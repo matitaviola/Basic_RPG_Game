@@ -30,14 +30,23 @@ const mapForeground = new Sprite({
 /* */
 
 /* Render Player*/
-const playerImage = new Image();
-playerImage.src = "./Assets/Player/playerDown.png";
-const playerSprite = new Sprite({
-	image: playerImage,
-	frames: {max:4},
-	position: {x: (canvas.width/2 + playerImage.width*1.5), y:canvas.height/2},
+const playerImageBase = new Image();
+playerImageBase.src = "./Assets/Player/playerDown.png";
+const playerSpriteBase = new Sprite({
+	image: playerImageBase,
+	frames: {max:4, cropFactX: 0, cropFactY: 0.5, cropFactHeight: 1},
+	position: {x: canvas.width/2, y:canvas.height/2},
 	pixelTolerance: playerPixelTol
 });
+
+const playerImageUpper = new Image();
+playerImageUpper.src = "./Assets/Player/playerDown.png";
+const playerSpriteUpper = new Sprite({
+	image: playerImageUpper,
+	frames: {max:4, cropFactX: 0, cropFactY: 0, cropFactHeight: 0.5},
+	position: {x: canvas.width/2, y:canvas.height/2},
+});
+
 /* */
 
 /* Collisions */
@@ -110,7 +119,7 @@ window.addEventListener('keyup', (ev) => {
 /* */
 
 /* Animation function */
-const testColl = new Collision({position:{x:canvas.width/2 - 100, y:canvas.height/2}, height:10, width:2})
+const testColl = new Collision({position:{x:canvas.width/2 - 100, y:canvas.height/2}, height:60, width:60})
 const moveWithMapObjs = [mapBackground, mapForeground, ...collisionTiles];
 function animateLoop(){
 	let moveEn = true; //This should be actually given by the speed;
@@ -123,10 +132,13 @@ function animateLoop(){
 	collisionTiles.forEach((coll) => {
 		coll.draw(context);
 	});
+	
+	
 	//Draws the player after the map
-	playerSprite.draw(context);
+	playerSpriteBase.draw(context);
+	playerSpriteUpper.draw(context);
 	//check that tolerance has been enabledPlugin
-	//if(playerSprite.width == (playerSprite.image.width/)
+	//if(playerSpriteBase.width == (playerSpriteBase.image.width/)
 		
 	//Draws the upper layers once the asset is loaded in memory
 	mapForeground.draw(context);
@@ -135,7 +147,7 @@ function animateLoop(){
 	if(keys.w.pressed && lastKey == 'w'){
 		for(let i = 0; i < collisionTiles.length; i++){
 			const coll = collisionTiles[i];
-			if(coll.checkCollision(playerSprite,{x: 0, y: 3}))
+			if(coll.checkCollision(playerSpriteBase,{x: 0, y: 3}))
 				{
 				moveEn = false;
 				break;
@@ -150,8 +162,8 @@ function animateLoop(){
 	else if(keys.a.pressed && lastKey == 'a'){
 		for(let i = 0; i < collisionTiles.length; i++){
 			const coll = collisionTiles[i];
-			if(coll.checkCollision(playerSprite,{x: 3, y: 0}))
-				{
+			if(coll.checkCollision(playerSpriteBase,{x: 3, y: 0}))
+			{
 				moveEn = false;
 				break;
 			}
@@ -164,7 +176,7 @@ function animateLoop(){
 	else if(keys.s.pressed && lastKey == 's'){
 		for(let i = 0; i < collisionTiles.length; i++){
 			const coll = collisionTiles[i];
-			if(coll.checkCollision(playerSprite,{x: 0, y: -3}))
+			if(coll.checkCollision(playerSpriteBase,{x: 0, y: -3}))
 				{
 				moveEn = false;
 				break;
@@ -178,7 +190,7 @@ function animateLoop(){
 	else if(keys.d.pressed && lastKey == 'd'){
 		for(let i = 0; i < collisionTiles.length; i++){
 			const coll = collisionTiles[i];
-			if(coll.checkCollision(playerSprite,{x: -3, y: 0}))
+			if(coll.checkCollision(playerSpriteBase,{x: -3, y: 0}))
 			{
 				moveEn = false;
 				break;
