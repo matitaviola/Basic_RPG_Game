@@ -2,36 +2,41 @@
 class Sprite {
 	static position;
 	
-	constructor({image, position, frames = {max: 1, cropFactHeight:1, cropFactX:0, cropFactY:0}, velocity, pixelTolerance = 0}) {
+	constructor({image, position, frames = {max: 1, frameSpeed:1}, velocity, pixelTolerance = 0, spriteImgs}) {
 		this.position = position;
 		this.image = image;
-		this.frames = frames;
+		this.spriteImgs = spriteImgs;
+		this.isMoving = false;
+		this.pixelTolerance = pixelTolerance;
+		this.frames = {...frames, currFrame:0, elapsed:0};
 		this.image.onload = () => {
-			this.width = this.image.width/this.frames.max - pixelTolerance - this.image.width * this.frames.cropFactX;
-			this.height = this.image.height - pixelTolerance - this.image.height * this.frames.cropFactY;
-			this.position.x += this.image.width * this.frames.cropFactX;
-			this.position.y += this.image.height * this.frames.cropFactY;
+			this.width = this.image.width/this.frames.max - pixelTolerance;
+			this.height = this.image.height - pixelTolerance;
 		};
 	}
 	
 	draw(context) {
 	//Image obj, X to start cropping, Y to start cropping, x crop width, y crop height, x, y, rendered image width, rendered image height) 
 		context.drawImage(this.image, 
-						this.image.width * this.frames.cropFactX,
-						this.image.height * this.frames.cropFactY,
+						this.frames.currFrame * (this.width  + this.pixelTolerance),
+						0,
 						this.image.width/ this.frames.max,
-						this.image.height * this.frames.cropFactHeight,
+						this.image.height,
 						this.position.x, 
 						this.position.y, 
 						this.image.width/ this.frames.max,
-						this.image.height * this.frames.cropFactHeight); 
-	}
-	
-	setCropValues(cropStartX, cropStartY) {
-		this.cropStartX = cropStartX;
-		this.cropStartY = cropStartY;
-		this.width -= cropStartX;
-		this.height -= cropStartY;
+						this.image.height); 
+		
+		if(!this.isMoving){
+			//this.frames.currFrame = 0; //reset to original position
+			return;
+		}
+		if(this.frames.max > 1)
+			this.frames.elapsed++;
+		if(this.frames.elapsed >= this.frames.frameSpeed){
+			this.frames.currFrame = (this.frames.currFrame + 1) % this.frames.max;	
+			this.frames.elapsed = 0;
+		}
 	}
 }
 
