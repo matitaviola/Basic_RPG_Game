@@ -10,8 +10,7 @@ const tileMapHeight = 40;
 const tileWidth = 16*4; //Tile size pixel * zoom%
 const tileHeight = 16*4;
 const startingPoint = {x:-1475, y:-350};
-const playerPixelTol = 5; //Player size pixel tolerance
-const playerUpperImgHeithPx = 30;
+const playerPixelTolX = 4; //Player size pixel tolerance on X axys
 const playerFrameSpeedIdle = 10; // 1 frame change every X executions
 /* */
 
@@ -32,46 +31,26 @@ const mapForeground = new Sprite({
 /* */
 
 /* Render Player*/
-const playerImageBaseDown = new Image();
-playerImageBaseDown.src = "./Assets/Player/playerDownLower.png";
-const playerImageBaseUp = new Image();
-playerImageBaseUp.src = "./Assets/Player/playerUpLower.png";
-const playerImageBaseLeft = new Image();
-playerImageBaseLeft.src = "./Assets/Player/playerLeftLower.png";
-const playerImageBaseRight = new Image();
-playerImageBaseRight.src = "./Assets/Player/playerRightLower.png";
-const playerSpriteBase = new Sprite({
-	image: playerImageBaseDown,
+const playerImageDown = new Image();
+playerImageDown.src = "./Assets/Player/playerDown.png";
+const playerImageUp = new Image();
+playerImageUp.src = "./Assets/Player/playerUp.png";
+const playerImageLeft = new Image();
+playerImageLeft.src = "./Assets/Player/playerLeft.png";
+const playerImageRight = new Image();
+playerImageRight.src = "./Assets/Player/playerRight.png";
+const playerSprite = new Sprite({
+	image: playerImageDown,
 	frames: {max:4, frameSpeed:playerFrameSpeedIdle},
 	position: {x: canvas.width/2, y:canvas.height/2},
-	pixelTolerance: playerPixelTol,
 	spriteImgs:{
-		down: playerImageBaseDown,
-		up: playerImageBaseUp,
-		left:playerImageBaseLeft,
-		right: playerImageBaseRight
+		down: playerImageDown,
+		up: playerImageUp,
+		left:playerImageLeft,
+		right: playerImageRight
 	}
 });
 
-const playerImageUpperDown = new Image();
-playerImageUpperDown.src = "./Assets/Player/playerDownUpper.png";
-const playerImageUpperUp = new Image();
-playerImageUpperUp.src = "./Assets/Player/playerUpUpper.png";
-const playerImageUpperLeft = new Image();
-playerImageUpperLeft.src = "./Assets/Player/playerLeftUpper.png";
-const playerImageUpperRight = new Image();
-playerImageUpperRight.src = "./Assets/Player/playerRightUpper.png";
-const playerSpriteUpper = new Sprite({
-	image: playerImageUpperDown,
-	frames: {max:4, frameSpeed:playerFrameSpeedIdle},
-	position: {x: canvas.width/2, y:canvas.height/2 - playerUpperImgHeithPx},
-	spriteImgs:{
-		down: playerImageUpperDown,
-		up: playerImageUpperUp,
-		left:playerImageUpperLeft,
-		right: playerImageUpperRight
-	}
-});
 
 /* */
 
@@ -149,6 +128,7 @@ const testColl = new Collision({position:{x:canvas.width/2 - 100, y:canvas.heigh
 const moveWithMapObjs = [mapBackground, mapForeground, ...collisionTiles];
 function animateLoop(){
 	let moveEn = true; //This should be actually given by the speed;
+	let playerSpriteTolerance = {u:playerSprite.height*2/3, d:0, l:playerPixelTolX, r:playerPixelTolX}; //Put it here to allow computations after image load
 	window.requestAnimationFrame(animateLoop); //Recursive calling, to keep moving
 	
 	//Draws the map once the asset is loaded in memory
@@ -161,19 +141,18 @@ function animateLoop(){
 	
 	
 	//Draws the player after the map
-	playerSpriteBase.draw(context);
-	playerSpriteUpper.draw(context);
-		
+	playerSprite.draw(context);
+	
 	//Draws the upper layers once the asset is loaded in memory
 	mapForeground.draw(context);
 
 	//Next position
-	playerSpriteBase.isMoving = false;
-	playerSpriteUpper.isMoving = false;
+	playerSprite.isMoving = false;
+	//playerSpriteUpper.isMoving = false;
 	if(keys.w.pressed && lastKey == 'w'){
 		for(let i = 0; i < collisionTiles.length; i++){
 			const coll = collisionTiles[i];
-			if(coll.checkCollision(playerSpriteBase,{x: 0, y: 3}))
+			if(coll.checkCollision(playerSprite,{x: 0, y: 3}, playerSpriteTolerance))
 				{
 				moveEn = false;
 				break;
@@ -184,16 +163,14 @@ function animateLoop(){
 			mov.position.y += 3;
 		  })
 		  
-		playerSpriteBase.isMoving = true;
-		playerSpriteBase.image = playerSpriteBase.spriteImgs.up;
-		playerSpriteUpper.isMoving = true;
-		playerSpriteUpper.image = playerSpriteUpper.spriteImgs.up;
-		
+		playerSprite.isMoving = true;
+		playerSprite.image = playerSprite.spriteImgs.up;
+
 	}
 	else if(keys.a.pressed && lastKey == 'a'){
 		for(let i = 0; i < collisionTiles.length; i++){
 			const coll = collisionTiles[i];
-			if(coll.checkCollision(playerSpriteBase,{x: 3, y: 0}))
+			if(coll.checkCollision(playerSprite,{x: 3, y: 0}, playerSpriteTolerance))
 			{
 				moveEn = false;
 				break;
@@ -204,15 +181,14 @@ function animateLoop(){
 			mov.position.x += 3;
 		  })
 		
-		playerSpriteBase.isMoving = true;
-		playerSpriteBase.image = playerSpriteBase.spriteImgs.left;
-		playerSpriteUpper.isMoving = true;
-		playerSpriteUpper.image = playerSpriteUpper.spriteImgs.left;
+		playerSprite.isMoving = true;
+		playerSprite.image = playerSprite.spriteImgs.left;
+
 	}
 	else if(keys.s.pressed && lastKey == 's'){
 		for(let i = 0; i < collisionTiles.length; i++){
 			const coll = collisionTiles[i];
-			if(coll.checkCollision(playerSpriteBase,{x: 0, y: -3}))
+			if(coll.checkCollision(playerSprite,{x: 0, y: -3}, playerSpriteTolerance))
 				{
 				moveEn = false;
 				break;
@@ -223,15 +199,14 @@ function animateLoop(){
 			mov.position.y -= 3;
 		  })
 		  
-		playerSpriteBase.isMoving = true;
-		playerSpriteBase.image = playerSpriteBase.spriteImgs.down;
-		playerSpriteUpper.isMoving = true;
-		playerSpriteUpper.image = playerSpriteUpper.spriteImgs.down;
+		playerSprite.isMoving = true;
+		playerSprite.image = playerSprite.spriteImgs.down;
+
 	}
 	else if(keys.d.pressed && lastKey == 'd'){
 		for(let i = 0; i < collisionTiles.length; i++){
 			const coll = collisionTiles[i];
-			if(coll.checkCollision(playerSpriteBase,{x: -3, y: 0}))
+			if(coll.checkCollision(playerSprite,{x: -3, y: 0}, playerSpriteTolerance))
 			{
 				moveEn = false;
 				break;
@@ -242,10 +217,9 @@ function animateLoop(){
 			mov.position.x -= 3;
 		  })
 		  
-		playerSpriteBase.isMoving = true;
-		playerSpriteBase.image = playerSpriteBase.spriteImgs.right;
-		playerSpriteUpper.isMoving = true;
-		playerSpriteUpper.image = playerSpriteUpper.spriteImgs.right;
+		playerSprite.isMoving = true;
+		playerSprite.image = playerSprite.spriteImgs.right;
+
 
 	}
 }
