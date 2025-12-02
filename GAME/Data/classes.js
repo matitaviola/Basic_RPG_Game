@@ -84,5 +84,11 @@ class Collision {
 
 	}
 	
+	checkOverlapArea(sprite){
+		const width = Math.max(this.position.x, sprite.position.x) - Math.min(this.position.x, sprite.position.x);
+		const height = Math.max(this.position.y, sprite.position.y) - Math.min(this.position.y, sprite.position.y);
+		return width*height;
+	}
+	
 }
 /* */

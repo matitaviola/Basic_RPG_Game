@@ -12,6 +12,7 @@ const tileHeight = 16*4;
 const startingPoint = {x:-1475, y:-350};
 const playerPixelTolX = 4; //Player size pixel tolerance on X axys
 const playerFrameSpeedIdle = 10; // 1 frame change every X executions
+const battleTriggerArea = 100; // Size of overlapping area on grass to trigegr battle
 /* */
 
 /* Render map */
@@ -74,6 +75,25 @@ collisionMap.forEach((row, i) => {
 	})
 });
 
+/* Grass */
+const grassMap = [];
+for (let i = 0; i <= (grass.length - tileMapWidth); i += tileMapWidth){
+	grassMap.push(grass.slice(i, i+tileMapWidth));
+}
+
+const grassTiles = []
+grassMap.forEach((row, i) => {
+	row.forEach((symbol, j) => {
+		if(symbol != 0)
+			grassTiles.push(
+				new Collision({
+					position:{x: j*tileWidth + startingPoint.x, y:i*tileHeight + startingPoint.y}, 
+					width: tileWidth, 
+					height:tileHeight})
+		);
+	})
+});
+
 /* Key Event*/
 let keys = {
 	w: {pressed: false},
@@ -125,7 +145,7 @@ window.addEventListener('keyup', (ev) => {
 
 /* Animation function */
 const testColl = new Collision({position:{x:canvas.width/2 - 100, y:canvas.height/2}, height:60, width:60})
-const moveWithMapObjs = [mapBackground, mapForeground, ...collisionTiles];
+const moveWithMapObjs = [mapBackground, mapForeground, ...collisionTiles, ...grassTiles];
 function animateLoop(){
 	let moveEn = true; //This should be actually given by the speed;
 	let playerSpriteTolerance = {u:playerSprite.height*2/3, d:0, l:playerPixelTolX, r:playerPixelTolX}; //Put it here to allow computations after image load
@@ -219,8 +239,19 @@ function animateLoop(){
 		  
 		playerSprite.isMoving = true;
 		playerSprite.image = playerSprite.spriteImgs.right;
-
-
+	}
+	
+	//Add check for grass battle, only if we moved
+	if(playerSprite.isMoving){
+		for(let i = 0; i < grassTiles.length; i++){
+			const patch = grassTiles[i];
+			if(patch.checkCollision(playerSprite,{x: 0, y: 0}, playerSpriteTolerance) &&
+				patch.checkOverlapArea(playerSprite) > battleTriggerArea)
+			{
+				console.log('Grass rustle');
+				break;
+			}
+		}
 	}
 }
 animateLoop(); //First call
