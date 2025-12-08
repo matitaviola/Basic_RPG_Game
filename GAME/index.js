@@ -143,13 +143,13 @@ window.addEventListener('keyup', (ev) => {
 }); //Player response upon key releasing
 /* */
 
-/* Animation function */
+/* Main Scene Animation function */
 const testColl = new Collision({position:{x:canvas.width/2 - 100, y:canvas.height/2}, height:60, width:60})
 const moveWithMapObjs = [mapBackground, mapForeground, ...collisionTiles, ...grassTiles];
-function animateLoop(){
+function animateMain(){
 	let moveEn = true; //This should be actually given by the speed;
 	let playerSpriteTolerance = {u:playerSprite.height*2/3, d:0, l:playerPixelTolX, r:playerPixelTolX}; //Put it here to allow computations after image load
-	window.requestAnimationFrame(animateLoop); //Recursive calling, to keep moving
+	const animationId = window.requestAnimationFrame(animateMain); //Recursive calling, to keep moving
 	
 	//Draws the map once the asset is loaded in memory
 	mapBackground.draw(context);
@@ -168,7 +168,6 @@ function animateLoop(){
 
 	//Next position
 	playerSprite.isMoving = false;
-	//playerSpriteUpper.isMoving = false;
 	if(keys.w.pressed && lastKey == 'w'){
 		for(let i = 0; i < collisionTiles.length; i++){
 			const coll = collisionTiles[i];
@@ -246,14 +245,35 @@ function animateLoop(){
 		for(let i = 0; i < grassTiles.length; i++){
 			const patch = grassTiles[i];
 			if(patch.checkCollision(playerSprite,{x: 0, y: 0}, playerSpriteTolerance) &&
-				patch.checkOverlapArea(playerSprite) > battleTriggerArea)
+				patch.checkOverlapArea(playerSprite) > battleTriggerArea
+				&& Math.random() < 0.1) //Add randomicity to encounter
 			{
-				console.log('Grass rustle');
+				console.log('Battle!');
+				window.cancelAnimationFrame(animationId); //Stops current loop
+				gsap.to('#battleOverlap',{
+					opacity: 1,
+					repeat:3,
+					yoyo: true,
+					duration: 0.5,
+					onComplete() {
+						gsap.to('#battleOverlap', {
+							opacity: 1, 
+							duration: 0.2,
+							onComplete(){
+								animateBattle();
+								}
+							});
+					}
+					});
 				break;
 			}
 		}
 	}
 }
-animateLoop(); //First call
+animateMain(); //First call
 
-
+/*	Battle Scene Animation function */
+function animateBattle(){
+	const animationId = window.requestAnimationFrame(animateBattle); //Recursive calling, to keep moving
+	console.log('Battling!');
+}

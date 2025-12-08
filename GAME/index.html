@@ -3,7 +3,12 @@ body {
 background-color: black;
 }
 </style>
-<canvas></canvas>
+<div style="display: inline-block; position: relative;">
+	<div id="battleOverlap"
+		style="background-color: black; opacity: 0; position: absolute; top:0; bottom:0; left:0; right:0; pointer-event: none;"></div>
+	<canvas></canvas>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js" integrity="sha512-NcZdtrT77bJr4STcmsGAESr06BYGE8woZdSdEgqnpyqac7sugNO+Tr4bGwGF3MsnEkGKhU2KL2xh6Ec+BqsaHA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script src="Data/collisions.js"></script>
 <script src="Data/grass.js"></script>
 <script src="Data/classes.js"></script>
