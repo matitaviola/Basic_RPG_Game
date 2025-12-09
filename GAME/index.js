@@ -167,7 +167,7 @@ function animateMain(){
 	mapForeground.draw(context);
 
 	//Next position
-	playerSprite.isMoving = false;
+	playerSprite.animate = false;
 	if(keys.w.pressed && lastKey == 'w'){
 		for(let i = 0; i < collisionTiles.length; i++){
 			const coll = collisionTiles[i];
@@ -182,7 +182,7 @@ function animateMain(){
 			mov.position.y += 3;
 		  })
 		  
-		playerSprite.isMoving = true;
+		playerSprite.animate = true;
 		playerSprite.image = playerSprite.spriteImgs.up;
 
 	}
@@ -200,7 +200,7 @@ function animateMain(){
 			mov.position.x += 3;
 		  })
 		
-		playerSprite.isMoving = true;
+		playerSprite.animate = true;
 		playerSprite.image = playerSprite.spriteImgs.left;
 
 	}
@@ -218,7 +218,7 @@ function animateMain(){
 			mov.position.y -= 3;
 		  })
 		  
-		playerSprite.isMoving = true;
+		playerSprite.animate = true;
 		playerSprite.image = playerSprite.spriteImgs.down;
 
 	}
@@ -236,12 +236,12 @@ function animateMain(){
 			mov.position.x -= 3;
 		  })
 		  
-		playerSprite.isMoving = true;
+		playerSprite.animate = true;
 		playerSprite.image = playerSprite.spriteImgs.right;
 	}
 	
 	//Add check for grass battle, only if we moved
-	if(playerSprite.isMoving){
+	if(playerSprite.animate){
 		for(let i = 0; i < grassTiles.length; i++){
 			const patch = grassTiles[i];
 			if(patch.checkCollision(playerSprite,{x: 0, y: 0}, playerSpriteTolerance) &&
@@ -261,8 +261,12 @@ function animateMain(){
 							duration: 0.2,
 							onComplete(){
 								animateBattle();
-								}
-							});
+								gsap.to('#battleOverlap', {
+									opacity: 0, 
+									duration: 0.2
+								})
+							}
+						});
 					}
 					});
 				break;
@@ -272,8 +276,28 @@ function animateMain(){
 }
 animateMain(); //First call
 
+/* Battler */
+const emberImg = new Image();
+emberImg.src = "Assets/Battle/Sprites/emberSprite.png";
+const emberSprite = new Sprite ({
+	image: emberImg,
+	frames: {max:4, frameSpeed:playerFrameSpeedIdle},
+	position: {x: 290, y:320},
+	animate: true
+});
+
 /*	Battle Scene Animation function */
+const battleBackgroundImg = new Image();
+battleBackgroundImg.src = "./Assets/Battle/Backgrounds/battleBackground.png";
+const battleBackground = new Sprite({
+	image: battleBackgroundImg,
+	frames: {max:1},
+	position: {x: 0, y:0}
+});
 function animateBattle(){
 	const animationId = window.requestAnimationFrame(animateBattle); //Recursive calling, to keep moving
-	console.log('Battling!');
+	
+	battleBackground.draw(context);
+	emberSprite.draw(context);
+	enemySprites[0].draw(context);
 }

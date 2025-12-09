@@ -2,11 +2,11 @@
 class Sprite {
 	static position;
 	
-	constructor({image, position, frames = {max: 1, frameSpeed:1}, velocity, spriteImgs}) {
+	constructor({image, position, frames = {max: 1, frameSpeed:1}, velocity, spriteImgs, animate=false}) {
 		this.position = position;
 		this.image = image;
 		this.spriteImgs = spriteImgs;
-		this.isMoving = false;
+		this.animate = animate;
 		this.frames = {...frames, currFrame:0, elapsed:0};
 		this.image.onload = () => {
 			this.width = this.image.width/this.frames.max;
@@ -26,7 +26,7 @@ class Sprite {
 						this.image.width/ this.frames.max,
 						this.image.height); 
 		
-		if(!this.isMoving){
+		if(!this.animate){
 			this.frames.currFrame = 0; //reset to original position
 			return;
 		}
