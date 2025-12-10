@@ -1,67 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
 <head>
-<link rel="preconnect" href="https://fonts.googleapis.com"/>
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap"/>
-<style>
-	* {
-		font-family: "Press Start 2P", cursive;
-	}
-	body {
-		background-color: black;
-	}
-	button{
-		border: 0.5px;
-		cursor: pointer;
-	}
-	button:hover{
-		background-color: #ccc;
-	}
-</style>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>RPG4Marika</title>
+	
+	<!-- Font -->
+	<link rel="preconnect" href="https://fonts.googleapis.com"/>
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap"/>
+	
+	<!-- CSS -->
+	<link rel="stylesheet" href="styles.css" />
+
 </head>
-<div style="display: inline-block; position: relative;">
-	<div id="battleOverlap"
-		style="
-			background-color: black; 
-			opacity: 0; 
-			position: absolute; 
-			top:0; 
-			bottom:0; 
-			left:0; 
-			right:0; 
-			pointer-event: none;"
-	></div>
+<body>
 	
-	<canvas></canvas>
+	<!-- Layers grafici -->
+	<div style="display: inline-block; position: relative;">
 	
-	<div id="battleOptionBar"
-		style="
-			background-color: pink;
-			height: 150px;
-			position: absolute; 
-			bottom:0; 
-			left:0; 
-			right:0;
-			border-top: 4px black solid;
-			display: flex;"
-	>
-		<div style="
-			width: 66.6%; 
-			border-right: 4px black solid; 
-			display: grid; 
-			grid-template-columns: repeat(2, 1fr);">
-			<button>Attack_1</button>
-			<button>Attack_2</button>
-			<button>Attack_3</button>
-			<button>Attack_4</button>
+		<!-- Battle transition -->
+		<div class="battle-overlap"></div>
+		
+		<!-- Main -->
+		<canvas></canvas>
+		
+		<!-- Battle menu-->
+		<div class="battle-attacks-bar">
+			<div class="battle-attacks-buttons">
+				<button>Attack_1</button>
+				<button>Attack_2</button>
+				<button>Attack_3</button>
+				<button>Attack_4</button>
+			</div>
+			<div class="battle-attacks-info">
+				<h1>AttackType</h1>
+			</div>
 		</div>
-		<div style="display: flex; align-items: center; justify-content: center; width: 33.3%;">
-			<h1 style="margin:0;">AttackType</h1>
-		</div>
+		
 	</div>
-</div>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js" integrity="sha512-NcZdtrT77bJr4STcmsGAESr06BYGE8woZdSdEgqnpyqac7sugNO+Tr4bGwGF3MsnEkGKhU2KL2xh6Ec+BqsaHA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-<script src="Data/classes.js"></script>
-<script src="Data/collisions.js"></script>
-<script src="Data/grass.js"></script>
-<script src="Data/enemies.js"></script>
-<script src="index.js"></script>
+
+	<!-- Codice -->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js" integrity="sha512-NcZdtrT77bJr4STcmsGAESr06BYGE8woZdSdEgqnpyqac7sugNO+Tr4bGwGF3MsnEkGKhU2KL2xh6Ec+BqsaHA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+	<script src="Data/globals.js"></script>
+	<script src="Data/classes.js"></script>
+	<script src="Data/collisions.js"></script>
+	<script src="Data/grass.js"></script>
+	<script src="Data/enemies.js"></script>
+	<script src="Data/map.js"></script>
+	<script src="Data/battle.js"></script>
+	<script src="index.js"></script>
+	
+<body>
