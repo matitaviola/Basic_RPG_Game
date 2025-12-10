@@ -1,4 +1,4 @@
-/* Classes */
+/* Sprites */
 class Sprite {
 	static position;
 	
@@ -12,10 +12,13 @@ class Sprite {
 			this.width = this.image.width/this.frames.max;
 			this.height = this.image.height;
 		};
+		this.opacity = 1;
 	}
 	
 	draw(context) {
 	//Image obj, X to start cropping, Y to start cropping, x crop width, y crop height, x, y, rendered image width, rendered image height) 
+		context.save();
+		context.globalAlpha = this.opacity;
 		context.drawImage(this.image, 
 						this.frames.currFrame * (this.width),
 						0,
@@ -25,6 +28,7 @@ class Sprite {
 						this.position.y, 
 						this.image.width/ this.frames.max,
 						this.image.height); 
+		context.restore();
 		
 		if(!this.animate){
 			this.frames.currFrame = 0; //reset to original position
@@ -38,7 +42,9 @@ class Sprite {
 		}
 	}
 }
+/* */
 
+/* Collision */
 class Collision {
 	static position;
 	static width;
@@ -92,3 +98,26 @@ class Collision {
 	
 }
 /* */
+
+/* Battler */
+class Battler {
+	constructor({name, sprite, maxHp = 50}){
+		this.name = name;
+		this.sprite = sprite;
+		this.currHp = maxHp;
+		this.maxHp = maxHp;
+	}
+}
+/* Attack */
+class Attack{
+	constructor({name, type, isDamage = false, damage = 0, isArea = false, animationCbk = () => {}, effectCbk = () => {} }) {
+		this.name = name;
+		this.type = type;
+		this.isDamage = isDamage;
+		this.damage = damage;
+		this.isArea = isArea;
+		this.animationCbk = animationCbk;
+		this.effectCbk = effectCbk;
+	}
+}
+

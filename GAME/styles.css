@@ -27,7 +27,7 @@ button:hover{
 
 /* Battle Attacks bar */
 .battle-attacks-bar {
-	opacity: 0;			
+	opacity: 0;		
 	background-color: pink;
 	height: 150px;
 	position: absolute; 
@@ -55,4 +55,49 @@ button:hover{
 
 .battle-attacks-info h1 {
 	margin:0;
+}
+
+/* Health Bars */
+.health-bar-enemy{
+	opacity: 0;	
+	background-color: white;
+	width: 250px;
+	position: absolute;
+	top: 50px;
+	left:50px;
+	padding: 12px;
+	border: 4px black solid;
+}
+.health-bar-enemy h1{
+	font-size: 16px;
+}
+.health-bar-pg{
+	opacity: 0;	
+	background-color: white;
+	width: 250px;
+	position: absolute;
+	top: 300px;
+	right: 50px;
+	padding: 12px;
+	border: 4px black solid;
+}
+.health-bar-pg h1{
+	font-size: 16px;
+}
+
+.health-bar{
+	position: relative;
+}
+.health-bar-life{
+	height: 10px;
+	background-color: lightgreen;
+	position: absolute;
+	top: 0;
+	left:0;
+	right: 0;
+}
+.health-bar-bg{
+	height: 10px;
+	background-color: grey;
+	margin-top: 10px;
 }

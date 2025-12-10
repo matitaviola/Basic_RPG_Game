@@ -166,23 +166,8 @@ function animateMain(){
 					yoyo: true,
 					duration: 0.5,
 					onComplete() {
-						gsap.to('.battle-overlap', {
-							opacity: 1, 
-							duration: 0.2,
-							onComplete(){
-								animateBattle();
-								gsap.to('.battle-overlap', {
-									opacity: 0, 
-									duration: 0.2,
-									onComplete() {
-										gsap.to('.battle-attacks-bar', {
-											opacity: 1
-										})
-									}
-								})
-							}
-						});
-					}
+							initBattle();
+						}
 					});
 				break;
 			}

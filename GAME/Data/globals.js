@@ -22,3 +22,7 @@ let keys = {
 }
 let lastKey;
 /* */
+
+/* Battle variables */
+let isInBattle = false;
+/* */
