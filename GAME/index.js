@@ -62,6 +62,8 @@ window.addEventListener('keyup', (ev) => {
 /* */
 
 //First call
-animateMain(); 
+//TODO: rimetti //animateMain(); 
+//TODO: rimuovi
+initBattle();
 
 

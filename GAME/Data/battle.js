@@ -7,7 +7,7 @@ const emberSprite = new Sprite ({
 	position: {x: 290, y:320},
 	animate: true
 });
-const pgBattler = new Battler({name: 'Pg', sprite: emberSprite, maxHp: 60});
+const pgBattler = new Battler({name: 'Pg', sprite: emberSprite, maxHp: 60, attackNames: ['Tackle', 'Fireball', 'Heal', 'Protect']});
 
 /*	Battle Scene Animation function */
 const battleBackgroundImg = new Image();
@@ -24,62 +24,9 @@ function animateBattle(){
 	
 	battleBackground.draw(context);
 	enemies[0].sprite.draw(context);
+	atkSpritesToRender.forEach((sprite) => {sprite.draw(context)});
 	pgBattler.sprite.draw(context);
 }
-
-const Tackle = new Attack({
-	name: 'pino', 
-	type: 'gino', 
-	damage: 10,
-	effectCbk: function(enemy) {
-		enemy.currHp -= this.damage;
-		if(enemy.currHp < 0) enemy.currHp = 0;
-	},
-	animationCbk: function(attacker, target, targetBarId, onComplete){
-		const tl = gsap.timeline({ onComplete }); //The onComplete is executed only when the timeline is terminated
-		const atkSpr = attacker.sprite;
-		const tgtSpr = target.sprite; 
-		
-		tl.to(atkSpr.position, {
-			x: atkSpr.position.x -20
-		}).to(atkSpr.position, {
-			x: atkSpr.position.x + 40
-		}).to(atkSpr.position, {
-			x: atkSpr.position.x,
-			duration: 0.1
-		}).to(atkSpr.position, {
-			x: tgtSpr.position.x - tgtSpr.width/2,
-			y: tgtSpr.position.y,
-			duration: 0.5,
-			onComplete: () => {
-				gsap.to(tgtSpr.position, {
-					x: tgtSpr.position.x + 40,
-					yoyo: true,
-					duration: 0.1,
-					repeat: 3
-				})
-				gsap.to(tgtSpr, {
-					opacity: 0,
-					yoyo: true,
-					duration: 0.1,
-					repeat: 3
-				})
-				
-				this.effectCbk(target); //For 'this.' to work and refer to the attack, the 'onComplete' must use an arrow function.
-				
-				gsap.to(targetBarId, {
-					width: (target.currHp/target.maxHp)*100 +'%',
-					duration: 0.5
-				});
-			}
-		}).to(atkSpr.position, {
-			x: atkSpr.position.x,
-			y: atkSpr.position.y,
-			duration: 0.4
-		})
-	}
-})
-
 
 /* Battle Initialization */
 function initBattle(){
@@ -107,12 +54,22 @@ function initBattle(){
 		}
 	});
 	
+	let atkIdx = 0;
+	
 	document.querySelectorAll('button').forEach(button => {
-		button.addEventListener('click', () => {
+		if(atkIdx < pgBattler.attackNames.length){
+			button.textContent = pgBattler.attackNames[atkIdx];
+			atkIdx++;
+		}else{
+			button.hidden = true;
+		}
+		
+		button.addEventListener('click', (e) => {
+			const attackName = e.currentTarget.innerHTML;
 			//Todo: implement real logic to choose opponent's move and action order
 			//Atm: calling the second attack on the resolution of the first timeline, but as it's written, the player will always attack first
-			Tackle.animationCbk(pgBattler, enemies[0], '#healthBarEnemy', () => {
-				Tackle.animationCbk(enemies[0], pgBattler,  '#healthBarPg')
+			attacks[attackName].animationCbk(pgBattler, enemies[0], '#healthBarEnemy', () => {
+				attacks[attackName].animationCbk(enemies[0], pgBattler,  '#healthBarPg')
 			});
 		})
 	});

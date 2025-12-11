@@ -36,7 +36,6 @@ button:hover{
 	right:0;
 	border-top: 4px black solid;
 	display: flex;
-	background: red !important;
 }
 
 .battle-attacks-buttons{
@@ -44,6 +43,7 @@ button:hover{
 	border-right: 4px black solid; 
 	display: grid; 
 	grid-template-columns: repeat(2, 1fr);
+	background-color: white;
 }
 
 .battle-attacks-info{

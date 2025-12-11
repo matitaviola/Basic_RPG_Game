@@ -2,7 +2,7 @@
 class Sprite {
 	static position;
 	
-	constructor({image, position, frames = {max: 1, frameSpeed:1}, velocity, spriteImgs, animate=false}) {
+	constructor({image, position, frames = {max: 1, frameSpeed:1}, velocity, spriteImgs, animate=false, rotation}) {
 		this.position = position;
 		this.image = image;
 		this.spriteImgs = spriteImgs;
@@ -13,12 +13,16 @@ class Sprite {
 			this.height = this.image.height;
 		};
 		this.opacity = 1;
+		this.rotation = rotation;
 	}
 	
 	draw(context) {
 	//Image obj, X to start cropping, Y to start cropping, x crop width, y crop height, x, y, rendered image width, rendered image height) 
 		context.save();
 		context.globalAlpha = this.opacity;
+		context.translate(this.position.x + this.width/2, this.position.y + this.height/2); //rotation center
+		context.rotate(this.rotation); //rotation (in radiants)
+		context.translate(-(this.position.x + this.width/2), -(this.position.y + this.height/2)); //return to the original point
 		context.drawImage(this.image, 
 						this.frames.currFrame * (this.width),
 						0,
@@ -101,11 +105,12 @@ class Collision {
 
 /* Battler */
 class Battler {
-	constructor({name, sprite, maxHp = 50}){
+	constructor({name, sprite, maxHp = 50, attackNames}){
 		this.name = name;
 		this.sprite = sprite;
 		this.currHp = maxHp;
 		this.maxHp = maxHp;
+		this.attackNames = attackNames;
 	}
 }
 /* Attack */
