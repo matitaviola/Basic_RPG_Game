@@ -1,3 +1,6 @@
+/* Attacks Queue */
+const attacksQueue = [];
+
 /* Used sprites*/
 const atkImg_Fireball = new Image();
 atkImg_Fireball.src = "./Assets/Battle/Sprites/Attacks/fireball.png";
@@ -28,7 +31,11 @@ const attacks = {
 			const tl = gsap.timeline({ onComplete }); //The onComplete is executed only when the timeline is terminated
 			const atkSpr = attacker.sprite;
 			const tgtSpr = target.sprite; 
+			//Show box and set text
+			document.querySelector('#diagBox').style.display = 'block';
+			document.querySelector('#diagBox').innerHTML = attacker.name + ' tackles ' + target.name;
 			
+			// Animation
 			tl.to(atkSpr.position, {
 				x: atkSpr.position.x -20
 			}).to(atkSpr.position, {
@@ -89,6 +96,11 @@ const attacks = {
 			if(targetBarId === "#healthBarPg") //if the attack comes from an enemy
 				atkSprite_Fireball.rotation = -2.1;
 				
+			//Show box and set text
+			document.querySelector('#diagBox').style.display = 'block';
+			document.querySelector('#diagBox').innerHTML = attacker.name + ' throws a fireball to ' + target.name;
+			
+			// Animation
 			tl.to(atkSprite_Fireball.position, {
 				x: tgtSpr.position.x,
 				y: tgtSpr.position.y,

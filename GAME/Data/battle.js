@@ -18,6 +18,7 @@ const battleBackground = new Sprite({
 	position: {x: 0, y:0}
 });
 
+
 /* Battle Animation */
 function animateBattle(){
 	const animationId = window.requestAnimationFrame(animateBattle); //Recursive calling, to keep moving
@@ -56,6 +57,7 @@ function initBattle(){
 	
 	let atkIdx = 0;
 	
+	//Attack selection
 	document.querySelectorAll('button').forEach(button => {
 		if(atkIdx < pgBattler.attackNames.length){
 			button.textContent = pgBattler.attackNames[atkIdx];
@@ -65,13 +67,27 @@ function initBattle(){
 		}
 		
 		button.addEventListener('click', (e) => {
-			const attackName = e.currentTarget.innerHTML;
+			let attackName = e.currentTarget.innerHTML;			
 			//Todo: implement real logic to choose opponent's move and action order
-			//Atm: calling the second attack on the resolution of the first timeline, but as it's written, the player will always attack first
-			attacks[attackName].animationCbk(pgBattler, enemies[0], '#healthBarEnemy', () => {
-				attacks[attackName].animationCbk(enemies[0], pgBattler,  '#healthBarPg')
-			});
+			//Attacks
+			attacks[attackName].animationCbk(pgBattler, enemies[0], '#healthBarEnemy');
+			//Select random attack from the ones the enemy knows
+			attackName = enemies[0].attackNames[Math.floor(Math.random() * enemies[0].attackNames.length)];
+			//Add it to the queue
+			attacksQueue.push(() => {attacks[attackName].animationCbk(enemies[0], pgBattler,  '#healthBarPg')});
 		})
+	});
+	
+	//Attack resolution, pop from queue
+	document.querySelector('#diagBox').addEventListener('click', (e) => {
+		if(attacksQueue.length > 0){
+			attacksQueue[0]();
+			attacksQueue.shift();
+		}
+		else{
+			// Remove dialog box
+			document.querySelector('#diagBox').style.display = 'none';
+		}
 	});
 	
 	

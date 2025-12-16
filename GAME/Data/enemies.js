@@ -9,7 +9,8 @@ const drake = new Sprite ({
 	position: {x: 800, y:100},
 	animate: true
 });
+drakeAttacks = ['Tackle', 'Fireball'];
 /* Enemy Sprite List */
 const enemies = [
-	new Battler({name: 'Drake', sprite: drake, maxHp: 50})
+	new Battler({name: 'Drake', sprite: drake, maxHp: 50, attackNames: drakeAttacks})
 ];

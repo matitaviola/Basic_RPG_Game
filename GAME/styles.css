@@ -13,6 +13,20 @@ button:hover{
 	background-color: #ccc;
 }
 
+/* Dialog box */
+.dialog-box {
+	display: none;	
+	background-color: white;
+	height: 130px; /* this plus padding must equal battle-attacks-bar height */
+	position: absolute; 
+	bottom:0; 
+	left:0; 
+	right:0;
+	border-top: 4px black solid;
+	padding: 10px;
+	cursor: pointer;
+}
+
 /* Battle Transition Screen */
 .battle-overlap {
 	background-color: black; 
