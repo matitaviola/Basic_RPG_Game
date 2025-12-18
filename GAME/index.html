@@ -21,45 +21,52 @@
 	
 		<!-- Battle transition -->
 		<div class="battle-overlap"></div>
-		<!-- Battle Health Bars -->
-		<div class="health-bar-enemy">
-			<h1>Enemy<h1>
-			<div class="health-bar">
-				<div class="health-bar-bg"></div>
-				<div id="healthBarEnemy" class="health-bar-life"></div>
-			</div>
-		</div>
-		<div class="health-bar-pg">
-			<h1>Player<h1>
-			<div class="health-bar">
-				<div class="health-bar-bg"></div>
-				<div id="healthBarPg" class="health-bar-life"></div>
-			</div>
-		</div>
 		<!-- Main -->
 		<canvas></canvas>
 		
-		<!-- Battle menu-->
-		<div class="battle-attacks-bar">
-			<div class="battle-attacks-buttons">
-				<button>Attack_1</button>
-				<button>Attack_2</button>
-				<button>Attack_3</button>
-				<button>Attack_4</button>
+		<!-- Battle GUI-->
+		<div id='battleGUI'>
+			<!-- Battle Health Bars -->
+			<div class="health-bar-enemy">
+				<h1>Enemy<h1>
+				<div class="health-bar">
+					<div class="health-bar-bg"></div>
+					<div id="healthBarEnemy" class="health-bar-life"></div>
+				</div>
 			</div>
-			<div class="battle-attacks-info">
-				<h1>AttackType</h1>
+			<div class="health-bar-pg">
+				<h1>Player<h1>
+				<div class="health-bar">
+					<div class="health-bar-bg"></div>
+					<div id="healthBarPg" class="health-bar-life"></div>
+				</div>
 			</div>
+			
+			<!-- Battle menu -->
+			<div class="battle-attacks-bar">
+				<div class="battle-attacks-buttons">
+					<button>Attack_1</button>
+					<button>Attack_2</button>
+					<button>Attack_3</button>
+					<button>Attack_4</button>
+				</div>
+				<div class="battle-attacks-info" id='battleAttackInfo'>
+					AttackType
+				</div>
+			</div>
+			
+			<!-- Dialog box -->
+			<div id="diagBox" class="dialog-box"> Text...</div>
 		</div>
 		
-		<!-- Dialog box -->
-		<div id="diagBox" class="dialog-box"> Text...</div>
+		
 		
 	</div>
 
 	<!-- Codice -->
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js" integrity="sha512-NcZdtrT77bJr4STcmsGAESr06BYGE8woZdSdEgqnpyqac7sugNO+Tr4bGwGF3MsnEkGKhU2KL2xh6Ec+BqsaHA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 	<script src="Data/globals.js"></script>
+	<script src="Data/utils.js"></script>
 	<script src="Data/classes.js"></script>
 	<script src="Data/collisions.js"></script>
 	<script src="Data/grass.js"></script>

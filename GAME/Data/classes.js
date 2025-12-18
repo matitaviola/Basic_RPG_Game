@@ -14,6 +14,12 @@ class Sprite {
 		};
 		this.opacity = 1;
 		this.rotation = rotation;
+		
+		//If using an already loaded image
+		if (this.image.complete) {
+			this.width = this.image.width / this.frames.max;
+			this.height = this.image.height;
+		}
 	}
 	
 	draw(context) {
@@ -104,20 +110,31 @@ class Collision {
 /* */
 
 /* Battler */
-class Battler {
+class Battler{
 	constructor({name, sprite, maxHp = 50, attackNames}){
 		this.name = name;
-		this.sprite = sprite;
 		this.currHp = maxHp;
 		this.maxHp = maxHp;
 		this.attackNames = attackNames;
+		this.sprite = sprite;
+	}
+	
+	faint() {
+		document.querySelector('#diagBox').innerHTML = this.name+' is K.O.';
+		gsap.to(this.sprite.position, {
+			y: this.sprite.position.y + 20
+		});
+		gsap.to(this.sprite, {
+			opacity: 0
+		})
 	}
 }
 /* Attack */
 class Attack{
-	constructor({name, type, isDamage = false, damage = 0, isArea = false, animationCbk = () => {}, effectCbk = () => {} }) {
+	constructor({name, type, info, isDamage = false, damage = 0, isArea = false, animationCbk = () => {}, effectCbk = () => {} }) {
 		this.name = name;
 		this.type = type;
+		this.info = info;
 		this.isDamage = isDamage;
 		this.damage = damage;
 		this.isArea = isArea;

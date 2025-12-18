@@ -3,14 +3,17 @@ const normalFrameSpeed = 20;
 /* Drake */
 const drakeImg = new Image();
 drakeImg.src = "Assets/Battle/Sprites/drakeSprite.png";
-const drake = new Sprite ({
+const drakeSpriteInfo = {
 	image: drakeImg,
 	frames: {max:4, frameSpeed:normalFrameSpeed},
 	position: {x: 800, y:100},
 	animate: true
-});
+};
+const drakeSprite = new Sprite ({...drakeSpriteInfo});
 drakeAttacks = ['Tackle', 'Fireball'];
-/* Enemy Sprite List */
-const enemies = [
-	new Battler({name: 'Drake', sprite: drake, maxHp: 50, attackNames: drakeAttacks})
+/* Enemy Image List */
+const enemiesImages = [drakeImg];
+/* Enemy List */
+const enemiesList = [
+	{name: 'Drake', sprite: drakeSprite, maxHp: 50, attackNames: drakeAttacks, spriteInfo: drakeSpriteInfo}
 ];

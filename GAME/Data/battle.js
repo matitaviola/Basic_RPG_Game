@@ -1,13 +1,14 @@
 /* Battler */
 const emberImg = new Image();
 emberImg.src = "Assets/Battle/Sprites/emberSprite.png";
-const emberSprite = new Sprite ({
+const emberSprite = new Sprite({
 	image: emberImg,
 	frames: {max:4, frameSpeed:playerFrameSpeedIdle},
-	position: {x: 290, y:320},
+	position: {x: pgSpriteX, y:pgSpriteY},
 	animate: true
 });
 const pgBattler = new Battler({name: 'Pg', sprite: emberSprite, maxHp: 60, attackNames: ['Tackle', 'Fireball', 'Heal', 'Protect']});
+
 
 /*	Battle Scene Animation function */
 const battleBackgroundImg = new Image();
@@ -18,10 +19,9 @@ const battleBackground = new Sprite({
 	position: {x: 0, y:0}
 });
 
-
 /* Battle Animation */
 function animateBattle(){
-	const animationId = window.requestAnimationFrame(animateBattle); //Recursive calling, to keep moving
+	battleAnimationId = window.requestAnimationFrame(animateBattle); //Recursive calling, to keep moving
 	
 	battleBackground.draw(context);
 	enemies[0].sprite.draw(context);
@@ -29,8 +29,27 @@ function animateBattle(){
 	pgBattler.sprite.draw(context);
 }
 
+/* Battle exit */
+function exitBattle(){
+	gsap.to('.battle-overlap',{
+		opacity: 1,
+		onComplete: () => {
+			enemies.length = 0;
+			cancelAnimationFrame(battleAnimationId);
+			isInBattle = false;
+			
+			animateMain();
+			
+			document.querySelector('#battleGUI').style.display = 'none';
+			
+			gsap.to('.battle-overlap',{
+				opacity: 0
+			});
+		}
+	});
+}
 /* Battle Initialization */
-function initBattle(){
+function initBattle({ random = true, chosenEnemies = []} = {}){
 	isInBattle = true;
 	//make battle bars visible
 	gsap.to('.battle-overlap', {
@@ -41,6 +60,7 @@ function initBattle(){
 				opacity: 0, 
 				duration: 0.2,
 				onComplete() {
+					document.querySelector('#battleGUI').style.display = 'block';
 					gsap.to('.battle-attacks-bar', {
 						opacity: 1
 					})
@@ -50,6 +70,30 @@ function initBattle(){
 					gsap.to('.health-bar-pg', {
 						opacity: 1
 					})
+					gsap.to(pgBattler.sprite, {
+						opacity: 1
+					})
+					
+					//Reset health bars
+					document.querySelector('#healthBarEnemy').style.width = '100%';
+					document.querySelector('#healthBarPg').style.width = (pgBattler.currHp/pgBattler.maxHp)*100 +'%';
+					document.querySelector('#diagBox').style.display = 'none';
+					
+					//Reset player sprite  
+					pgBattler.sprite.position = {x: pgSpriteX, y:pgSpriteY};
+					
+					//Find enemies
+					if(random){
+						const randomEnemy = enemiesList[Math.floor(Math.random() * enemiesList.length)];
+						enemies.push(new Battler({...randomEnemy, sprite: new Sprite({...randomEnemy.spriteInfo})}));
+					}else{
+						chosenEnemies.forEach(e => {
+						  enemies.push(new Battler({ ...e }));
+						});
+					}
+					
+					//Start animating the Battle
+					animateBattle();
 				}
 			})
 		}
@@ -66,30 +110,49 @@ function initBattle(){
 			button.hidden = true;
 		}
 		
+		// Show info
+		button.addEventListener('mouseenter', (e) => {
+			const selectedAttack = attacks[e.currentTarget.innerHTML];
+			document.querySelector('#battleAttackInfo').innerHTML = selectedAttack.info;
+		});
+		
+		// Attack chosen
 		button.addEventListener('click', (e) => {
 			let attackName = e.currentTarget.innerHTML;			
 			//Todo: implement real logic to choose opponent's move and action order
-			//Attacks
+			//Attacks 
 			attacks[attackName].animationCbk(pgBattler, enemies[0], '#healthBarEnemy');
-			//Select random attack from the ones the enemy knows
-			attackName = enemies[0].attackNames[Math.floor(Math.random() * enemies[0].attackNames.length)];
-			//Add it to the queue
-			attacksQueue.push(() => {attacks[attackName].animationCbk(enemies[0], pgBattler,  '#healthBarPg')});
+			//Check if opponent is K.O.
+			if(enemies[0].currHp <= 0){
+				actionsQueue.push(() => enemies[0].faint());
+				actionsQueue.push(() => exitBattle());
+			}
+			else{
+				//Select random attack from the ones the enemy knows
+				attackName = enemies[0].attackNames[Math.floor(Math.random() * enemies[0].attackNames.length)];
+				//Add it to the queue
+				actionsQueue.push(() => {
+					attacks[attackName].animationCbk(enemies[0], pgBattler,  '#healthBarPg');
+					//Player's K.O. check
+					if(pgBattler.currHp <= 0){
+						actionsQueue.push(() => pgBattler.faint());
+						actionsQueue.push(() => exitBattle());
+					}
+				});
+			}
 		})
 	});
 	
-	//Attack resolution, pop from queue
+	//Attack resolution
 	document.querySelector('#diagBox').addEventListener('click', (e) => {
-		if(attacksQueue.length > 0){
-			attacksQueue[0]();
-			attacksQueue.shift();
+		//Next move, pop from queue
+		if(actionsQueue.length > 0){
+			actionsQueue[0]();
+			actionsQueue.shift();
 		}
 		else{
 			// Remove dialog box
 			document.querySelector('#diagBox').style.display = 'none';
 		}
 	});
-	
-	
-	animateBattle();
 }

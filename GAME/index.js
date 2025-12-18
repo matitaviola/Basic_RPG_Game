@@ -61,9 +61,6 @@ window.addEventListener('keyup', (ev) => {
 }); //Player response upon key releasing
 /* */
 
-//First call
-//TODO: rimetti //animateMain(); 
-//TODO: rimuovi
-initBattle();
+initBattle({random:  true});
 
 

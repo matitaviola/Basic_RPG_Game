@@ -166,7 +166,7 @@ function animateMain(){
 					yoyo: true,
 					duration: 0.5,
 					onComplete() {
-							initBattle();
+							initBattle({random: true});
 						}
 					});
 				break;

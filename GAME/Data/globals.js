@@ -25,4 +25,8 @@ let lastKey;
 
 /* Battle variables */
 let isInBattle = false;
+let battleAnimationId;
+const enemies = [];
+const pgSpriteX = 290;
+const pgSpriteY = 320;
 /* */

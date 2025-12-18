@@ -1,5 +1,5 @@
 /* Attacks Queue */
-const attacksQueue = [];
+const actionsQueue = [];
 
 /* Used sprites*/
 const atkImg_Fireball = new Image();
@@ -15,16 +15,17 @@ const atkSprite_Fireball = new Sprite ({
 let atkSpritesToRender = [];
 /* Reused logics */
 // Base damaging move
-directDamageMove = function(enemy) {
-	enemy.currHp -= this.damage;
-	if(enemy.currHp < 0) enemy.currHp = 0;
+directDamageMove = function(target) {
+	target.currHp -= this.damage;
+	if(target.currHp < 0) target.currHp = 0;
 };
 
 /* Exported attacks */
 const attacks = { 
 	Tackle: new Attack({
 		name: 'Tackle', 
-		type: 'physical', 
+		type: 'physical',
+		info: 'The user tackles the opponent, albeit not with all its might',		
 		damage: 10,
 		effectCbk: directDamageMove,
 		animationCbk: function(attacker, target, targetBarId, onComplete){
@@ -35,6 +36,9 @@ const attacks = {
 			document.querySelector('#diagBox').style.display = 'block';
 			document.querySelector('#diagBox').innerHTML = attacker.name + ' tackles ' + target.name;
 			
+			//Effect
+			this.effectCbk(target); //For 'this.' to work and refer to the attack, the 'onComplete' must use an arrow function.
+					
 			// Animation
 			tl.to(atkSpr.position, {
 				x: atkSpr.position.x -20
@@ -61,8 +65,6 @@ const attacks = {
 						repeat: 3
 					})
 					
-					this.effectCbk(target); //For 'this.' to work and refer to the attack, the 'onComplete' must use an arrow function.
-					
 					gsap.to(targetBarId, {
 						width: (target.currHp/target.maxHp)*100 +'%',
 						duration: 0.5
@@ -78,11 +80,9 @@ const attacks = {
 	Fireball: new Attack({
 		name: 'Fireball', 
 		type: 'magic', 
-		damage: 15,
-		effectCbk: function(enemy) {
-			enemy.currHp -= this.damage;
-			if(enemy.currHp < 0) enemy.currHp = 0;
-		},
+		info: 'The user trows a flaming ball to the target',
+		damage: 50,
+		effectCbk: directDamageMove,
 		animationCbk: function(attacker, target, targetBarId, sprite, onComplete){
 			const tl = gsap.timeline({ onComplete }); //The onComplete is executed only when the timeline is terminated
 			const atkSpr = attacker.sprite;
@@ -100,6 +100,9 @@ const attacks = {
 			document.querySelector('#diagBox').style.display = 'block';
 			document.querySelector('#diagBox').innerHTML = attacker.name + ' throws a fireball to ' + target.name;
 			
+			//Effect
+			this.effectCbk(target); //For 'this.' to work and refer to the attack, the 'onComplete' must use an arrow function.
+					
 			// Animation
 			tl.to(atkSprite_Fireball.position, {
 				x: tgtSpr.position.x,
@@ -120,8 +123,6 @@ const attacks = {
 						duration: 0.1,
 						repeat: 3
 					})
-					
-					this.effectCbk(target); //For 'this.' to work and refer to the attack, the 'onComplete' must use an arrow function.
 					
 					gsap.to(targetBarId, {
 						width: (target.currHp/target.maxHp)*100 +'%',

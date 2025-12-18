@@ -37,6 +37,7 @@ button:hover{
 	left:0; 
 	right:0; 
 	pointer-events: none;
+	z-index: 5;
 }
 
 /* Battle Attacks bar */
@@ -53,7 +54,7 @@ button:hover{
 }
 
 .battle-attacks-buttons{
-	width: 66.6%; 
+	width: 66.4%; 
 	border-right: 4px black solid; 
 	display: grid; 
 	grid-template-columns: repeat(2, 1fr);
@@ -64,7 +65,8 @@ button:hover{
 	display: flex; 
 	align-items: center; 
 	justify-content: center; 
-	width: 33.3%;
+	width: 33%;
+	padding: 0.6%
 }
 
 .battle-attacks-info h1 {
