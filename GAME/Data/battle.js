@@ -27,6 +27,9 @@ function animateBattle(){
 
 /* Battle exit */
 function exitBattle(){
+	//Needs to add check for whether we won or the opponent did
+	audio.victory.play();
+	
 	gsap.to('.battle-overlap',{
 		opacity: 1,
 		onComplete: () => {
@@ -41,6 +44,9 @@ function exitBattle(){
 			gsap.to('.battle-overlap',{
 				opacity: 0
 			});
+			
+			audio.battleBGM.stop();
+			audio.mapBGM.play();
 		}
 	});
 }

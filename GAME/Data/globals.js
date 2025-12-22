@@ -23,6 +23,10 @@ let keys = {
 let lastKey;
 /* */
 
+/* Audio Events */
+let clicked4AudioStart = false;
+/* */
+
 /* Battle variables */
 let isInBattle = false;
 let battleAnimationId;

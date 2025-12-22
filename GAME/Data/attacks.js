@@ -63,10 +63,15 @@ const attacks = {
 						repeat: 3
 					})
 					
+					//SFX
+					audio.attackSound.tackleHit.play();
+					
+					//Show damages
 					gsap.to(targetBarId, {
 						width: (target.currHp/target.maxHp)*100 +'%',
 						duration: 0.5
 					});
+					
 				}
 			}).to(atkSpr.position, {
 				x: atkSpr.position.x,
@@ -79,7 +84,7 @@ const attacks = {
 		name: 'Fireball', 
 		type: 'magic', 
 		info: 'The user trows a flaming ball to the target',
-		damage: 50,
+		damage: 15,
 		effectCbk: directDamageMove,
 		animationCbk: function(attacker, target, targetBarId, sprite, onComplete){
 			const tl = gsap.timeline({ onComplete }); //The onComplete is executed only when the timeline is terminated
@@ -100,6 +105,9 @@ const attacks = {
 			
 			//Effect
 			this.effectCbk(target); //For 'this.' to work and refer to the attack, the 'onComplete' must use an arrow function.
+			
+			//SFX
+			audio.attackSound.fireballInit.play();
 					
 			// Animation
 			tl.to(atkSprite_Fireball.position, {
@@ -122,6 +130,10 @@ const attacks = {
 						repeat: 3
 					})
 					
+					//SFX
+					audio.attackSound.fireballHit.play();
+					
+					//Show damages
 					gsap.to(targetBarId, {
 						width: (target.currHp/target.maxHp)*100 +'%',
 						duration: 0.5

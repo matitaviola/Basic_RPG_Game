@@ -155,6 +155,10 @@ function animateMain(){
 				&& Math.random() < 0.1) //Add randomicity to encounter
 			{
 				console.log('Battle!');
+				audio.mapBGM.stop(); //Stop map's music
+				audio.battleIntro.play(); //start battle into
+				audio.battleBGM.play(); //battle backgroun music into
+				
 				window.cancelAnimationFrame(animationId); //Stops current loop
 				gsap.to('.battle-overlap',{
 					opacity: 1,
