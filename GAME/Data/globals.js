@@ -18,13 +18,22 @@ let keys = {
 	w: {pressed: false},
 	a: {pressed: false},
 	s: {pressed: false},
-	d: {pressed: false}
+	d: {pressed: false},
+	enter: {pressed: false}
 }
 let lastKey;
 /* */
 
 /* Audio Events */
 let clicked4AudioStart = false;
+/* */
+
+/* Intro variables */
+let introAnimationId;
+/* */
+
+/* Map variables */
+let mapAnimationId;
 /* */
 
 /* Battle variables */

@@ -1,19 +1,29 @@
-/* Battler */
+/* Player's Battler */
 const emberSpriteInfo = {
 	imageSrc: "Assets/Battle/Sprites/emberSprite.png",
 	frames: {max:4, frameSpeed:playerFrameSpeedIdle},
 	position: {x: pgSpriteX, y:pgSpriteY},
 	animate: true
 };
-const pgBattler = new Battler({name: 'Pg', sprite: new Sprite({...emberSpriteInfo}), maxHp: 60, attackNames: ['Tackle', 'Fireball', 'Heal', 'Protect']});
+const pgBattler = new Battler({name: 'Pg', sprite: new Sprite({...emberSpriteInfo}), maxHp: 60, attackNames: ['Tackle', 'Fireball']});
 
 
-/*	Battle Scene Animation function */
+/*	Battle Background */
 const battleBackground = new Sprite({
 	imageSrc: "./Assets/Battle/Backgrounds/battleBackground.png",
 	frames: {max:1},
 	position: {x: 0, y:0}
 });
+
+/* Button's enabling/disabling */
+function disableButtons() {
+  document.querySelectorAll('button').forEach(btn => btn.disabled = true);
+}
+function enableButtons() {
+  document.querySelectorAll('button').forEach(btn => btn.disabled = false);
+  console.log('done')
+}
+
 
 /* Battle Animation */
 function animateBattle(){
@@ -27,7 +37,7 @@ function animateBattle(){
 
 /* Battle exit */
 function exitBattle(){
-	//Needs to add check for whether we won or the opponent did
+	//TODO: add check for whether we won or the opponent did, to play victory or defeat audio
 	audio.victory.play();
 	
 	gsap.to('.battle-overlap',{
@@ -94,6 +104,9 @@ function initBattle({ random = true, chosenEnemies = []} = {}){
 						});
 					}
 					
+					// Enable buttons if left disbaled 
+					enableButtons();
+					
 					//Start animating the Battle
 					animateBattle();
 				}
@@ -104,7 +117,7 @@ function initBattle({ random = true, chosenEnemies = []} = {}){
 	let atkIdx = 0;
 	
 	//Attack selection
-	document.querySelectorAll('button').forEach(button => {
+	document.querySelectorAll('.battle-attacks-buttons button').forEach(button => {
 		if(atkIdx < pgBattler.attackNames.length){
 			button.textContent = pgBattler.attackNames[atkIdx];
 			atkIdx++;
@@ -120,10 +133,14 @@ function initBattle({ random = true, chosenEnemies = []} = {}){
 		
 		// Attack chosen
 		button.addEventListener('click', (e) => {
-			let attackName = e.currentTarget.innerHTML;			
+			let attackName = e.currentTarget.innerHTML;	
+			
+			//Stop from selecting other Attacks
+			disableButtons();
+			
 			//Todo: implement real logic to choose opponent's move and action order
 			//Attacks 
-			attacks[attackName].animationCbk(pgBattler, enemies[0], '#healthBarEnemy');
+			attacks[attackName].animationCbk({attacker:pgBattler, target:enemies[0], targetBarId:'#healthBarEnemy'});
 			//Check if opponent is K.O.
 			if(enemies[0].currHp <= 0){
 				actionsQueue.push(() => enemies[0].faint());
@@ -134,7 +151,7 @@ function initBattle({ random = true, chosenEnemies = []} = {}){
 				attackName = enemies[0].attackNames[Math.floor(Math.random() * enemies[0].attackNames.length)];
 				//Add it to the queue
 				actionsQueue.push(() => {
-					attacks[attackName].animationCbk(enemies[0], pgBattler,  '#healthBarPg');
+					attacks[attackName].animationCbk({attacker:enemies[0], target:pgBattler, targetBarId:'#healthBarPg', onComplete:enableButtons});
 					//Player's K.O. check
 					if(pgBattler.currHp <= 0){
 						actionsQueue.push(() => pgBattler.faint());

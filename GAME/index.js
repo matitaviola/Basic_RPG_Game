@@ -35,6 +35,9 @@ window.addEventListener('keydown', (ev) => {
 		case 'd':
 			keys.d.pressed = true;
 		break;
+		case 'Enter':
+			keys.enter.pressed = true;
+		break;
 		default:
 			console.log("Wrong button");
 		break;
@@ -55,6 +58,9 @@ window.addEventListener('keyup', (ev) => {
 		case 'd':
 			keys.d.pressed = false;
 		break;
+		case 'Enter':
+			keys.enter.pressed = true;
+		break;
 		default:
 		break;
 	}
@@ -68,8 +74,8 @@ addEventListener('click', () => {
 });
 /* */
 
-//animateMain();
-clicked4AudioStart = true;
-initBattle({random: true});
+// Starting call
+initGame();
+
 
 

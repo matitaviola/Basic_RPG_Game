@@ -55,7 +55,7 @@ const moveWithMapObjs = [mapBackground, mapForeground, ...collisionTiles, ...gra
 function animateMain(){
 	let moveEn = true; //This should be actually given by the speed;
 	let playerSpriteTolerance = {u:playerSprite.height*2/3, d:0, l:playerPixelTolX, r:playerPixelTolX}; //Put it here to allow computations after image load
-	const animationId = window.requestAnimationFrame(animateMain); //Recursive calling, to keep moving
+	mapAnimationId = window.requestAnimationFrame(animateMain); //Recursive calling, to keep moving
 	
 	//Draws the map once the asset is loaded in memory
 	mapBackground.draw(context);
@@ -152,14 +152,14 @@ function animateMain(){
 			const patch = grassTiles[i];
 			if(patch.checkCollision(playerSprite,{x: 0, y: 0}, playerSpriteTolerance) &&
 				patch.checkOverlapArea(playerSprite) > battleTriggerArea
-				&& Math.random() < 0.1) //Add randomicity to encounter
+				&& Math.random() < 0.05) //Add randomicity to encounter
 			{
 				console.log('Battle!');
 				audio.mapBGM.stop(); //Stop map's music
 				audio.battleIntro.play(); //start battle into
 				audio.battleBGM.play(); //battle backgroun music into
 				
-				window.cancelAnimationFrame(animationId); //Stops current loop
+				window.cancelAnimationFrame(mapAnimationId); //Stops current loop
 				gsap.to('.battle-overlap',{
 					opacity: 1,
 					repeat:3,

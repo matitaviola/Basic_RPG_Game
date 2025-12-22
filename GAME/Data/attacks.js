@@ -26,7 +26,7 @@ const attacks = {
 		info: 'The user tackles the opponent, albeit not with all its might',		
 		damage: 10,
 		effectCbk: directDamageMove,
-		animationCbk: function(attacker, target, targetBarId, onComplete){
+		animationCbk: function({attacker, target, targetBarId, onComplete}){
 			const tl = gsap.timeline({ onComplete }); //The onComplete is executed only when the timeline is terminated
 			const atkSpr = attacker.sprite;
 			const tgtSpr = target.sprite; 
@@ -38,46 +38,48 @@ const attacks = {
 			this.effectCbk(target); //For 'this.' to work and refer to the attack, the 'onComplete' must use an arrow function.
 					
 			// Animation
+			
 			tl.to(atkSpr.position, {
-				x: atkSpr.position.x -20
-			}).to(atkSpr.position, {
-				x: atkSpr.position.x + 40
-			}).to(atkSpr.position, {
-				x: atkSpr.position.x,
-				duration: 0.1
-			}).to(atkSpr.position, {
-				x: tgtSpr.position.x - tgtSpr.width/2,
-				y: tgtSpr.position.y,
-				duration: 0.5,
-				onComplete: () => {
-					gsap.to(tgtSpr.position, {
-						x: tgtSpr.position.x + 40,
-						yoyo: true,
-						duration: 0.1,
-						repeat: 3
-					})
-					gsap.to(tgtSpr, {
-						opacity: 0,
-						yoyo: true,
-						duration: 0.1,
-						repeat: 3
-					})
-					
-					//SFX
-					audio.attackSound.tackleHit.play();
-					
-					//Show damages
-					gsap.to(targetBarId, {
-						width: (target.currHp/target.maxHp)*100 +'%',
-						duration: 0.5
-					});
-					
-				}
-			}).to(atkSpr.position, {
-				x: atkSpr.position.x,
-				y: atkSpr.position.y,
-				duration: 0.4
+			  x: "-=20",
+			  duration: 0.1
 			})
+			.to(atkSpr.position, {
+			  x: "+=40",
+			  duration: 0.1
+			})
+			.to(atkSpr.position, {
+			  x: atkSpr.position.x,
+			  duration: 0.1
+			})
+			.to(atkSpr.position, {
+			  x: tgtSpr.position.x - tgtSpr.width / 2,
+			  y: tgtSpr.position.y,
+			  duration: 0.5
+			})
+			.call(() => {
+			  audio.attackSound.tackleHit.play();
+			})
+			.to(tgtSpr.position, {
+			  x: "+=40",
+			  yoyo: true,
+			  repeat: 3,
+			  duration: 0.1
+			})
+			.to(tgtSpr, {
+			  opacity: 0,
+			  yoyo: true,
+			  repeat: 3,
+			  duration: 0.1
+			}, "<") // run alongside shake
+			.to(targetBarId, {
+			  width: (target.currHp / target.maxHp) * 100 + '%',
+			  duration: 0.5
+			})
+			.to(atkSpr.position, {
+			  x: atkSpr.position.x,
+			  y: atkSpr.position.y,
+			  duration: 0.4
+			});
 		}
 	}),
 	Fireball: new Attack({
@@ -86,7 +88,7 @@ const attacks = {
 		info: 'The user trows a flaming ball to the target',
 		damage: 15,
 		effectCbk: directDamageMove,
-		animationCbk: function(attacker, target, targetBarId, sprite, onComplete){
+		animationCbk: function({attacker, target, targetBarId, sprite, onComplete}){
 			const tl = gsap.timeline({ onComplete }); //The onComplete is executed only when the timeline is terminated
 			const atkSpr = attacker.sprite;
 			const tgtSpr = target.sprite; 
@@ -111,35 +113,30 @@ const attacks = {
 					
 			// Animation
 			tl.to(atkSprite_Fireball.position, {
-				x: tgtSpr.position.x,
-				y: tgtSpr.position.y,
-				duration: 0.8,
-				onComplete: () => {
-					atkSpritesToRender.pop();
-					
-					gsap.to(tgtSpr.position, {
-						x: tgtSpr.position.x + 40,
-						yoyo: true,
-						duration: 0.1,
-						repeat: 3
-					})
-					gsap.to(tgtSpr, {
-						opacity: 0,
-						yoyo: true,
-						duration: 0.1,
-						repeat: 3
-					})
-					
-					//SFX
-					audio.attackSound.fireballHit.play();
-					
-					//Show damages
-					gsap.to(targetBarId, {
-						width: (target.currHp/target.maxHp)*100 +'%',
-						duration: 0.5
-					});
-				}
+			  x: tgtSpr.position.x,
+			  y: tgtSpr.position.y,
+			  duration: 0.8
 			})
+			.call(() => {
+			  atkSpritesToRender.pop();
+			  audio.attackSound.fireballHit.play();
+			})
+			.to(tgtSpr.position, {
+			  x: "+=40",
+			  yoyo: true,
+			  repeat: 3,
+			  duration: 0.1
+			})
+			.to(tgtSpr, {
+			  opacity: 0,
+			  yoyo: true,
+			  repeat: 3,
+			  duration: 0.1
+			}, "<") // run at the same time as the shake
+			.to(targetBarId, {
+			  width: (target.currHp / target.maxHp) * 100 + '%',
+			  duration: 0.5
+			});
 		}
 	})
 };
