@@ -1,15 +1,11 @@
 /* Render map */
-const mapImage = new Image();
-mapImage.src = "./Assets/Maps/Test_map.png";
 const mapBackground = new Sprite({
-	image: mapImage,
+	imageSrc: "./Assets/Maps/Test_map.png",
 	position: {x: startingPoint.x, y: startingPoint.y}
 });
 
-const upperLayers = new Image();
-upperLayers.src = "./Assets/Maps/Test_map_upper_layers.png";
 const mapForeground = new Sprite({
-	image: upperLayers,
+	imageSrc: "./Assets/Maps/Test_map_upper_layers.png",
 	position: {x: startingPoint.x, y: startingPoint.y}
 });
 /* */

@@ -1,20 +1,16 @@
 /* Battler */
-const emberImg = new Image();
-emberImg.src = "Assets/Battle/Sprites/emberSprite.png";
-const emberSprite = new Sprite({
-	image: emberImg,
+const emberSpriteInfo = {
+	imageSrc: "Assets/Battle/Sprites/emberSprite.png",
 	frames: {max:4, frameSpeed:playerFrameSpeedIdle},
 	position: {x: pgSpriteX, y:pgSpriteY},
 	animate: true
-});
-const pgBattler = new Battler({name: 'Pg', sprite: emberSprite, maxHp: 60, attackNames: ['Tackle', 'Fireball', 'Heal', 'Protect']});
+};
+const pgBattler = new Battler({name: 'Pg', sprite: new Sprite({...emberSpriteInfo}), maxHp: 60, attackNames: ['Tackle', 'Fireball', 'Heal', 'Protect']});
 
 
 /*	Battle Scene Animation function */
-const battleBackgroundImg = new Image();
-battleBackgroundImg.src = "./Assets/Battle/Backgrounds/battleBackground.png";
 const battleBackground = new Sprite({
-	image: battleBackgroundImg,
+	imageSrc: "./Assets/Battle/Backgrounds/battleBackground.png",
 	frames: {max:1},
 	position: {x: 0, y:0}
 });
@@ -88,7 +84,7 @@ function initBattle({ random = true, chosenEnemies = []} = {}){
 						enemies.push(new Battler({...randomEnemy, sprite: new Sprite({...randomEnemy.spriteInfo})}));
 					}else{
 						chosenEnemies.forEach(e => {
-						  enemies.push(new Battler({ ...e }));
+						  enemies.push(new Battler({ ...e, sprite: new Sprite({...e.spriteInfo}) }));
 						});
 					}
 					

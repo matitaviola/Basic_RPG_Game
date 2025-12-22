@@ -10,7 +10,7 @@ playerImageLeft.src = "./Assets/Player/playerLeft.png";
 const playerImageRight = new Image();
 playerImageRight.src = "./Assets/Player/playerRight.png";
 const playerSprite = new Sprite({
-	image: playerImageDown,
+	imageSrc: playerImageDown.src,
 	frames: {max:4, frameSpeed:playerFrameSpeedIdle},
 	position: {x: canvas.width/2, y:canvas.height/2},
 	spriteImgs:{

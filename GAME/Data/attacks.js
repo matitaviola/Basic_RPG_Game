@@ -2,10 +2,8 @@
 const actionsQueue = [];
 
 /* Used sprites*/
-const atkImg_Fireball = new Image();
-atkImg_Fireball.src = "./Assets/Battle/Sprites/Attacks/fireball.png";
 const atkSprite_Fireball = new Sprite ({
-	image: atkImg_Fireball,
+	imageSrc: "./Assets/Battle/Sprites/Attacks/fireball.png",
 	frames: {max:4, frameSpeed:10},
 	position: {x: 0, y:0},
 	animate: true,

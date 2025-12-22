@@ -2,9 +2,11 @@
 class Sprite {
 	static position;
 	
-	constructor({image, position, frames = {max: 1, frameSpeed:1}, velocity, spriteImgs, animate=false, rotation}) {
+	constructor({imageSrc, position, frames = {max: 1, frameSpeed:1}, velocity, spriteImgs, animate=false, rotation}) {
 		this.position = position;
-		this.image = image;
+		this.image = new Image;
+		this.imageSrc = imageSrc;
+		this.image.src = this.imageSrc;
 		this.spriteImgs = spriteImgs;
 		this.animate = animate;
 		this.frames = {...frames, currFrame:0, elapsed:0};
@@ -14,12 +16,6 @@ class Sprite {
 		};
 		this.opacity = 1;
 		this.rotation = rotation;
-		
-		//If using an already loaded image
-		if (this.image.complete) {
-			this.width = this.image.width / this.frames.max;
-			this.height = this.image.height;
-		}
 	}
 	
 	draw(context) {
