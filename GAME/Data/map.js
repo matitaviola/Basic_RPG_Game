@@ -55,7 +55,7 @@ followerImageLeft.src = "./Assets/Player/playerLeft.png";
 const followerImageRight = new Image();
 followerImageRight.src = "./Assets/Player/playerRight.png";
 
-const followerSprite = new Sprite({
+const followerOne = new Follower({
 	imageSrc: followerImageDown.src,
 	frames: {
 		max: 4,
@@ -72,69 +72,6 @@ const followerSprite = new Sprite({
 		right: followerImageRight
 	}
 });
-const FOLLOW_DISTANCE = 64; // one tile behind / beside player
-
-function updateFollower(direction, moveDelta) {
-	// Save current position and direction image
-	const oldPos = {
-		x: followerSprite.position.x,
-		y: followerSprite.position.y
-	};
-	const oldImg = followerSprite.image ;
-
-	let newPos = { x: 0, y: 0 };
-	console.log('Starting here:', followerSprite.position);
-
-	switch (direction) {
-		case 'up':
-			newPos.x = playerSprite.position.x;
-			newPos.y = playerSprite.position.y + FOLLOW_DISTANCE;
-			followerSprite.image = followerSprite.spriteImgs.up;
-			break;
-		case 'down':
-			newPos.x = playerSprite.position.x;
-			newPos.y = playerSprite.position.y - FOLLOW_DISTANCE;
-			followerSprite.image = followerSprite.spriteImgs.down;
-			break;
-		case 'right':
-			newPos.x = playerSprite.position.x - FOLLOW_DISTANCE;
-			newPos.y = playerSprite.position.y;
-			followerSprite.image = followerSprite.spriteImgs.right;
-			break;
-		case 'left':
-			newPos.x = playerSprite.position.x + FOLLOW_DISTANCE;
-			newPos.y = playerSprite.position.y;
-			followerSprite.image = followerSprite.spriteImgs.left;
-			break;
-	}
-
-	
-	// Temporarily move follower to future position
-	followerSprite.position = newPos;
-	
-	//Compute tolerance 
-	let followerSpriteTolerance = {u:followerSprite.height*2/3, d:0, l:playerPixelTolX, r:playerPixelTolX};
-	
-	// Collision check
-	for (let i = 0; i < collisionTiles.length; i++) {
-		const coll = collisionTiles[i];
-
-		if (coll.checkCollision(followerSprite, {x:0, y:0}, followerSpriteTolerance)) {
-			console.log('i should stay here:', oldPos);
-
-			// Restore old position
-			followerSprite.position = oldPos;
-			followerSprite.image = oldImg;
-			return;
-		}
-	}
-
-	// Valid move → keep new position
-	followerSprite.animate = true;
-	console.log('Ending here:', followerSprite.position);
-}
-
-
 /* */
 
 
@@ -180,7 +117,7 @@ grassMap.forEach((row, i) => {
 
 /* Main Scene Animation function */
 const moveWithMapObjs = [mapBackground, mapForeground, ...collisionTiles, ...grassTiles];
-const drawObjs = [mapBackground, ...collisionTiles, followerSprite, playerSprite, mapForeground];
+const drawObjs = [mapBackground, ...collisionTiles, followerOne, playerSprite, mapForeground];
 
 function animateMain(){
 	mapAnimationId = window.requestAnimationFrame(animateMain); //Recursive calling, to keep moving
@@ -197,7 +134,7 @@ function animateMain(){
 	
 	let moveEn = true; 
 	playerSprite.animate = false;
-	followerSprite.animate = false;
+	followerOne.animate = false;
 	
 	//Next position
 	if(keys.w.pressed && (lastKey == 'w' || lastKey == 'ArrowUp')){
@@ -214,7 +151,7 @@ function animateMain(){
 			moveWithMapObjs.forEach(mov => {
 				mov.position.y += 3;
 			});
-			updateFollower('up');
+			followerOne.updateFollower('up', playerSprite);
 		}
 
 		  
@@ -236,7 +173,7 @@ function animateMain(){
 			moveWithMapObjs.forEach(mov => {
 				mov.position.x += 3;
 			});
-			updateFollower('left');
+			followerOne.updateFollower('left', playerSprite);
 		}
 
 		playerSprite.animate = true;
@@ -257,7 +194,7 @@ function animateMain(){
 			moveWithMapObjs.forEach(mov => {
 				mov.position.y -= 3;
 			});
-			updateFollower('down');
+			followerOne.updateFollower('down', playerSprite);
 		}
 		  
 		playerSprite.animate = true;
@@ -278,7 +215,7 @@ function animateMain(){
 			moveWithMapObjs.forEach(mov => {
 				mov.position.x -= 3;
 			});
-			updateFollower('right');
+			followerOne.updateFollower('right', playerSprite);
 		}
 		  
 		playerSprite.animate = true;

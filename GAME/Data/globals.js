@@ -10,6 +10,7 @@ const tileHeight = 16*4;
 const startingPoint = {x:-1475, y:-350};
 const FOLLOWER_STARTING_POINT_X = canvas.width / 2;
 const FOLLOWER_STARTING_POINT_Y = canvas.height / 2 + 64;
+const FOLLOW_DISTANCE = 64; // one tile behind / beside player
 const playerPixelTolX = 4; //Player size pixel tolerance on X axys
 const playerFrameSpeedIdle = 10; // 1 frame change every X executions
 const battleTriggerArea = 100; // Size of overlapping area on grass to trigegr battle

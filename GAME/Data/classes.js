@@ -50,6 +50,71 @@ class Sprite {
 }
 /* */
 
+/* Follower */
+class Follower extends Sprite {
+	constructor({imageSrc, position, frames = {max: 1, frameSpeed:1}, velocity, spriteImgs, animate=false, rotation}){
+		super({imageSrc, position, frames, velocity, spriteImgs, animate, rotation});
+		this.finishedMoving = true;
+		this.lastDirection = 'down';
+	}
+	
+	updateFollower(direction, targetSprite) {
+		// Save current position and direction image
+		const oldPos = {
+			x: this.position.x,
+			y: this.position.y
+		};
+		const oldImg = this.image ;
+
+		let newPos = { x: 0, y: 0 };
+
+		switch (direction) {
+			case 'up':
+				newPos.x = targetSprite.position.x;
+				newPos.y = targetSprite.position.y + FOLLOW_DISTANCE;
+				this.image = this.spriteImgs.up;
+				break;
+			case 'down':
+				newPos.x = targetSprite.position.x;
+				newPos.y = targetSprite.position.y - FOLLOW_DISTANCE;
+				this.image = this.spriteImgs.down;
+				break;
+			case 'right':
+				newPos.x = targetSprite.position.x - FOLLOW_DISTANCE;
+				newPos.y = targetSprite.position.y;
+				this.image = this.spriteImgs.right;
+				break;
+			case 'left':
+				newPos.x = targetSprite.position.x + FOLLOW_DISTANCE;
+				newPos.y = targetSprite.position.y;
+				this.image = this.spriteImgs.left;
+				break;
+		}
+
+		
+		// Temporarily move follower to future position
+		this.position = newPos;
+		
+		//Compute tolerance 
+		let thisTolerance = {u:this.height*2/3, d:0, l:playerPixelTolX, r:playerPixelTolX};
+		
+		// Collision check
+		for (let i = 0; i < collisionTiles.length; i++) {
+			const coll = collisionTiles[i];
+
+			if (coll.checkCollision(this, {x:0, y:0}, thisTolerance)) {
+				// Restore old position
+				this.position = oldPos;
+				this.image = oldImg;
+				return;
+			}
+		}
+
+		// Valid move → keep new position
+		this.animate = true;
+	}
+
+}
 /* Collision */
 class Collision {
 	static position;
@@ -125,6 +190,7 @@ class Battler{
 		})
 	}
 }
+/* */
 /* Attack */
 class Attack{
 	constructor({name, type, info, isDamage = false, damage = 0, isArea = false, animationCbk = () => {}, effectCbk = () => {} }) {
@@ -138,4 +204,4 @@ class Attack{
 		this.effectCbk = effectCbk;
 	}
 }
-
+/* */
