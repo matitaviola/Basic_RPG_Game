@@ -8,6 +8,8 @@ const tileMapHeight = 40;
 const tileWidth = 16*4; //Tile size pixel * zoom%
 const tileHeight = 16*4;
 const startingPoint = {x:-1475, y:-350};
+const FOLLOWER_STARTING_POINT_X = canvas.width / 2;
+const FOLLOWER_STARTING_POINT_Y = canvas.height / 2 + 64;
 const playerPixelTolX = 4; //Player size pixel tolerance on X axys
 const playerFrameSpeedIdle = 10; // 1 frame change every X executions
 const battleTriggerArea = 100; // Size of overlapping area on grass to trigegr battle
@@ -42,4 +44,9 @@ let battleAnimationId;
 const enemies = [];
 const pgSpriteX = 290;
 const pgSpriteY = 320;
+/* */
+
+/* Followers */
+const followerMoves = [];
+const FOLLOW_DELAY = 12; // distance behind player
 /* */

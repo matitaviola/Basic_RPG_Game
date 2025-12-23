@@ -3,15 +3,19 @@ console.log('Olà, bellezza');
 window.addEventListener('keydown', (ev) => {
 	switch(ev.key){
 		case 'w':
+		case 'ArrowUp':
 			keys.w.pressed = true;
 		break;
 		case 'a':
+		case 'ArrowLeft':
 			keys.a.pressed = true;
 		break;
 		case 's':
+		case 'ArrowDown':
 			keys.s.pressed = true;
 		break;
 		case 'd':
+		case 'ArrowRight':
 			keys.d.pressed = true;
 		break;
 		case 'Enter':
@@ -26,15 +30,20 @@ window.addEventListener('keydown', (ev) => {
 window.addEventListener('keyup', (ev) => {
 	switch(ev.key){
 		case 'w':
+		case 'ArrowUp':
 			keys.w.pressed = false;
 		break;
 		case 'a':
+		case 'ArrowLeft':
 			keys.a.pressed = false;
 		break;
 		case 's':
+		case 'ArrowDown':
 			keys.s.pressed = false;
 		break;
 		case 'd':
+		case 'ArrowRight':
+		case 'z':
 			keys.d.pressed = false;
 		break;
 		case 'Enter':
