@@ -6,7 +6,7 @@ const emberSpriteInfo = {
 	animate: true
 };
 const pgBattler = new Battler({name: 'Pg', sprite: new Sprite({...emberSpriteInfo}), maxHp: 60, attackNames: ['Tackle', 'Fireball']});
-
+/* */
 
 /*	Battle Background */
 const battleBackground = new Sprite({
@@ -14,6 +14,7 @@ const battleBackground = new Sprite({
 	frames: {max:1},
 	position: {x: 0, y:0}
 });
+/* */
 
 /* Button's enabling/disabling */
 function disableButtons() {
@@ -21,9 +22,8 @@ function disableButtons() {
 }
 function enableButtons() {
   document.querySelectorAll('button').forEach(btn => btn.disabled = false);
-  console.log('done')
 }
-
+/* */
 
 /* Battle Animation */
 function animateBattle(){
@@ -44,25 +44,41 @@ function exitBattle(){
 		opacity: 1,
 		onComplete: () => {
 			enemies.length = 0;
-			cancelAnimationFrame(battleAnimationId);
-			isInBattle = false;
 			
+			cancelAnimationFrame(battleAnimationId);
 			animateMain();
 			
 			document.querySelector('#battleGUI').style.display = 'none';
-			
 			gsap.to('.battle-overlap',{
 				opacity: 0
 			});
 			
 			audio.battleBGM.stop();
 			audio.mapBGM.play();
+			
+			isInBattle = false;
 		}
 	});
 }
+/* */
+
 /* Battle Initialization */
 function initBattle({ random = true, chosenEnemies = []} = {}){
 	isInBattle = true;
+	
+	//Find enemies
+	if(random){
+		const randomEnemy = enemiesList[Math.floor(Math.random() * enemiesList.length)];
+		enemies.push(new Battler({...randomEnemy, sprite: new Sprite({...randomEnemy.spriteInfo})}));
+	}else{
+		chosenEnemies.forEach(e => {
+		  enemies.push(new Battler({ ...e, sprite: new Sprite({...e.spriteInfo}) }));
+		});
+	}
+	
+	//Reset player sprite  
+	pgBattler.sprite.position = {x: pgSpriteX, y:pgSpriteY};
+	
 	//make battle bars visible
 	gsap.to('.battle-overlap', {
 		opacity: 1, 
@@ -90,20 +106,7 @@ function initBattle({ random = true, chosenEnemies = []} = {}){
 					document.querySelector('#healthBarEnemy').style.width = '100%';
 					document.querySelector('#healthBarPg').style.width = (pgBattler.currHp/pgBattler.maxHp)*100 +'%';
 					document.querySelector('#diagBox').style.display = 'none';
-					
-					//Reset player sprite  
-					pgBattler.sprite.position = {x: pgSpriteX, y:pgSpriteY};
-					
-					//Find enemies
-					if(random){
-						const randomEnemy = enemiesList[Math.floor(Math.random() * enemiesList.length)];
-						enemies.push(new Battler({...randomEnemy, sprite: new Sprite({...randomEnemy.spriteInfo})}));
-					}else{
-						chosenEnemies.forEach(e => {
-						  enemies.push(new Battler({ ...e, sprite: new Sprite({...e.spriteInfo}) }));
-						});
-					}
-					
+
 					// Enable buttons if left disbaled 
 					enableButtons();
 					
@@ -125,18 +128,12 @@ function initBattle({ random = true, chosenEnemies = []} = {}){
 			button.hidden = true;
 		}
 		
-		// Show info
-		button.addEventListener('mouseenter', (e) => {
-			const selectedAttack = attacks[e.currentTarget.innerHTML];
-			document.querySelector('#battleAttackInfo').innerHTML = selectedAttack.info;
-		});
-		
 		// Attack chosen
 		button.addEventListener('click', (e) => {
-			let attackName = e.currentTarget.innerHTML;	
-			
 			//Stop from selecting other Attacks
 			disableButtons();
+			
+			let attackName = e.currentTarget.innerHTML;	
 			
 			//Todo: implement real logic to choose opponent's move and action order
 			//Attacks 
@@ -159,7 +156,13 @@ function initBattle({ random = true, chosenEnemies = []} = {}){
 					}
 				});
 			}
-		})
+		});
+		
+		// Show info
+		button.addEventListener('mouseenter', (e) => {
+			const selectedAttack = attacks[e.currentTarget.innerHTML];
+			document.querySelector('#battleAttackInfo').innerHTML = selectedAttack.info;
+		});
 	});
 	
 	//Attack resolution
@@ -175,3 +178,4 @@ function initBattle({ random = true, chosenEnemies = []} = {}){
 		}
 	});
 }
+/* */ 

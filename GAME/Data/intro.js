@@ -15,16 +15,8 @@ function initGame(){
 		}
 		document.getElementById('introDiv').style.display = 'none';
 		window.cancelAnimationFrame(introAnimationId); //Stops current loop
-		gsap.to('.battle-overlap',{
-			opacity: 1,
-			repeat:3,
-			yoyo: true,
-			duration: 0.5,
-			onComplete() {
-					animateMain();
-					console.log('in main');
-				}
-			});
+		animateMain();
+		console.log('in main');
 	});
 	/* show div */
 	animateIntro();

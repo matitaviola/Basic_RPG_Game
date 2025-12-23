@@ -16,14 +16,17 @@ button:hover{
 /* Intro */
 /* Overlay container */
 #introDiv {
+	
     position: fixed;
     top: 50%;
     left: 50%;
+	
     transform: translate(-50%, -50%);
     width: 400px;
     max-width: 90%;
     height: 200px;
-    background-color: rgba(0, 0, 0, 0.9);
+	
+    background-color: darkgrey;/*rgba(0, 0, 0, 0.9);*/
     color: #fff;
     border-radius: 20px;
     padding: 20px;
