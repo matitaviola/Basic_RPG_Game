@@ -16,7 +16,6 @@ button:hover{
 /* Intro */
 /* Overlay container */
 #introDiv {
-	
     position: fixed;
     top: 50%;
     left: 50%;
@@ -35,6 +34,9 @@ button:hover{
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+	
+	/* REMOVE */
+	display: none;
 }
 
 /* Text section */

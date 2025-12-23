@@ -2,13 +2,13 @@
 const actionsQueue = [];
 
 /* Used sprites*/
-const atkSprite_Fireball = new Sprite ({
+const atkSpriteInfo_Fireball ={
 	imageSrc: "./Assets/Battle/Sprites/Attacks/fireball.png",
 	frames: {max:4, frameSpeed:10},
 	position: {x: 0, y:0},
 	animate: true,
 	rotation:1
-});
+};
 /* Sprites to be rendered */
 let atkSpritesToRender = [];
 /* Reused logics */
@@ -93,6 +93,7 @@ const attacks = {
 			const atkSpr = attacker.sprite;
 			const tgtSpr = target.sprite; 
 			//Draw fireball upon player
+			let atkSprite_Fireball = new Sprite({...atkSpriteInfo_Fireball});
 			atkSprite_Fireball.position.x = atkSpr.position.x;
 			atkSprite_Fireball.position.y = atkSpr.position.y;
 			//Add sprite to the ones to be rendered

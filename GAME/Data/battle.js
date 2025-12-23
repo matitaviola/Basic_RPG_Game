@@ -16,12 +16,18 @@ const battleBackground = new Sprite({
 });
 /* */
 
-/* Button's enabling/disabling */
+/* Button and DiagBox enabling/disabling */
 function disableButtons() {
   document.querySelectorAll('button').forEach(btn => btn.disabled = true);
 }
 function enableButtons() {
   document.querySelectorAll('button').forEach(btn => btn.disabled = false);
+}
+function disableDiagBox() {
+  document.querySelector('#diagBox').style.pointerEvents = 'none';
+}
+function enableDiagBox() {
+  document.querySelector('#diagBox').style.pointerEvents = 'auto';
 }
 /* */
 
@@ -120,7 +126,12 @@ function initBattle({ random = true, chosenEnemies = []} = {}){
 	let atkIdx = 0;
 	
 	//Attack selection
-	document.querySelectorAll('.battle-attacks-buttons button').forEach(button => {
+	document.querySelectorAll('.battle-attacks-buttons button').forEach(oldButton => {
+		//Remove all previous listeners by cloning
+		const button = oldButton.cloneNode(true);
+		oldButton.replaceWith(button);
+  
+		//Change attack names
 		if(atkIdx < pgBattler.attackNames.length){
 			button.textContent = pgBattler.attackNames[atkIdx];
 			atkIdx++;
@@ -132,12 +143,13 @@ function initBattle({ random = true, chosenEnemies = []} = {}){
 		button.addEventListener('click', (e) => {
 			//Stop from selecting other Attacks
 			disableButtons();
+			disableDiagBox();
 			
 			let attackName = e.currentTarget.innerHTML;	
 			
 			//Todo: implement real logic to choose opponent's move and action order
 			//Attacks 
-			attacks[attackName].animationCbk({attacker:pgBattler, target:enemies[0], targetBarId:'#healthBarEnemy'});
+			attacks[attackName].animationCbk({attacker:pgBattler, target:enemies[0], targetBarId:'#healthBarEnemy', onComplete:enableDiagBox});
 			//Check if opponent is K.O.
 			if(enemies[0].currHp <= 0){
 				actionsQueue.push(() => enemies[0].faint());
@@ -148,7 +160,9 @@ function initBattle({ random = true, chosenEnemies = []} = {}){
 				attackName = enemies[0].attackNames[Math.floor(Math.random() * enemies[0].attackNames.length)];
 				//Add it to the queue
 				actionsQueue.push(() => {
-					attacks[attackName].animationCbk({attacker:enemies[0], target:pgBattler, targetBarId:'#healthBarPg', onComplete:enableButtons});
+					attacks[attackName].animationCbk({attacker:enemies[0], target:pgBattler, targetBarId:'#healthBarPg', onComplete: () => {
+						enableButtons(); enableDiagBox();
+					}});
 					//Player's K.O. check
 					if(pgBattler.currHp <= 0){
 						actionsQueue.push(() => pgBattler.faint());
