@@ -54,7 +54,6 @@ addEventListener('click', () => {
 /* */
 
 // Starting call
-//initGame();
-initBattle({random: true});
+initGame();
 
 

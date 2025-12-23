@@ -31,6 +31,18 @@ function enableDiagBox() {
 }
 /* */
 
+/* Queue next action */
+function queueNextAction() {
+  if (actionsQueue.length > 0) {
+    actionsQueue.shift()();
+  } else {
+    document.querySelector('#diagBox').style.display = 'none';
+    enableButtons();
+    enableDiagBox();
+  }
+}
+
+
 /* Battle Animation */
 function animateBattle(){
 	battleAnimationId = window.requestAnimationFrame(animateBattle); //Recursive calling, to keep moving
@@ -161,13 +173,14 @@ function initBattle({ random = true, chosenEnemies = []} = {}){
 				//Add it to the queue
 				actionsQueue.push(() => {
 					attacks[attackName].animationCbk({attacker:enemies[0], target:pgBattler, targetBarId:'#healthBarPg', onComplete: () => {
-						enableButtons(); enableDiagBox();
-					}});
-					//Player's K.O. check
+						//Player's K.O. check
 					if(pgBattler.currHp <= 0){
 						actionsQueue.push(() => pgBattler.faint());
 						actionsQueue.push(() => exitBattle());
-					}
+						queueNextAction();
+					}else{enableButtons(); enableDiagBox();}
+					}});
+					
 				});
 			}
 		});
@@ -180,16 +193,6 @@ function initBattle({ random = true, chosenEnemies = []} = {}){
 	});
 	
 	//Attack resolution
-	document.querySelector('#diagBox').addEventListener('click', (e) => {
-		//Next move, pop from queue
-		if(actionsQueue.length > 0){
-			actionsQueue[0]();
-			actionsQueue.shift();
-		}
-		else{
-			// Remove dialog box
-			document.querySelector('#diagBox').style.display = 'none';
-		}
-	});
+	document.querySelector('#diagBox').addEventListener('click', queueNextAction);
 }
 /* */ 

@@ -34,9 +34,6 @@ button:hover{
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-	
-	/* REMOVE */
-	display: none;
 }
 
 /* Text section */
