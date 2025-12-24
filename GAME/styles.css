@@ -1,4 +1,9 @@
 /* General look */
+#gameMainContainer{
+	display: inline-block; 
+	position: relative;
+	background-color: black;
+}
 * {
 		font-family: "Press Start 2P", cursive;
 	}
@@ -13,14 +18,15 @@ button:hover{
 	background-color: #ccc;
 }
 
+/*-------------------------------------------------------------*/
 /* Intro */
 /* Overlay container */
 #introDiv {
-    position: fixed;
+    position: absolute;
     top: 50%;
     left: 50%;
+    transform: translate(-50%, -50%) scale(0.9);
 	
-    transform: translate(-50%, -50%);
     width: 400px;
     max-width: 90%;
     height: 200px;
@@ -63,6 +69,116 @@ button:hover{
     background-color: #ff8533;
 }
 
+/*--------------------------------------------------------*/
+body {
+    background: #1a1a1a;
+    font-family: "Segoe UI", sans-serif;
+}
+
+/* MENU CONTAINER */
+.main-menu {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.9);
+    opacity: 0;
+
+    width: 420px;
+    max-width: 90%;
+    padding: 25px;
+
+    background: linear-gradient(145deg, #3a3a3a, #2a2a2a);
+    color: white;
+    border-radius: 25px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+
+    text-align: center;
+    z-index: 9999;
+
+    display: none; /*Change to flex when showing*/
+    flex-direction: column;
+    gap: 15px;
+
+    animation: menuIn 0.4s ease forwards;
+}
+
+/* TITLE */
+.main-menu h1 {
+    margin: 0;
+    font-size: 32px;
+    letter-spacing: 1px;
+}
+
+/* DESCRIPTION */
+.main-menu h2 {
+    margin: 0;
+    font-size: 15px;
+    font-weight: normal;
+    opacity: 0.85;
+}
+
+/* BUTTON GRID */
+.menu-buttons {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin-top: 10px;
+}
+
+/* BUTTONS */
+.menu-buttons button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+
+    padding: 14px;
+    font-size: 16px;
+    font-weight: 600;
+
+    border: none;
+    border-radius: 14px;
+    cursor: pointer;
+
+    background: linear-gradient(145deg, #555, #444);
+    color: white;
+
+    transition: 
+        transform 0.15s,
+        box-shadow 0.15s,
+        background 0.2s;
+}
+
+.menu-buttons button span {
+    font-size: 18px;
+}
+
+/* HOVER & ACTIVE */
+.menu-buttons button:hover,
+.menu-buttons button.active {
+    background: linear-gradient(145deg, #777, #666);
+    box-shadow: 0 0 15px rgba(255,255,255,0.25);
+    transform: scale(1.05);
+}
+
+.menu-buttons button:active {
+    transform: scale(0.97);
+}
+
+/* OPEN ANIMATION */
+@keyframes menuIn {
+    from {
+        opacity: 0;
+        transform: translate(-50%, -55%) scale(0.85);
+    }
+    to {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+    }
+}
+
+
+/*-------------------------------------------------*/
 /* Dialog box */
 .dialog-box {
 	display: none;	

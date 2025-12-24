@@ -42,6 +42,9 @@ let keys = {
 }
 let lastKey;
 /* */
+/* Menu */
+let menuOpen = false;
+/* */
 
 /* Audio Events */
 let clicked4AudioStart = false;

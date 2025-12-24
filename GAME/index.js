@@ -20,6 +20,8 @@ window.addEventListener('keydown', (ev) => {
 		break;
 		case 'Enter':
 			keys.enter.pressed = true;
+			menuOpen = !menuOpen;
+			document.querySelector('.main-menu').style.display = (menuOpen)? 'flex' : 'none';
 		break;
 		default:
 			console.log("Wrong button");
@@ -47,7 +49,7 @@ window.addEventListener('keyup', (ev) => {
 			keys.d.pressed = false;
 		break;
 		case 'Enter':
-			keys.enter.pressed = true;
+			keys.enter.pressed = false;
 		break;
 		default:
 		break;

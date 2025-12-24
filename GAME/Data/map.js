@@ -171,98 +171,100 @@ function animateMain(){
 	followerOne.animate = false;
 	followerTwo.animate = false;
 	
-	//Next position
-	if(keys.w.pressed && (lastKey == 'w' || lastKey == 'ArrowUp')){
-		
-		for(let i = 0; i < collisionTiles.length; i++){
-			const coll = collisionTiles[i];
-			if(coll.checkCollision(playerSprite,{x: 0, y: MOVEMENT_PIXELS}, playerSpriteTolerance)){
-				moveEn = false;
-				break;
+	//Check for 'enter' for menu
+	if(!menuOpen){
+		//Next position
+		if(keys.w.pressed && (lastKey == 'w' || lastKey == 'ArrowUp')){
+			
+			for(let i = 0; i < collisionTiles.length; i++){
+				const coll = collisionTiles[i];
+				if(coll.checkCollision(playerSprite,{x: 0, y: MOVEMENT_PIXELS}, playerSpriteTolerance)){
+					moveEn = false;
+					break;
+				}
 			}
-		}
-		
-		if (moveEn) {
-			moveWithMapObjs.forEach(mov => {
-				mov.position.y += MOVEMENT_PIXELS;
-			});
-			followerOne.updateFollower('up', playerSprite);
-			followerTwo.updateFollower('up', followerOne);
-		}
-
-		  
-		playerSprite.animate = true;
-		playerSprite.image = playerSprite.spriteImgs.up;
-
-	}
-	else if(keys.a.pressed && (lastKey == 'a' || lastKey == 'ArrowLeft')){
-		
-		for(let i = 0; i < collisionTiles.length; i++){
-			const coll = collisionTiles[i];
-			if(coll.checkCollision(playerSprite,{x: MOVEMENT_PIXELS, y: 0}, playerSpriteTolerance)){
-				moveEn = false;
-				break;
+			
+			if (moveEn) {
+				moveWithMapObjs.forEach(mov => {
+					mov.position.y += MOVEMENT_PIXELS;
+				});
+				followerOne.updateFollower('up', playerSprite);
+				followerTwo.updateFollower('up', followerOne);
 			}
-		}
-		
-		if (moveEn) {
-			moveWithMapObjs.forEach(mov => {
-				mov.position.x += MOVEMENT_PIXELS;
-			});
-			followerOne.updateFollower('left', playerSprite);
-			followerTwo.updateFollower('left', followerOne);
-		}
 
-		playerSprite.animate = true;
-		playerSprite.image = playerSprite.spriteImgs.left;
+			  
+			playerSprite.animate = true;
+			playerSprite.image = playerSprite.spriteImgs.up;
 
-	}
-	else if(keys.s.pressed && (lastKey == 's' || lastKey == 'ArrowDown')){
-		
-		for(let i = 0; i < collisionTiles.length; i++){
-			const coll = collisionTiles[i];
-			if(coll.checkCollision(playerSprite,{x: 0, y: -MOVEMENT_PIXELS}, playerSpriteTolerance)){
-				moveEn = false;
-				break;
+		}
+		else if(keys.a.pressed && (lastKey == 'a' || lastKey == 'ArrowLeft')){
+			
+			for(let i = 0; i < collisionTiles.length; i++){
+				const coll = collisionTiles[i];
+				if(coll.checkCollision(playerSprite,{x: MOVEMENT_PIXELS, y: 0}, playerSpriteTolerance)){
+					moveEn = false;
+					break;
+				}
 			}
-		}
-		
-		if (moveEn) {
-			moveWithMapObjs.forEach(mov => {
-				mov.position.y -= MOVEMENT_PIXELS;
-			});
-			followerOne.updateFollower('down', playerSprite);
-			followerTwo.updateFollower('down', followerOne);
-		}
-		  
-		playerSprite.animate = true;
-		playerSprite.image = playerSprite.spriteImgs.down;
-
-	}
-	else if(keys.d.pressed && (lastKey == 'd' || lastKey == 'ArrowRight')){
-		
-		for(let i = 0; i < collisionTiles.length; i++){
-			const coll = collisionTiles[i];
-			if(coll.checkCollision(playerSprite,{x: -MOVEMENT_PIXELS, y: 0}, playerSpriteTolerance)){
-				moveEn = false;
-				break;
+			
+			if (moveEn) {
+				moveWithMapObjs.forEach(mov => {
+					mov.position.x += MOVEMENT_PIXELS;
+				});
+				followerOne.updateFollower('left', playerSprite);
+				followerTwo.updateFollower('left', followerOne);
 			}
+
+			playerSprite.animate = true;
+			playerSprite.image = playerSprite.spriteImgs.left;
+
+		}
+		else if(keys.s.pressed && (lastKey == 's' || lastKey == 'ArrowDown')){
+			
+			for(let i = 0; i < collisionTiles.length; i++){
+				const coll = collisionTiles[i];
+				if(coll.checkCollision(playerSprite,{x: 0, y: -MOVEMENT_PIXELS}, playerSpriteTolerance)){
+					moveEn = false;
+					break;
+				}
+			}
+			
+			if (moveEn) {
+				moveWithMapObjs.forEach(mov => {
+					mov.position.y -= MOVEMENT_PIXELS;
+				});
+				followerOne.updateFollower('down', playerSprite);
+				followerTwo.updateFollower('down', followerOne);
+			}
+			  
+			playerSprite.animate = true;
+			playerSprite.image = playerSprite.spriteImgs.down;
+
+		}
+		else if(keys.d.pressed && (lastKey == 'd' || lastKey == 'ArrowRight')){
+			
+			for(let i = 0; i < collisionTiles.length; i++){
+				const coll = collisionTiles[i];
+				if(coll.checkCollision(playerSprite,{x: -MOVEMENT_PIXELS, y: 0}, playerSpriteTolerance)){
+					moveEn = false;
+					break;
+				}
+			}
+			
+			if (moveEn) {
+				moveWithMapObjs.forEach(mov => {
+					mov.position.x -= MOVEMENT_PIXELS;
+				});
+				followerOne.updateFollower('right', playerSprite);
+				followerTwo.updateFollower('right', followerOne);
+			}
+			  
+			playerSprite.animate = true;
+			playerSprite.image = playerSprite.spriteImgs.right;
 		}
 		
-		if (moveEn) {
-			moveWithMapObjs.forEach(mov => {
-				mov.position.x -= MOVEMENT_PIXELS;
-			});
-			followerOne.updateFollower('right', playerSprite);
-			followerTwo.updateFollower('right', followerOne);
-		}
-		  
-		playerSprite.animate = true;
-		playerSprite.image = playerSprite.spriteImgs.right;
-	}
-	
-	//Add check for grass battle, only if we moved
-	if(playerSprite.animate){
+		//Add check for grass battle, only if we moved
+		if(playerSprite.animate){
 		for(let i = 0; i < grassTiles.length; i++){
 			const patch = grassTiles[i];
 			if(patch.checkCollision(playerSprite,{x: 0, y: 0}, playerSpriteTolerance) &&
@@ -289,5 +291,6 @@ function animateMain(){
 				break;
 			}
 		}
+	}
 	}
 }

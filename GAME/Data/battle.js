@@ -94,6 +94,9 @@ function initBattle({ random = true, chosenEnemies = []} = {}){
 		});
 	}
 	
+	document.querySelector('.health-bar-pg h1').textContent = pgBattler.name;
+	document.querySelector('.health-bar-enemy h1').textContent = enemies[0].name;
+	
 	//Reset player sprite  
 	pgBattler.sprite.position = {x: PG_SPRITE_X, y:PG_SPRITE_Y};
 	

@@ -17,7 +17,7 @@
 <body>
 	
 	<!-- Layers grafici -->
-	<div style="display: inline-block; position: relative;">
+	<div id='gameMainContainer'>
 		
 		<!-- Intro div-->
 		<div id="introDiv">
@@ -29,6 +29,23 @@
 			<!-- Bottom part with button -->
 			<button id="introButton">Start Game</button>
 		</div>
+		
+		<!-- Main menu -->
+		<div class="main-menu" id="mainMenu">
+			<h1>Menu</h1>
+			<h2>Select an option</h2>
+
+			<div class="menu-buttons">
+				<button data-index="0"><span>🎮</span> Play</button>
+				<button data-index="1"><span>⚙️</span> Settings</button>
+				<button data-index="2"><span>📊</span> Stats</button>
+				<button data-index="3"><span>🛒</span> Shop</button>
+				<button data-index="4"><span>❓</span> Help</button>
+				<button data-index="5"><span>🚪</span> Exit</button>
+			</div>
+		</div>
+
+
 	
 		<!-- Battle transition -->
 		<div class="battle-overlap"></div>

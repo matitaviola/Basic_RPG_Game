@@ -15,9 +15,7 @@ function initGame(){
 		}
 		document.getElementById('introDiv').style.display = 'none';
 		window.cancelAnimationFrame(introAnimationId); //Stops current loop
-		//TODO: rimetti questo e togli battle animateMain();
-		initBattle({random: true});
-		console.log('in main');
+		animateMain();	
 	});
 	/* show div */
 	animateIntro();
