@@ -44,21 +44,21 @@ const playerSprite = new Sprite({
 
 /* Render Follower */
 const followerImageDown = new Image();
-followerImageDown.src = "./Assets/Player/playerDown.png";
+followerImageDown.src = "./Assets/Player/catDownHop.png";
 
 const followerImageUp = new Image();
-followerImageUp.src = "./Assets/Player/playerUp.png";
+followerImageUp.src = "./Assets/Player/catUpHop.png";
 
 const followerImageLeft = new Image();
-followerImageLeft.src = "./Assets/Player/playerLeft.png";
+followerImageLeft.src = "./Assets/Player/catLeftHop.png";
 
 const followerImageRight = new Image();
-followerImageRight.src = "./Assets/Player/playerRight.png";
+followerImageRight.src = "./Assets/Player/catRightHop.png";
 
 const followerOne = new Follower({
 	imageSrc: followerImageDown.src,
 	frames: {
-		max: 4,
+		max: 3,
 		frameSpeed: playerFrameSpeedIdle
 	},
 	position: {
@@ -141,7 +141,7 @@ function animateMain(){
 		
 		for(let i = 0; i < collisionTiles.length; i++){
 			const coll = collisionTiles[i];
-			if(coll.checkCollision(playerSprite,{x: 0, y: 3}, playerSpriteTolerance)){
+			if(coll.checkCollision(playerSprite,{x: 0, y: MOVEMENT_PIXELS}, playerSpriteTolerance)){
 				moveEn = false;
 				break;
 			}
@@ -149,7 +149,7 @@ function animateMain(){
 		
 		if (moveEn) {
 			moveWithMapObjs.forEach(mov => {
-				mov.position.y += 3;
+				mov.position.y += MOVEMENT_PIXELS;
 			});
 			followerOne.updateFollower('up', playerSprite);
 		}
@@ -163,7 +163,7 @@ function animateMain(){
 		
 		for(let i = 0; i < collisionTiles.length; i++){
 			const coll = collisionTiles[i];
-			if(coll.checkCollision(playerSprite,{x: 3, y: 0}, playerSpriteTolerance)){
+			if(coll.checkCollision(playerSprite,{x: MOVEMENT_PIXELS, y: 0}, playerSpriteTolerance)){
 				moveEn = false;
 				break;
 			}
@@ -171,7 +171,7 @@ function animateMain(){
 		
 		if (moveEn) {
 			moveWithMapObjs.forEach(mov => {
-				mov.position.x += 3;
+				mov.position.x += MOVEMENT_PIXELS;
 			});
 			followerOne.updateFollower('left', playerSprite);
 		}
@@ -184,7 +184,7 @@ function animateMain(){
 		
 		for(let i = 0; i < collisionTiles.length; i++){
 			const coll = collisionTiles[i];
-			if(coll.checkCollision(playerSprite,{x: 0, y: -3}, playerSpriteTolerance)){
+			if(coll.checkCollision(playerSprite,{x: 0, y: -MOVEMENT_PIXELS}, playerSpriteTolerance)){
 				moveEn = false;
 				break;
 			}
@@ -192,7 +192,7 @@ function animateMain(){
 		
 		if (moveEn) {
 			moveWithMapObjs.forEach(mov => {
-				mov.position.y -= 3;
+				mov.position.y -= MOVEMENT_PIXELS;
 			});
 			followerOne.updateFollower('down', playerSprite);
 		}
@@ -205,7 +205,7 @@ function animateMain(){
 		
 		for(let i = 0; i < collisionTiles.length; i++){
 			const coll = collisionTiles[i];
-			if(coll.checkCollision(playerSprite,{x: -3, y: 0}, playerSpriteTolerance)){
+			if(coll.checkCollision(playerSprite,{x: -MOVEMENT_PIXELS, y: 0}, playerSpriteTolerance)){
 				moveEn = false;
 				break;
 			}
@@ -213,7 +213,7 @@ function animateMain(){
 		
 		if (moveEn) {
 			moveWithMapObjs.forEach(mov => {
-				mov.position.x -= 3;
+				mov.position.x -= MOVEMENT_PIXELS;
 			});
 			followerOne.updateFollower('right', playerSprite);
 		}

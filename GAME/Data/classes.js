@@ -89,6 +89,10 @@ class Follower extends Sprite {
 				newPos.y = targetSprite.position.y;
 				this.image = this.spriteImgs.left;
 				break;
+			default:
+				newPos.x = targetSprite.position.x;
+				newPos.y = targetSprite.position.y;
+			break;
 		}
 
 		
@@ -96,21 +100,36 @@ class Follower extends Sprite {
 		this.position = newPos;
 		
 		//Compute tolerance 
-		let thisTolerance = {u:this.height*2/3, d:0, l:playerPixelTolX, r:playerPixelTolX};
+		let thisTolerance = {u:this.height*2/3, d:0, l:followerPixelTolX, r:followerPixelTolX};
 		
 		// Collision check
 		for (let i = 0; i < collisionTiles.length; i++) {
 			const coll = collisionTiles[i];
 
 			if (coll.checkCollision(this, {x:0, y:0}, thisTolerance)) {
-				// Restore old position
-				this.position = oldPos;
+				// Restore old position if invalid move, while taking into account the ofset that was given to the rest of the map
+				switch(direction){
+					case 'up':
+						this.position = {x:oldPos.x, y:oldPos.y + MOVEMENT_PIXELS};
+						break;
+					case 'down':
+						this.position = {x:oldPos.x, y:oldPos.y - MOVEMENT_PIXELS};
+						break;
+					case 'right':
+						this.position = {x:oldPos.x - MOVEMENT_PIXELS, y:oldPos.y};
+						break;
+					case 'left':
+						this.position = {x:oldPos.x + MOVEMENT_PIXELS, y:oldPos.y};
+						break;
+					default:
+						this.position = oldPos;
+					break;
+				}
 				this.image = oldImg;
 				return;
 			}
 		}
 
-		// Valid move → keep new position
 		this.animate = true;
 	}
 
