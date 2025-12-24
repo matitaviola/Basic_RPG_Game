@@ -38,8 +38,8 @@ function queueNextAction() {
   } else {
     document.querySelector('#diagBox').style.display = 'none';
     enableButtons();
-    enableDiagBox();
   }
+  enableDiagBox();
 }
 
 
@@ -161,28 +161,31 @@ function initBattle({ random = true, chosenEnemies = []} = {}){
 			
 			//Todo: implement real logic to choose opponent's move and action order
 			//Attacks 
-			attacks[attackName].animationCbk({attacker:pgBattler, target:enemies[0], targetBarId:'#healthBarEnemy', onComplete:enableDiagBox});
-			//Check if opponent is K.O.
-			if(enemies[0].currHp <= 0){
-				actionsQueue.push(() => enemies[0].faint());
-				actionsQueue.push(() => exitBattle());
-			}
-			else{
-				//Select random attack from the ones the enemy knows
-				attackName = enemies[0].attackNames[Math.floor(Math.random() * enemies[0].attackNames.length)];
-				//Add it to the queue
-				actionsQueue.push(() => {
-					attacks[attackName].animationCbk({attacker:enemies[0], target:pgBattler, targetBarId:'#healthBarPg', onComplete: () => {
-						//Player's K.O. check
-					if(pgBattler.currHp <= 0){
-						actionsQueue.push(() => pgBattler.faint());
-						actionsQueue.push(() => exitBattle());
-						queueNextAction();
-					}else{enableButtons(); enableDiagBox();}
-					}});
+			attacks[attackName].animationCbk({attacker:pgBattler, target:enemies[0], targetBarId:'#healthBarEnemy', onComplete: () => {
+				//Check if opponent is K.O.
+				if(enemies[0].currHp <= 0){
+					actionsQueue.push(() => enemies[0].faint());
+					actionsQueue.push(() => exitBattle());
+					queueNextAction();
+				}
+				else{
+					//Select random attack from the ones the enemy knows
+					attackName = enemies[0].attackNames[Math.floor(Math.random() * enemies[0].attackNames.length)];
+					//Add it to the queue
 					
-				});
-			}
+						attacks[attackName].animationCbk({attacker:enemies[0], target:pgBattler, targetBarId:'#healthBarPg', onComplete: () => {
+							//Player's K.O. check
+							if(pgBattler.currHp <= 0){
+								actionsQueue.push(() => pgBattler.faint());
+								actionsQueue.push(() => exitBattle());
+								queueNextAction();
+							}else{enableButtons(); enableDiagBox();}
+						}});
+						
+					
+				}
+			}});
+			
 		});
 		
 		// Show info
