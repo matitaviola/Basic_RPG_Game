@@ -1,8 +1,8 @@
 /* Player's Battler */
 const emberSpriteInfo = {
 	imageSrc: "Assets/Battle/Sprites/emberSprite.png",
-	frames: {max:4, frameSpeed:playerFrameSpeedIdle},
-	position: {x: pgSpriteX, y:pgSpriteY},
+	frames: {max:4, frameSpeed:PLAYER_FRAME_SPEED_IDLE},
+	position: {x: PG_SPRITE_X, y:PG_SPRITE_Y},
 	animate: true
 };
 const pgBattler = new Battler({name: 'Pg', sprite: new Sprite({...emberSpriteInfo}), maxHp: 60, attackNames: ['Tackle', 'Fireball']});
@@ -95,7 +95,7 @@ function initBattle({ random = true, chosenEnemies = []} = {}){
 	}
 	
 	//Reset player sprite  
-	pgBattler.sprite.position = {x: pgSpriteX, y:pgSpriteY};
+	pgBattler.sprite.position = {x: PG_SPRITE_X, y:PG_SPRITE_Y};
 	
 	//make battle bars visible
 	gsap.to('.battle-overlap', {

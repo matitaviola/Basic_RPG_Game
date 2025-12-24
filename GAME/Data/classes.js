@@ -52,14 +52,14 @@ class Sprite {
 
 /* Follower */
 class Follower extends Sprite {
-	constructor({imageSrc, position, frames = {max: 1, frameSpeed:1}, velocity, spriteImgs, animate=false, rotation}){
+	constructor({imageSrc, position, frames = {max: 1, frameSpeed:1}, velocity, spriteImgs, animate=false, rotation, followTime}){
 		super({imageSrc, position, frames, velocity, spriteImgs, animate, rotation});
 		this.finishedMoving = true;
-		this.lastDirection = 'down';
+		this.followTime = followTime;
 	}
 	
 	updateFollower(direction, targetSprite) {
-		// Save current position and direction image
+		
 		const oldPos = {
 			x: this.position.x,
 			y: this.position.y
@@ -100,7 +100,7 @@ class Follower extends Sprite {
 		this.position = newPos;
 		
 		//Compute tolerance 
-		let thisTolerance = {u:this.height*2/3, d:0, l:followerPixelTolX, r:followerPixelTolX};
+		let thisTolerance = {u:this.height*2/3, d:0, l:FOLLOWER_PIXEL_TOL_X, r:FOLLOWER_PIXEL_TOL_X};
 		
 		// Collision check
 		for (let i = 0; i < collisionTiles.length; i++) {
@@ -129,7 +129,13 @@ class Follower extends Sprite {
 				return;
 			}
 		}
-
+		
+		this.position = oldPos;
+		gsap.to(this.position,{
+			x: newPos.x,
+			y: newPos.y,
+			duration: this.followTime
+		});
 		this.animate = true;
 	}
 
