@@ -127,6 +127,7 @@ collisionMap.forEach((row, i) => {
 		);
 	})
 });
+
 /* */
 
 /* Grass */
@@ -150,16 +151,20 @@ grassMap.forEach((row, i) => {
 /* */
 
 /* Main Scene Animation function */
-const moveWithMapObjs = [mapBackground, mapForeground, ...collisionTiles, ...grassTiles];
-const drawObjs = [mapBackground, ...collisionTiles, followerTwo, followerOne, playerSprite, mapForeground];
+moveWithMapObjs.push(mapBackground, mapForeground, ...collisionTiles, ...grassTiles, ...characters );
+const drawObjs = [mapBackground, ...collisionTiles, followerTwo, followerOne, ...characters, playerSprite, mapForeground];
 
 function animateMain(){
 	mapAnimationId = window.requestAnimationFrame(animateMain); //Recursive calling, to keep moving
 	
 	//Draw everything
+	
 	drawObjs.forEach((drawObj) => {
 		drawObj.draw(context);
 	});
+	npcOne.interactionBox.drawColor(context, 'blue');
+	npcOne.collision.drawColor(context, 'red');
+	npcOne.draw(context);
 	
 	let playerSpriteTolerance = {u:playerSprite.height*2/3, d:0, l:PLAYER_PIXEL_TOL_X, r:PLAYER_PIXEL_TOL_X}; //Put it here to allow computations after image load
 	
@@ -262,6 +267,22 @@ function animateMain(){
 			playerSprite.animate = true;
 			playerSprite.image = playerSprite.spriteImgs.right;
 		}
+		else if (keys.space.pressed) {
+			const playerTolerance = {
+				u: playerSprite.height * 2 / 3,
+				d: 0,
+				l: PLAYER_PIXEL_TOL_X,
+				r: PLAYER_PIXEL_TOL_X
+			};
+			for(let i = 0; i < characters.length; i++){
+				const npc = characters[i];
+				if(npc.canInteract(playerSprite)){
+					npcOne.interact();
+					break;
+				}
+			}
+		}
+
 		
 		//Add check for grass battle, only if we moved
 		if(playerSprite.animate){

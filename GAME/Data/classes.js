@@ -140,6 +140,8 @@ class Follower extends Sprite {
 	}
 
 }
+/* */
+
 /* Collision */
 class Collision {
 	static position;
@@ -154,6 +156,11 @@ class Collision {
 	
 	draw(context) {
 		context.fillStyle = 'rgba(255, 0, 0, 0)';
+		context.fillRect(this.position.x, this.position.y, this.width, this.height); 
+	}
+	
+	drawColor(context, color) {
+		context.fillStyle = color;
 		context.fillRect(this.position.x, this.position.y, this.width, this.height); 
 	}
 	
@@ -229,4 +236,86 @@ class Attack{
 		this.effectCbk = effectCbk;
 	}
 }
+/* */
+
+/* Character */
+class Character extends Sprite {
+	constructor({
+		imageSrc,
+		position,
+		frames = { max: 1, frameSpeed: 1 },
+		spriteImgs,
+		animate = false,
+		rotation = 0,
+
+		// Offsets relative to sprite.position
+		collisionOffset = { x: 0, y: 0 },
+		interactionOffset = { x: 0, y: 0 },
+		interactionPadding = 12
+	}) {
+		super({ imageSrc, position, frames, spriteImgs, animate, rotation });
+
+		this.collisionOffset = collisionOffset;
+		this.interactionOffset = interactionOffset;
+		this.interactionPadding = interactionPadding;
+
+		this.collision = null;
+		this.interactionBox = null;
+
+		this.image.onload = () => {
+			this.width = this.image.width / this.frames.max;
+			this.height = this.image.height;
+
+			// Physical collision (shares sprite position)
+			this.collision = new Collision({
+				position: {x: this.position.x + collisionOffset.x/2, y: this.position.y+collisionOffset.y/2},
+				width: this.width + collisionOffset.x,
+				height: this.height + collisionOffset.y
+			});
+			//Push into collision list
+			//TODO: think if it would be better to get the list as parameter instead of directly naming the constant
+			moveWithMapObjs.push(this.collision);
+			collisionTiles.push(this.collision);
+			
+			// Interaction collision (shares sprite position)
+			this.interactionBox = new Collision({
+				position: {x: this.position.x - interactionOffset.x/2, y: this.position.y - interactionOffset.y/2},
+				width: this.width + interactionOffset.x,
+				height: this.height +interactionOffset.y
+			});
+			//Push into interaction list
+			//TODO: think if it would be better to get the list as parameter instead of directly naming the constant
+			moveWithMapObjs.push(this.interactionBox);
+		};
+	}
+
+	draw(context) {
+		super.draw(context);
+
+		// Debug
+		// this.collision?.drawOffset(context, this.collisionOffset);
+		// this.interactionBox?.drawOffset(context, {
+		// 	x: this.interactionOffset.x - this.interactionPadding,
+		// 	y: this.interactionOffset.y - this.interactionPadding
+		// });
+	}
+
+	interact() {
+		console.log('hello');
+	}
+
+	canInteract(player, tolerance) {
+		if (!this.interactionBox) return false;
+
+		return this.interactionBox.checkCollision(
+			player,
+			{
+				x: this.interactionOffset.x - this.interactionPadding,
+				y: this.interactionOffset.y - this.interactionPadding
+			},
+			tolerance
+		);
+	}
+}
+
 /* */

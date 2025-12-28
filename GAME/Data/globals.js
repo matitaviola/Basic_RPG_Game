@@ -38,7 +38,8 @@ let keys = {
 	a: {pressed: false},
 	s: {pressed: false},
 	d: {pressed: false},
-	enter: {pressed: false}
+	enter: {pressed: false},
+	space: { pressed: false }
 }
 let lastKey;
 /* */
@@ -56,6 +57,7 @@ let introAnimationId;
 
 /* Map variables */
 let mapAnimationId;
+let moveWithMapObjs = [];
 /* */
 
 /* Battle variables */
