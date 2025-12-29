@@ -31,8 +31,8 @@ const attacks = {
 			const atkSpr = attacker.sprite;
 			const tgtSpr = target.sprite; 
 			//Show box and set text
-			document.querySelector('#diagBox').style.display = 'block';
-			document.querySelector('#diagBox').innerHTML = attacker.name + ' tackles ' + target.name;
+			document.querySelector('#diagBoxBattle').style.display = 'block';
+			document.querySelector('#diagBoxBattle').innerHTML = attacker.name + ' tackles ' + target.name;
 			
 			//Effect
 			this.effectCbk(target); //For 'this.' to work and refer to the attack, the 'onComplete' must use an arrow function.
@@ -103,8 +103,8 @@ const attacks = {
 				atkSprite_Fireball.rotation = -2.1;
 				
 			//Show box and set text
-			document.querySelector('#diagBox').style.display = 'block';
-			document.querySelector('#diagBox').innerHTML = attacker.name + ' throws a fireball to ' + target.name;
+			document.querySelector('#diagBoxBattle').style.display = 'block';
+			document.querySelector('#diagBoxBattle').innerHTML = attacker.name + ' throws a fireball to ' + target.name;
 			
 			//Effect
 			this.effectCbk(target); //For 'this.' to work and refer to the attack, the 'onComplete' must use an arrow function.

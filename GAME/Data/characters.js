@@ -26,6 +26,11 @@ const npcOne = new Character({
 	interactCbk: function(){
 		this.rotateToFaceCaller(playerDirection)
 		console.log('We are number one!');
+		showDialog([
+			"Hey there, traveler!",
+			"This world is more dangerous than it looks...",
+			"Make sure you're prepared before leaving town."
+		]);
 	}
 });
 /* */

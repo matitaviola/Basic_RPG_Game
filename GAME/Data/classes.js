@@ -213,7 +213,7 @@ class Battler{
 	}
 	
 	faint() {
-		document.querySelector('#diagBox').innerHTML = this.name+' is K.O.';
+		document.querySelector('#diagBoxBattle').innerHTML = this.name+' is K.O.';
 		gsap.to(this.sprite.position, {
 			y: this.sprite.position.y + 20
 		});

@@ -67,3 +67,11 @@ let isInBattle = false;
 let battleAnimationId;
 const enemies = [];
 /* */
+
+/* Dialog */
+let dialogQueue = [];
+let currentText = '';
+let charIndex = 0;
+let isTyping = false;
+let typingSpeed = 25;
+/* */

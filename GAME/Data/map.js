@@ -165,8 +165,9 @@ function animateMain(){
 	
 	let playerSpriteTolerance = {u:playerSprite.height*2/3, d:0, l:PLAYER_PIXEL_TOL_X, r:PLAYER_PIXEL_TOL_X}; //Put it here to allow computations after image load
 	
-	//Exit if here but we're in battle
+	//Exit if here but we're in battle or dialog. Chenge these to have a single game state enumeration
 	if(isInBattle) return;
+
 	
 	let moveEn = true; 
 	playerSprite.animate = false;
@@ -269,20 +270,27 @@ function animateMain(){
 			playerDirection = 'right';
 		}
 		else if (keys.space.pressed) {
-			const playerTolerance = {
-				u: playerSprite.height * 2 / 3,
-				d: 0,
-				l: PLAYER_PIXEL_TOL_X,
-				r: PLAYER_PIXEL_TOL_X
-			};
-			for(let i = 0; i < characters.length; i++){
+			//If we're already speaking. TODO: chnage to check the gamestate
+			if (diagBox.classList.contains('visible')) {
+				advanceDialog();
+				//'Consume' the key, for debouncing
+				keys.space.pressed = false;
+				return;
+			}
+
+			//Interact with characters
+			for (let i = 0; i < characters.length; i++) {
 				const npc = characters[i];
-				if(npc.canInteract(playerSprite)){
-					npcOne.interact();
+				if (npc.canInteract(playerSprite)) {
+					npc.interact();
+
+					//'Consume' the key, for debouncing
+					keys.space.pressed = false;
 					break;
 				}
 			}
 		}
+
 
 		
 		//Add check for grass battle, only if we moved

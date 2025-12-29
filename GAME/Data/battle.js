@@ -16,18 +16,18 @@ const battleBackground = new Sprite({
 });
 /* */
 
-/* Button and DiagBox enabling/disabling */
+/* Button and diagBoxBattle enabling/disabling */
 function disableButtons() {
   document.querySelectorAll('button').forEach(btn => btn.disabled = true);
 }
 function enableButtons() {
   document.querySelectorAll('button').forEach(btn => btn.disabled = false);
 }
-function disableDiagBox() {
-  document.querySelector('#diagBox').style.pointerEvents = 'none';
+function disablediagBoxBattle() {
+  document.querySelector('#diagBoxBattle').style.pointerEvents = 'none';
 }
-function enableDiagBox() {
-  document.querySelector('#diagBox').style.pointerEvents = 'auto';
+function enablediagBoxBattle() {
+  document.querySelector('#diagBoxBattle').style.pointerEvents = 'auto';
 }
 /* */
 
@@ -36,10 +36,10 @@ function queueNextAction() {
   if (actionsQueue.length > 0) {
     actionsQueue.shift()();
   } else {
-    document.querySelector('#diagBox').style.display = 'none';
+    document.querySelector('#diagBoxBattle').style.display = 'none';
     enableButtons();
   }
-  enableDiagBox();
+  enablediagBoxBattle();
 }
 
 
@@ -126,7 +126,7 @@ function initBattle({ random = true, chosenEnemies = []} = {}){
 					//Reset health bars
 					document.querySelector('#healthBarEnemy').style.width = '100%';
 					document.querySelector('#healthBarPg').style.width = (pgBattler.currHp/pgBattler.maxHp)*100 +'%';
-					document.querySelector('#diagBox').style.display = 'none';
+					document.querySelector('#diagBoxBattle').style.display = 'none';
 
 					// Enable buttons if left disbaled 
 					enableButtons();
@@ -158,7 +158,7 @@ function initBattle({ random = true, chosenEnemies = []} = {}){
 		button.addEventListener('click', (e) => {
 			//Stop from selecting other Attacks
 			disableButtons();
-			disableDiagBox();
+			disablediagBoxBattle();
 			
 			let attackName = e.currentTarget.innerHTML;	
 			
@@ -182,7 +182,7 @@ function initBattle({ random = true, chosenEnemies = []} = {}){
 								actionsQueue.push(() => pgBattler.faint());
 								actionsQueue.push(() => exitBattle());
 								queueNextAction();
-							}else{enableButtons(); enableDiagBox();}
+							}else{enableButtons(); enablediagBoxBattle();}
 						}});
 						
 					
@@ -199,6 +199,6 @@ function initBattle({ random = true, chosenEnemies = []} = {}){
 	});
 	
 	//Attack resolution
-	document.querySelector('#diagBox').addEventListener('click', queueNextAction);
+	document.querySelector('#diagBoxBattle').addEventListener('click', queueNextAction);
 }
 /* */ 
