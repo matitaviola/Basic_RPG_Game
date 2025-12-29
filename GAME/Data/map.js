@@ -162,9 +162,6 @@ function animateMain(){
 	drawObjs.forEach((drawObj) => {
 		drawObj.draw(context);
 	});
-	npcOne.interactionBox.drawColor(context, 'blue');
-	npcOne.collision.drawColor(context, 'red');
-	npcOne.draw(context);
 	
 	let playerSpriteTolerance = {u:playerSprite.height*2/3, d:0, l:PLAYER_PIXEL_TOL_X, r:PLAYER_PIXEL_TOL_X}; //Put it here to allow computations after image load
 	
@@ -197,9 +194,10 @@ function animateMain(){
 				followerTwo.updateFollower('up', followerOne);
 			}
 
-			  
+			//Update player sprite and direction 
 			playerSprite.animate = true;
 			playerSprite.image = playerSprite.spriteImgs.up;
+			playerDirection = 'up';
 
 		}
 		else if(keys.a.pressed && (lastKey == 'a' || lastKey == 'ArrowLeft')){
@@ -222,6 +220,7 @@ function animateMain(){
 
 			playerSprite.animate = true;
 			playerSprite.image = playerSprite.spriteImgs.left;
+			playerDirection = 'left';
 
 		}
 		else if(keys.s.pressed && (lastKey == 's' || lastKey == 'ArrowDown')){
@@ -244,6 +243,7 @@ function animateMain(){
 			  
 			playerSprite.animate = true;
 			playerSprite.image = playerSprite.spriteImgs.down;
+			playerDirection = 'down';
 
 		}
 		else if(keys.d.pressed && (lastKey == 'd' || lastKey == 'ArrowRight')){
@@ -266,6 +266,7 @@ function animateMain(){
 			  
 			playerSprite.animate = true;
 			playerSprite.image = playerSprite.spriteImgs.right;
+			playerDirection = 'right';
 		}
 		else if (keys.space.pressed) {
 			const playerTolerance = {

@@ -43,6 +43,7 @@ let keys = {
 }
 let lastKey;
 /* */
+
 /* Menu */
 let menuOpen = false;
 /* */
@@ -58,6 +59,7 @@ let introAnimationId;
 /* Map variables */
 let mapAnimationId;
 let moveWithMapObjs = [];
+let playerDirection = 'down';
 /* */
 
 /* Battle variables */

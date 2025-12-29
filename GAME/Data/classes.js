@@ -251,7 +251,8 @@ class Character extends Sprite {
 		// Offsets relative to sprite.position
 		collisionOffset = { x: 0, y: 0 },
 		interactionOffset = { x: 0, y: 0 },
-		interactionPadding = 12
+		interactionPadding = 12,
+		interactCbk = ()=>{console.log('hello');}
 	}) {
 		super({ imageSrc, position, frames, spriteImgs, animate, rotation });
 
@@ -261,7 +262,9 @@ class Character extends Sprite {
 
 		this.collision = null;
 		this.interactionBox = null;
-
+		
+		this.interactCbk = interactCbk;
+		
 		this.image.onload = () => {
 			this.width = this.image.width / this.frames.max;
 			this.height = this.image.height;
@@ -291,17 +294,11 @@ class Character extends Sprite {
 
 	draw(context) {
 		super.draw(context);
-
-		// Debug
-		// this.collision?.drawOffset(context, this.collisionOffset);
-		// this.interactionBox?.drawOffset(context, {
-		// 	x: this.interactionOffset.x - this.interactionPadding,
-		// 	y: this.interactionOffset.y - this.interactionPadding
-		// });
 	}
 
 	interact() {
-		console.log('hello');
+		this.interactCbk();
+		//Debug space?
 	}
 
 	canInteract(player, tolerance) {
@@ -310,11 +307,65 @@ class Character extends Sprite {
 		return this.interactionBox.checkCollision(
 			player,
 			{
-				x: this.interactionOffset.x - this.interactionPadding,
-				y: this.interactionOffset.y - this.interactionPadding
+				x: 0,
+				y: 0
 			},
 			tolerance
 		);
+	}
+	
+	rotateTo(directionToFace){
+		switch(directionToFace){
+			case 'up':
+				if( this.spriteImgs.up != null){
+					this.image = this.spriteImgs.up;
+				}
+			break;
+			case 'down':
+				if( this.spriteImgs.down != null){
+					this.image = this.spriteImgs.down;
+				}
+			break;
+			case 'left':
+				if( this.spriteImgs.left != null){
+					this.image = this.spriteImgs.left;
+				}
+			break;
+			case 'right':
+				if( this.spriteImgs.right != null){
+					this.image = this.spriteImgs.right;
+				}
+			break;
+			default:
+			break;
+		}
+	}
+	
+	rotateToFaceCaller(callerDirection){
+		switch(callerDirection){
+			case 'down':
+				if( this.spriteImgs.up != null){
+					this.image = this.spriteImgs.up;
+				}
+			break;
+			case 'up':
+				if( this.spriteImgs.down != null){
+					this.image = this.spriteImgs.down;
+				}
+			break;
+			case 'right':
+				if( this.spriteImgs.left != null){
+					this.image = this.spriteImgs.left;
+				}
+			break;
+			case 'left':
+				if( this.spriteImgs.right != null){
+					this.image = this.spriteImgs.right;
+				}
+			break;
+			default:
+			break;
+		}
 	}
 }
 
