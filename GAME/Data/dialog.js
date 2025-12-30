@@ -1,5 +1,8 @@
 /* Functions */
 function showDialog(textBlocks) {
+	//Set the new gamestate
+	gamestate = G_S.DIALOG;
+	
 	dialogQueue = [...textBlocks];
 	diagBox.classList.add('visible');
 	nextDialogBlock();
@@ -19,7 +22,7 @@ function typeNextChar() {
 	if (charIndex < currentText.length) {
 		diagBox.firstChild.textContent += currentText[charIndex];
 		charIndex++;
-		setTimeout(typeNextChar, typingSpeed);
+		setTimeout(typeNextChar, TYPING_SPEED);
 	} else {
 		isTyping = false;
 
@@ -56,6 +59,9 @@ function closeDialog() {
 	diagBox.classList.remove('visible');
 	diagArrow.classList.add('hidden');
 	dialogQueue = [];
+	
+	//Set the new gamestate
+	gamestate = G_S.MAP;
 }
 
 /* Constants and event listeners */

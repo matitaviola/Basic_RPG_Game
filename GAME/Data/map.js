@@ -165,8 +165,8 @@ function animateMain(){
 	
 	let playerSpriteTolerance = {u:playerSprite.height*2/3, d:0, l:PLAYER_PIXEL_TOL_X, r:PLAYER_PIXEL_TOL_X}; //Put it here to allow computations after image load
 	
-	//Exit if here but we're in battle or dialog. Chenge these to have a single game state enumeration
-	if(isInBattle) return;
+	//Exit if here but we're in battle or dialog
+	if(gamestate == G_S.BATTLE) return;
 
 	
 	let moveEn = true; 
@@ -175,7 +175,18 @@ function animateMain(){
 	followerTwo.animate = false;
 	
 	//Check for 'enter' for menu
-	if(!menuOpen){
+	if(gamestate == G_S.DIALOG){
+		if (keys.space.pressed) {
+			//If we're already speaking.
+			if (diagBox.classList.contains('visible')) {
+				advanceDialog();
+				//'Consume' the key, for debouncing
+				keys.space.pressed = false;
+				return;
+			}
+		}
+	}
+	else if(gamestate == G_S.MAP){
 		//Next position
 		if(keys.w.pressed && (lastKey == 'w' || lastKey == 'ArrowUp')){
 			
@@ -270,14 +281,6 @@ function animateMain(){
 			playerDirection = 'right';
 		}
 		else if (keys.space.pressed) {
-			//If we're already speaking. TODO: chnage to check the gamestate
-			if (diagBox.classList.contains('visible')) {
-				advanceDialog();
-				//'Consume' the key, for debouncing
-				keys.space.pressed = false;
-				return;
-			}
-
 			//Interact with characters
 			for (let i = 0; i < characters.length; i++) {
 				const npc = characters[i];
@@ -291,36 +294,34 @@ function animateMain(){
 			}
 		}
 
-
-		
 		//Add check for grass battle, only if we moved
 		if(playerSprite.animate){
-		for(let i = 0; i < grassTiles.length; i++){
-			const patch = grassTiles[i];
-			if(patch.checkCollision(playerSprite,{x: 0, y: 0}, playerSpriteTolerance) &&
-				patch.checkOverlapArea(playerSprite) > BATTLE_TRIGGER_AREA
-				&& Math.random() < 0.01) //Add randomicity to encounter
-			{
-				console.log('Battle!');
-				
-				window.cancelAnimationFrame(mapAnimationId); //Stops current loop
-				
-				audio.mapBGM.stop(); //Stop map's music
-				audio.battleIntro.play(); //start battle into
-				audio.battleBGM.play(); //battle backgroun music into
-				
-				gsap.to('.battle-overlap',{
-					opacity: 1,
-					repeat:3,
-					yoyo: true,
-					duration: 0.5,
-					onComplete() {
-							initBattle({random: true});
-						}
-					});
-				break;
+			for(let i = 0; i < grassTiles.length; i++){
+				const patch = grassTiles[i];
+				if(patch.checkCollision(playerSprite,{x: 0, y: 0}, playerSpriteTolerance) &&
+					patch.checkOverlapArea(playerSprite) > BATTLE_TRIGGER_AREA
+					&& Math.random() < 0.01) //Add randomicity to encounter
+				{
+					console.log('Battle!');
+					
+					window.cancelAnimationFrame(mapAnimationId); //Stops current loop
+					
+					audio.mapBGM.stop(); //Stop map's music
+					audio.battleIntro.play(); //start battle into
+					audio.battleBGM.play(); //battle backgroun music into
+					
+					gsap.to('.battle-overlap',{
+						opacity: 1,
+						repeat:3,
+						yoyo: true,
+						duration: 0.5,
+						onComplete() {
+								initBattle({random: true});
+							}
+						});
+					break;
+				}
 			}
 		}
-	}
 	}
 }

@@ -15,8 +15,16 @@ function initGame(){
 		}
 		document.getElementById('introDiv').style.display = 'none';
 		window.cancelAnimationFrame(introAnimationId); //Stops current loop
+		
+		//Set the new gamestate
+		gamestate = G_S.MAP;
+		
+		//Start map
 		animateMain();	
 	});
+	//Set the new gamestate
+	gamestate = G_S.INTRO;
+	
 	/* show div */
 	animateIntro();
 }

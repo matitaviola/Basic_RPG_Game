@@ -73,8 +73,9 @@ function exitBattle(){
 			
 			audio.battleBGM.stop();
 			audio.mapBGM.play();
-			
-			isInBattle = false;
+		
+			//Set the new gamestate
+			gamestate = G_S.MAP;
 		}
 	});
 }
@@ -82,7 +83,9 @@ function exitBattle(){
 
 /* Battle Initialization */
 function initBattle({ random = true, chosenEnemies = []} = {}){
-	isInBattle = true;
+	
+	//Set the new gamestate
+	gamestate = G_S.BATTLE;
 	
 	//Find enemies
 	if(random){

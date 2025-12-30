@@ -1,4 +1,13 @@
-/* Constants */
+/*--------------- Constants & Enums ----------------*/
+//Game state enum
+const G_S = {
+	INTRO: 'INTRO',
+	MENU: 'MENU',
+	DIALOG: 'DIALOG',
+	MAP: 'MAP',
+	BATTLE: 'BATTLE'
+};
+
 // Canvas info
 const canvas = document.querySelector('canvas');
 const context = canvas.getContext('2d');
@@ -32,6 +41,16 @@ const PG_SPRITE_X = 290;
 const PG_SPRITE_Y = 320;
 /* */
 
+//Dialog Typing speed
+const TYPING_SPEED = 25;
+/* */
+
+/*--------------- Variables ----------------*/
+
+/* Game state */
+let gamestate = G_S.INTRO;
+/* */
+
 /* Key Event*/
 let keys = {
 	w: {pressed: false},
@@ -42,10 +61,6 @@ let keys = {
 	space: { pressed: false }
 }
 let lastKey;
-/* */
-
-/* Menu */
-let menuOpen = false;
 /* */
 
 /* Audio Events */
@@ -63,7 +78,6 @@ let playerDirection = 'down';
 /* */
 
 /* Battle variables */
-let isInBattle = false;
 let battleAnimationId;
 const enemies = [];
 /* */
@@ -73,5 +87,4 @@ let dialogQueue = [];
 let currentText = '';
 let charIndex = 0;
 let isTyping = false;
-let typingSpeed = 25;
 /* */

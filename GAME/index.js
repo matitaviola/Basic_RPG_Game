@@ -20,8 +20,14 @@ window.addEventListener('keydown', (ev) => {
 		break;
 		case 'Enter':
 			keys.enter.pressed = true;
-			menuOpen = !menuOpen;
-			document.querySelector('.main-menu').style.display = (menuOpen)? 'flex' : 'none';
+			if(gamestate == G_S.MAP){
+				gamestate = G_S.MENU;
+				document.querySelector('.main-menu').style.display = 'flex';
+			}
+			else if(gamestate == G_S.MENU){
+				gamestate = G_S.MAP;
+				document.querySelector('.main-menu').style.display = 'none';
+			}
 		break;
 		case ' ':
 			keys.space.pressed = true;
