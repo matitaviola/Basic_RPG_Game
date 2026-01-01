@@ -76,6 +76,7 @@ function exitBattle(){
 		
 			//Set the new gamestate
 			gamestate = G_S.MAP;
+			
 		}
 	});
 }

@@ -1,10 +1,14 @@
 /* Functions */
-function showDialog(textBlocks) {
+function showDialog(textBlocks, endCbk) {
 	//Set the new gamestate
 	gamestate = G_S.DIALOG;
 	
 	dialogQueue = [...textBlocks];
 	diagBox.classList.add('visible');
+	
+	//Set callback to be invoked at the end of the dialog
+	dialogEndCbk = endCbk;
+	
 	nextDialogBlock();
 }
 
@@ -36,6 +40,7 @@ function advanceDialog() {
 	//If text is still typing, finish it instantly
 	if (isTyping) {
 		diagBox.firstChild.textContent = currentText;
+		charIndex = currentText.length;
 		isTyping = false;
 
 		if (dialogQueue.length > 0) {
@@ -60,12 +65,18 @@ function closeDialog() {
 	diagArrow.classList.add('hidden');
 	dialogQueue = [];
 	
+	//Ending callback
+	dialogEndCbk();
+	//Clears callback
+	dialogEndCbk = () => {};
+	
 	//Set the new gamestate
 	gamestate = G_S.MAP;
 }
 
-/* Constants and event listeners */
+/* Constants, callabacks and event listeners */
 const diagBox = document.getElementById('diagBox');
 const diagArrow = document.getElementById('diagArrow');
+let dialogEndCbk;
 diagBox.addEventListener('click', advanceDialog);
 

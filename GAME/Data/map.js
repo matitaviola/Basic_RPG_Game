@@ -115,11 +115,10 @@ for (let i = 0; i <= (collisions.length - TILE_MAP_WIDTH); i += TILE_MAP_WIDTH){
 	collisionMap.push(collisions.slice(i, i+TILE_MAP_WIDTH));
 }
 
-const collisionTiles = []
 collisionMap.forEach((row, i) => {
 	row.forEach((symbol, j) => {
 		if(symbol != 0)
-			collisionTiles.push(
+			collisionBlocks.push(
 				new Collision({
 					position:{x: j*TILE_WIDTH + STARTING_POINT_X, y:i*TILE_HEIGHT + STARTING_POINT_Y}, 
 					width: TILE_WIDTH, 
@@ -151,8 +150,8 @@ grassMap.forEach((row, i) => {
 /* */
 
 /* Main Scene Animation function */
-moveWithMapObjs.push(mapBackground, mapForeground, ...collisionTiles, ...grassTiles, ...characters );
-const drawObjs = [mapBackground, ...collisionTiles, followerTwo, followerOne, ...characters, playerSprite, mapForeground];
+moveWithMapObjs.push(mapBackground, mapForeground, ...collisionBlocks, ...grassTiles, ...characters );
+const drawObjs = [mapBackground, ...collisionBlocks, followerTwo, followerOne, ...characters, playerSprite, mapForeground];
 
 function animateMain(){
 	mapAnimationId = window.requestAnimationFrame(animateMain); //Recursive calling, to keep moving
@@ -190,8 +189,8 @@ function animateMain(){
 		//Next position
 		if(keys.w.pressed && (lastKey == 'w' || lastKey == 'ArrowUp')){
 			
-			for(let i = 0; i < collisionTiles.length; i++){
-				const coll = collisionTiles[i];
+			for(let i = 0; i < collisionBlocks.length; i++){
+				const coll = collisionBlocks[i];
 				if(coll.checkCollision(playerSprite,{x: 0, y: MOVEMENT_PIXELS}, playerSpriteTolerance)){
 					moveEn = false;
 					break;
@@ -214,8 +213,8 @@ function animateMain(){
 		}
 		else if(keys.a.pressed && (lastKey == 'a' || lastKey == 'ArrowLeft')){
 			
-			for(let i = 0; i < collisionTiles.length; i++){
-				const coll = collisionTiles[i];
+			for(let i = 0; i < collisionBlocks.length; i++){
+				const coll = collisionBlocks[i];
 				if(coll.checkCollision(playerSprite,{x: MOVEMENT_PIXELS, y: 0}, playerSpriteTolerance)){
 					moveEn = false;
 					break;
@@ -237,8 +236,8 @@ function animateMain(){
 		}
 		else if(keys.s.pressed && (lastKey == 's' || lastKey == 'ArrowDown')){
 			
-			for(let i = 0; i < collisionTiles.length; i++){
-				const coll = collisionTiles[i];
+			for(let i = 0; i < collisionBlocks.length; i++){
+				const coll = collisionBlocks[i];
 				if(coll.checkCollision(playerSprite,{x: 0, y: -MOVEMENT_PIXELS}, playerSpriteTolerance)){
 					moveEn = false;
 					break;
@@ -260,8 +259,8 @@ function animateMain(){
 		}
 		else if(keys.d.pressed && (lastKey == 'd' || lastKey == 'ArrowRight')){
 			
-			for(let i = 0; i < collisionTiles.length; i++){
-				const coll = collisionTiles[i];
+			for(let i = 0; i < collisionBlocks.length; i++){
+				const coll = collisionBlocks[i];
 				if(coll.checkCollision(playerSprite,{x: -MOVEMENT_PIXELS, y: 0}, playerSpriteTolerance)){
 					moveEn = false;
 					break;

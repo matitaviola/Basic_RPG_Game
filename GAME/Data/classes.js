@@ -103,8 +103,8 @@ class Follower extends Sprite {
 		let thisTolerance = {u:this.height*2/3, d:0, l:FOLLOWER_PIXEL_TOL_X, r:FOLLOWER_PIXEL_TOL_X};
 		
 		// Collision check
-		for (let i = 0; i < collisionTiles.length; i++) {
-			const coll = collisionTiles[i];
+		for (let i = 0; i < collisionBlocks.length; i++) {
+			const coll = collisionBlocks[i];
 
 			if (coll.checkCollision(this, {x:0, y:0}, thisTolerance)) {
 				// Restore old position if invalid move, while taking into account the ofset that was given to the rest of the map
@@ -252,7 +252,11 @@ class Character extends Sprite {
 		collisionOffset = { x: 0, y: 0 },
 		interactionOffset = { x: 0, y: 0 },
 		interactionPadding = 12,
-		interactCbk = ()=>{console.log('hello');}
+		interactCbk = ()=>{console.log('hello');},
+		
+		//Interactions
+		interactable = true,
+		visible = true
 	}) {
 		super({ imageSrc, position, frames, spriteImgs, animate, rotation });
 
@@ -263,6 +267,8 @@ class Character extends Sprite {
 		this.collision = null;
 		this.interactionBox = null;
 		
+		this.visible = visible;
+		this.interactable = interactable;
 		this.interactCbk = interactCbk;
 		
 		this.image.onload = () => {
@@ -278,7 +284,7 @@ class Character extends Sprite {
 			//Push into collision list
 			//TODO: think if it would be better to get the list as parameter instead of directly naming the constant
 			moveWithMapObjs.push(this.collision);
-			collisionTiles.push(this.collision);
+			collisionBlocks.push(this.collision);
 			
 			// Interaction collision (shares sprite position)
 			this.interactionBox = new Collision({
@@ -293,12 +299,13 @@ class Character extends Sprite {
 	}
 
 	draw(context) {
-		super.draw(context);
+		if(this.visible)
+			super.draw(context);
 	}
 
 	interact() {
-		this.interactCbk();
-		//Debug space?
+		if(this.interactable)
+			this.interactCbk();
 	}
 
 	canInteract(player, tolerance) {
@@ -366,6 +373,66 @@ class Character extends Sprite {
 			default:
 			break;
 		}
+	}
+	
+	hideSelf(){
+		//Remove from collision blocks
+		let index = collisionBlocks.indexOf(this.collision);
+		if (index > -1) { // only splice array when item is found
+		  collisionBlocks.splice(index, 1); // the '1' parameter means remove one item only
+		}
+		
+		//Set invisible
+		this.visible = false;
+		
+		//Set to uninteractable
+		this.interactable = false;
+		
+		console.log('puff');
+	}
+	
+	showSelf(){
+		//Add to collisions:
+		collisionBlocks.push(this.collision);
+		
+		//Set visible
+		this.visible = true;
+		
+		//Set to uninteractable
+		this.interactable = true;
+	}
+	
+	deleteSelf(){
+		//Remove from collision blocks
+		let index = collisionBlocks.indexOf(this.collision);
+		if (index > -1) { // only splice array when item is found
+		  collisionBlocks.splice(index, 1); // the '1' parameter means remove one item only
+		}
+		
+		//Remove from moving with map blocks
+		index = moveWithMapObjs.indexOf(this.collision);
+		if (index > -1) { 
+		  moveWithMapObjs.splice(index, 1);
+		}
+		
+		index = moveWithMapObjs.indexOf(this.interactionBox);
+		if (index > -1) { 
+		  moveWithMapObjs.splice(index, 1); 
+		}
+		
+		//Remove from visible sprites
+		index = drawObjs.indexOf(this);
+		if (index > -1) { 
+		  drawObjs.splice(index, 1);
+		}		
+		
+		//Remove from characters
+		index = characters.indexOf(this);
+		if (index > -1) { 
+		  characters.splice(index, 1);
+		}	
+		
+		console.log('goodbye');
 	}
 }
 

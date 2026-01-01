@@ -74,6 +74,7 @@ let introAnimationId;
 /* Map variables */
 let mapAnimationId;
 let moveWithMapObjs = [];
+let collisionBlocks = [];
 let playerDirection = 'down';
 /* */
 
