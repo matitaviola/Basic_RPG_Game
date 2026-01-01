@@ -70,11 +70,9 @@ button:hover{
 }
 
 /*--------------------------------------------------------*/
-body {
-    background: #1a1a1a;
-    font-family: "Segoe UI", sans-serif;
-}
 
+
+/*-------------------------MENU--------------------------------*/
 /* MENU CONTAINER */
 .main-menu {
     position: absolute;
@@ -126,12 +124,7 @@ body {
 }
 
 /* BUTTONS */
-.menu-buttons button {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-
+.main-menu button {
     padding: 14px;
     font-size: 16px;
     font-weight: 600;
@@ -149,19 +142,35 @@ body {
         background 0.2s;
 }
 
-.menu-buttons button span {
+.main-menu button span {
     font-size: 18px;
 }
 
+.menu-buttons button {
+	display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.menu-option{
+	display: none;
+    flex-direction: column;
+	align-items: center;
+    justify-content: center;
+    gap: 8px;
+	padding: 8px;
+	row-gap: 17px;
+}
 /* HOVER & ACTIVE */
-.menu-buttons button:hover,
-.menu-buttons button.active {
+.main-menu button:hover,
+.main-menu button.active {
     background: linear-gradient(145deg, #777, #666);
     box-shadow: 0 0 15px rgba(255,255,255,0.25);
     transform: scale(1.05);
 }
 
-.menu-buttons button:active {
+.main-menu button:active {
     transform: scale(0.97);
 }
 
@@ -177,8 +186,9 @@ body {
     }
 }
 
+/*--------------------------------------------------------*/
 
-/*-------------------------------------------------*/
+/*-------------------------Dialog-------------------------------*/
 /* Dialog box */
 .dialog-box {
 	position: absolute;
@@ -218,6 +228,9 @@ body {
 	100% { opacity: 1; }
 }
 
+/*--------------------------------------------------------*/
+
+/*-------------------------Battle GUI-------------------------------*/
 /* Battle dialog box */
 .dialog-box-battle {
 	display: none;	
@@ -322,3 +335,5 @@ body {
 	background-color: grey;
 	margin-top: 10px;
 }
+
+/*--------------------------------------------------------*/

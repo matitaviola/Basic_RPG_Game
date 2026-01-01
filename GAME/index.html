@@ -32,16 +32,20 @@
 		
 		<!-- Main menu -->
 		<div class="main-menu" id="mainMenu">
-			<h1>Menu</h1>
-			<h2>Select an option</h2>
-
+			<h1 id='MenuTitle'>Menu</h1>
+			<h2 id='MenuOption'>Select an option</h2>
 			<div class="menu-buttons">
-				<button data-index="0"><span>🎮</span> Play</button>
-				<button data-index="1"><span>⚙️</span> Settings</button>
-				<button data-index="2"><span>📊</span> Stats</button>
-				<button data-index="3"><span>🛒</span> Shop</button>
-				<button data-index="4"><span>❓</span> Help</button>
-				<button data-index="5"><span>🚪</span> Exit</button>
+				<button data-index="0"><span>🎮</span>Controls</button>
+				<button data-index="1"><span>⚙️</span>Settings</button>
+				<button data-index="2"><span>ℹ️</span>Info</button>
+				<button data-index="3"><span>🙌</span>Credits</button>
+			</div>
+			<div id='menuExit'>
+				<button><span>🚪</span>Exit</button>
+			</div>
+			<div class="menu-option">
+				<div id='optionInfo'>Info</div>
+				<button id='menuBack'><span>🔙</span> Back</button>
 			</div>
 		</div>
 
@@ -104,6 +108,7 @@
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.3/howler.min.js" integrity="sha512-6+YN/9o9BWrk6wSfGxQGpt3EUK6XeHi6yeHV+TYD2GR0Sj/cggRpXr1BrAQf0as6XslxomMUxXp2vIl+fv0QRA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 	<script src="Data/globals.js"></script>
 	<script src="Data/audio.js"></script>
+	<script src="Data/menu.js"></script>
 	<script src="Data/dialog.js"></script>
 	<script src="Data/classes.js"></script>
 	<script src="Data/collisions.js"></script>

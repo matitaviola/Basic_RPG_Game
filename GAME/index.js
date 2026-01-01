@@ -27,6 +27,7 @@ window.addEventListener('keydown', (ev) => {
 			else if(gamestate == G_S.MENU){
 				gamestate = G_S.MAP;
 				document.querySelector('.main-menu').style.display = 'none';
+				resetMenu();
 			}
 		break;
 		case ' ':
