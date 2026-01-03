@@ -55,39 +55,68 @@ function animateBattle(){
 
 /* Battle exit */
 function exitBattle(){
-	//TODO: add check for whether we won or the opponent did, to play victory or defeat audio
-	audio.victory.play();
+	//TODO: improve check for whether we won or the opponent did, to play victory or defeat audio
+	if(pgBattler.currHp > 0){
+		audio.victory.play();
 	
-	gsap.to('.battle-overlap',{
-		opacity: 1,
-		onComplete: () => {
-			enemies.length = 0;
+		gsap.to('.battle-overlap',{
+			opacity: 1,
+			onComplete: () => {
+				enemies.length = 0;
+				
+				cancelAnimationFrame(battleAnimationId);
+				animateMain();
+				
+				document.querySelector('#battleGUI').style.display = 'none';
+				gsap.to('.battle-overlap',{
+					opacity: 0
+				});
+				
+				audio.battleBGM.stop();
+				audio.mapBGM.play();
 			
-			cancelAnimationFrame(battleAnimationId);
-			animateMain();
-			
-			document.querySelector('#battleGUI').style.display = 'none';
-			gsap.to('.battle-overlap',{
-				opacity: 0
-			});
-			
-			audio.battleBGM.stop();
-			audio.mapBGM.play();
+				//Set the new gamestate
+				gamestate = G_S.MAP;
+				
+			}
+		});
+	}
+	else{
+		//GAME OVER
+		audio.battleBGM.stop();
 		
-			//Set the new gamestate
-			gamestate = G_S.MAP;
-			
-		}
-	});
+		document.querySelector('#diagBoxBattle').innerHTML = 'GAME OVER :(';
+		
+		gsap.to('.battle-overlap',{
+			opacity: 1,
+			repeat: 2,
+			yoyo: true,
+			duration: 2,
+			onComplete: () => {				
+				//Reload page
+				location.reload();
+				
+			}
+		});
+		
+	}
 }
 /* */
 
 /* Battle Initialization */
-function initBattle({ random = true, chosenEnemies = []} = {}){
+function initBattle({ random = true, chosenEnemies = [], initCallback} = {}){
+	window.cancelAnimationFrame(mapAnimationId);
 	
+	if(initCallback)
+		initCallback();
 	//Set the new gamestate
 	gamestate = G_S.BATTLE;
 	
+	//Play Music
+	audio.mapBGM.stop(); //Stop map's music
+	audio.battleIntro.play(); //start battle into
+	audio.battleBGM.play(); //battle backgroun music into
+					
 	//Find enemies
 	if(random){
 		const randomEnemy = enemiesList[Math.floor(Math.random() * enemiesList.length)];

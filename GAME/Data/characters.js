@@ -42,7 +42,7 @@ const sallyEvent = new Character({
 				tl.to(hunchmanSally.position,{
 				x: sallyEvent.position.x,
 				y: sallyEvent.position.y,
-				duration: 1.5,
+				duration: 2,
 				onUpdate: () => {
 					hunchmanSally.draw(context);
 				}});
@@ -87,6 +87,8 @@ const nalaEvent = new Character({
 			], 
 			() => {
 				this.hideSelf();
+				//Rimuovi custode, ora siete abbastanza nel party
+				custode.hideSelf();
 				drawObjs.splice(drawObjs.length-4, 0, Nala); //From the bottom, skips foreground and playersprite
 				
 				const tl = gsap.timeline({ onComplete: () => {
@@ -95,10 +97,9 @@ const nalaEvent = new Character({
 				} });
 				
 				//move huncheman
-				hunchmanNala.image = hunchmanNala.spriteImgs.left;
 				hunchmanNala.showSelf();
 				tl.to(hunchmanNala.position,{
-				x: nalaEvent.position.x,
+				x: nalaEvent.position.x + TILE_WIDTH/2,
 				y: nalaEvent.position.y,
 				duration: 1.5,
 				onUpdate: () => {
@@ -107,6 +108,86 @@ const nalaEvent = new Character({
 			}
 		);
 
+	}
+});
+/* */
+
+/* Prince */
+const princeImageDown = new Image();
+princeImageDown.src = "./Assets/Player/princeDown.png";
+
+const princeImageUp = new Image();
+princeImageUp.src = "./Assets/Player/princeUp.png";
+
+const princeImageLeft = new Image();
+princeImageLeft.src = "./Assets/Player/princeLeft.png";
+
+const princeImageRight = new Image();
+princeImageRight.src = "./Assets/Player/princeRight.png";
+
+const prince = new Character({
+	imageSrc: princeImageUp.src,
+	frames: { max: 4, frameSpeed: 20},
+	animate: false,
+	position: {x: 36*TILE_WIDTH + STARTING_POINT_X, y:60*TILE_HEIGHT + STARTING_POINT_Y},
+	spriteImgs: {
+		down: princeImageDown,
+		up: princeImageUp,
+		left:princeImageLeft,
+		right: princeImageRight
+	},
+	collisionOffset: { x: 0, y: 10},
+	interactionOffset: { x: 10, y: 10},
+	interactCbk: function(){
+		this.rotateToFaceCaller(playerDirection)
+		showDialog([
+				"Mattia: Bellezza?!",
+				"Mattia: Come sei arrivata qui?",
+				"Mattia: Anzi, non importa, devi andartene, c'è un...",
+				"Drago: ROOOOOOOOOOOAR!!!"
+			], 
+			() => {
+				const tl = gsap.timeline({ onComplete: () => {
+					showDialog([
+						"Mattia: Eccolo, prepariamoci alla battaglia!",
+						"Drago: ROOOOOOOOOOOAR!"
+					], ()=>{
+						//Remove player and folowers from the moving objects
+						moveWithMapObjs.pop();
+						moveWithMapObjs.pop();
+						moveWithMapObjs.pop();
+						gsap.to('.battle-overlap',{
+						opacity: 1,
+						repeat:3,
+						yoyo: true,
+						duration: 0.5,
+						onComplete: () => {initBattle({random: true, initCallback: function(){dragon.hideSelf();}})}
+						});
+					})
+				} });
+				
+				//move DRAGON
+				dragon.showSelf();
+				this.rotateToFaceCaller('down');
+				moveWithMapObjs.push(Nala, Sally, playerSprite);
+				tl.to(moveWithMapObjs.map(m => m.position), {
+						y: `+=${MOVEMENT_PIXELS * 120}`,
+						duration:2,
+						repeat:1,
+						yoyo: true
+						
+					})
+				.to(playerSprite.position,{ 
+					x: canvas.width/2, 
+					y:canvas.height/2 
+				})
+				.to(dragon.position,{ 
+					y: prince.position.y - dragon.height,
+					duration: 2,
+					onUpdate: () => { dragon.draw(context); }
+				});	
+			}
+		)
 	}
 });
 /* */
@@ -135,7 +216,7 @@ const hunchmanNalaImageLeft = new Image();
 hunchmanNalaImageLeft.src = "./Assets/Player/hunchmenLeft.png";
 
 const hunchmanNala = new Character({
-	imageSrc: hunchmanSallyImageUp.src,
+	imageSrc: hunchmanNalaImageLeft.src,
 	frames: { max: 2, frameSpeed: 20},
 	animate: true,
 	visible: false,
@@ -151,4 +232,60 @@ const hunchmanNala = new Character({
 });
 /* */
 
-const characters = [sallyEvent, nalaEvent, hunchmanSally, hunchmanNala];
+/* dragon */
+const dragonImageDown = new Image();
+dragonImageDown.src = "./Assets/Player/dragonDown.png";
+
+const dragon = new Character({
+	imageSrc: dragonImageDown.src,
+	frames: { max: 2, frameSpeed: 20},
+	animate: true,
+	visible: false,
+	interactable: false,
+	position: {x: 35*TILE_WIDTH + STARTING_POINT_X, y:51*TILE_HEIGHT + STARTING_POINT_Y},
+	spriteImgs: {
+		down: dragonImageDown
+	},
+	collisionOffset: { x: 0, y: 0},
+	interactionOffset: { x: 10, y: 10},
+	interactCbk: function(){
+	}
+});
+/* */
+
+/* custode */
+const custodeImageDown = new Image();
+custodeImageDown.src = "./Assets/Player/custodeDown.png";
+
+const custode = new Character({
+	imageSrc: custodeImageDown.src,
+	frames: { max: 1, frameSpeed: 100},
+	animate: true,
+	visible: true,
+	interactable: true,
+	position: {x: 36*TILE_WIDTH + STARTING_POINT_X, y:66*TILE_HEIGHT + STARTING_POINT_Y},
+	spriteImgs: {
+		down: custodeImageDown
+	},
+	collisionOffset: { x: 0, y: 0},
+	interactionOffset: { x: 10, y: 10},
+	interactCbk: function(){
+		showDialog([
+				"Custode: Mi spiace, ma temo che voi due da sole non sarete in grado di liberare il principe.",
+				"Custode: Tornate quando sarete un po' di più"
+		], () => {
+			moveWithMapObjs.forEach(mov => {
+				gsap.to(mov.position, {
+				y: mov.position.y - MOVEMENT_PIXELS*15});
+			});
+			Sally.updateFollower('down', playerSprite);
+			Nala.updateFollower('down', Sally);
+			playerSprite.animate = true;
+			playerSprite.image = playerSprite.spriteImgs.down;
+			playerDirection = 'down';
+		})
+	}
+});
+/* */
+
+const characters = [sallyEvent, nalaEvent, hunchmanSally, hunchmanNala, custode, prince, dragon];
