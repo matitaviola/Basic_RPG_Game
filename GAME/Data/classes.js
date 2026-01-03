@@ -9,7 +9,12 @@ class Sprite {
 		this.image.src = this.imageSrc;
 		this.spriteImgs = spriteImgs;
 		this.animate = animate;
-		this.frames = {...frames, currFrame:0, elapsed:0};
+		this.frames = {
+		  max: frames.max ?? 1,
+		  frameSpeed: frames.frameSpeed ?? PLAYER_FRAME_SPEED_IDLE,
+		  currFrame: 0,
+		  elapsed: 0
+		};
 		this.image.onload = () => {
 			this.width = this.image.width/this.frames.max;
 			this.height = this.image.height;
@@ -284,7 +289,8 @@ class Character extends Sprite {
 			//Push into collision list
 			//TODO: think if it would be better to get the list as parameter instead of directly naming the constant
 			moveWithMapObjs.push(this.collision);
-			collisionBlocks.push(this.collision);
+			if(this.interactable = interactable)
+				collisionBlocks.push(this.collision);
 			
 			// Interaction collision (shares sprite position)
 			this.interactionBox = new Collision({

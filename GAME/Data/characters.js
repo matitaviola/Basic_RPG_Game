@@ -10,7 +10,8 @@ sallyEventImageRight.src = "./Assets/Player/sallyRight.png";
 
 const sallyEvent = new Character({
 	imageSrc: sallyEventImageDown.src,
-	frames: { max: 2 },
+	frames: { max: 2, frameSpeed: 15 },
+	animate: true,
 	position: {x: 36*TILE_WIDTH + STARTING_POINT_X, y:28*TILE_HEIGHT + STARTING_POINT_Y},
 	spriteImgs: {
 		up: sallyEventImageUp,
@@ -22,16 +23,29 @@ const sallyEvent = new Character({
 	interactionOffset: { x: 10, y: 10},
 	interactCbk: function(){
 		this.rotateToFaceCaller(playerDirection)
-		console.log('We are number one!');
 		showDialog([
 				"Sally: Meow! *Buondì, piccola artista!*",
 				"Sally: Meow *Presta molta attenzione, questo posto è più pericoloso di quanto sembri.*",
 				"Sally: Meoow! *Qualcuno ha persino rapito il tuo ragazzo!*",
 				"Sally: Meow... *Se vuoi, ti darò una zampa a ritrovarlo...*",
+				"Sally: Meow! *...anche perchè sembra stiano per arrivare dei guai!*"
 			], 
 			() => {
 				this.hideSelf();
 				drawObjs.splice(drawObjs.length-3, 0, Sally); //From the bottom, skips foreground and playersprite
+				const tl = gsap.timeline({ onComplete: () => {
+					hunchmanSally.hideSelf();
+					initBattle({random:true});
+				} });
+				
+				//move huncheman
+				tl.to(hunchmanSally.position,{
+				x: sallyEvent.position.x,
+				y: sallyEvent.position.y,
+				duration: 1.5,
+				onUpdate: () => {
+					hunchmanSally.draw(context);
+				}});
 			}
 		);
 
@@ -51,7 +65,8 @@ nalaEventImageRight.src = "./Assets/Player/nalaRight.png";
 
 const nalaEvent = new Character({
 	imageSrc: nalaEventImageDown.src,
-	frames: { max: 3 },
+	frames: { max: 3, frameSpeed: 10},
+	animate: true,
 	position: {x: 15*TILE_WIDTH + STARTING_POINT_X, y:55*TILE_HEIGHT + STARTING_POINT_Y},
 	spriteImgs: {
 		up: nalaEventImageUp,
@@ -63,7 +78,6 @@ const nalaEvent = new Character({
 	interactionOffset: { x: 10, y: 10},
 	interactCbk: function(){
 		this.rotateToFaceCaller(playerDirection)
-		console.log('We are number one!');
 		showDialog([
 				"Nala: Meow? *Oh, state andando all'avventura?*",
 				"Nala: Meeow?? *Come dite? Un drago?*",
@@ -74,10 +88,67 @@ const nalaEvent = new Character({
 			() => {
 				this.hideSelf();
 				drawObjs.splice(drawObjs.length-4, 0, Nala); //From the bottom, skips foreground and playersprite
+				
+				const tl = gsap.timeline({ onComplete: () => {
+					hunchmanNala.hideSelf();
+					initBattle({random:true});
+				} });
+				
+				//move huncheman
+				hunchmanNala.image = hunchmanNala.spriteImgs.left;
+				hunchmanNala.showSelf();
+				tl.to(hunchmanNala.position,{
+				x: nalaEvent.position.x,
+				y: nalaEvent.position.y,
+				duration: 1.5,
+				onUpdate: () => {
+					hunchmanNala.draw(context);
+				}});
 			}
 		);
 
 	}
 });
 /* */
-const characters = [sallyEvent, nalaEvent];
+
+/* hunchmanSally */
+const hunchmanSallyImageUp = new Image();
+hunchmanSallyImageUp.src = "./Assets/Player/hunchmenUp.png";
+
+const hunchmanSally = new Character({
+	imageSrc: hunchmanSallyImageUp.src,
+	frames: { max: 2, frameSpeed: 20},
+	animate: true,
+	position: {x: 36*TILE_WIDTH + STARTING_POINT_X, y:32*TILE_HEIGHT + STARTING_POINT_Y},
+	spriteImgs: {
+		up: hunchmanSallyImageUp
+	},
+	collisionOffset: { x: 0, y: 0},
+	interactionOffset: { x: 10, y: 10},
+	interactCbk: function(){
+	}
+});
+/* */
+
+/* hunchmanNala */
+const hunchmanNalaImageLeft = new Image();
+hunchmanNalaImageLeft.src = "./Assets/Player/hunchmenLeft.png";
+
+const hunchmanNala = new Character({
+	imageSrc: hunchmanSallyImageUp.src,
+	frames: { max: 2, frameSpeed: 20},
+	animate: true,
+	visible: false,
+	interactable: false,
+	position: {x: 19*TILE_WIDTH + STARTING_POINT_X, y:55*TILE_HEIGHT + STARTING_POINT_Y},
+	spriteImgs: {
+		left: hunchmanNalaImageLeft
+	},
+	collisionOffset: { x: 0, y: 0},
+	interactionOffset: { x: 10, y: 10},
+	interactCbk: function(){
+	}
+});
+/* */
+
+const characters = [sallyEvent, nalaEvent, hunchmanSally, hunchmanNala];
