@@ -282,7 +282,7 @@ class Character extends Sprite {
 
 			// Physical collision (shares sprite position)
 			this.collision = new Collision({
-				position: {x: this.position.x + collisionOffset.x/2, y: this.position.y+collisionOffset.y/2},
+				position: {x: this.position.x - collisionOffset.x/2, y: this.position.y - collisionOffset.y/2},
 				width: this.width + collisionOffset.x,
 				height: this.height + collisionOffset.y
 			});

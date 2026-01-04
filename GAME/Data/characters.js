@@ -1,16 +1,16 @@
 /* sallyEvent */
 const sallyEventImageDown = new Image();
-sallyEventImageDown.src = "./Assets/Player/sallyDown.png";
+sallyEventImageDown.src = "./Assets/Player/sallyEvDown.png";
 const sallyEventImageUp = new Image();
-sallyEventImageUp.src = "./Assets/Player/sallyUp.png";
+sallyEventImageUp.src = "./Assets/Player/sallyEvUp.png";
 const sallyEventImageLeft = new Image();
-sallyEventImageLeft.src = "./Assets/Player/sallyLeft.png";
+sallyEventImageLeft.src = "./Assets/Player/sallyEvLeft.png";
 const sallyEventImageRight = new Image();
-sallyEventImageRight.src = "./Assets/Player/sallyRight.png";
+sallyEventImageRight.src = "./Assets/Player/sallyEvRight.png";
 
 const sallyEvent = new Character({
 	imageSrc: sallyEventImageDown.src,
-	frames: { max: 2, frameSpeed: 15 },
+	frames: { max: 1, frameSpeed: 15 },
 	animate: true,
 	position: {x: 36*TILE_WIDTH + STARTING_POINT_X, y:28*TILE_HEIGHT + STARTING_POINT_Y},
 	spriteImgs: {
@@ -19,8 +19,8 @@ const sallyEvent = new Character({
 		left: sallyEventImageLeft,
 		right: sallyEventImageRight
 	},
-	collisionOffset: { x: 0, y: 20},
-	interactionOffset: { x: 10, y: 20},
+	collisionOffset: { x: 15, y: 15},
+	interactionOffset: { x: 20, y: 20},
 	interactCbk: function(){
 		this.rotateToFaceCaller(playerDirection);
 		showDialog([
@@ -56,17 +56,17 @@ const sallyEvent = new Character({
 
 /* nalaEvent */
 const nalaEventImageDown = new Image();
-nalaEventImageDown.src = "./Assets/Player/nalaDown.png";
+nalaEventImageDown.src = "./Assets/Player/nalaEvDown.png";
 const nalaEventImageUp = new Image();
-nalaEventImageUp.src = "./Assets/Player/nalaUp.png";
+nalaEventImageUp.src = "./Assets/Player/nalaEvUp.png";
 const nalaEventImageLeft = new Image();
-nalaEventImageLeft.src = "./Assets/Player/nalaLeft.png";
+nalaEventImageLeft.src = "./Assets/Player/nalaEvLeft.png";
 const nalaEventImageRight = new Image();
-nalaEventImageRight.src = "./Assets/Player/nalaRight.png";
+nalaEventImageRight.src = "./Assets/Player/nalaEvRight.png";
 
 const nalaEvent = new Character({
 	imageSrc: nalaEventImageDown.src,
-	frames: { max: 3, frameSpeed: 10},
+	frames: { max: 1, frameSpeed: 10},
 	animate: true,
 	position: {x: 15.5*TILE_WIDTH + STARTING_POINT_X, y:54*TILE_HEIGHT + STARTING_POINT_Y},
 	spriteImgs: {
@@ -75,8 +75,8 @@ const nalaEvent = new Character({
 		left: nalaEventImageLeft,
 		right: nalaEventImageRight
 	},
-	collisionOffset: { x: 0, y: 20},
-	interactionOffset: { x: 10, y: 20},
+	collisionOffset: { x: 20, y: 20},
+	interactionOffset: { x: 25, y: 25},
 	interactCbk: function(){
 		this.rotateToFaceCaller(playerDirection);
 		showDialog([
@@ -287,7 +287,7 @@ const custode = new Character({
 	interactCbk: function(){
 		showDialog([
 				"Custode: Mi spiace, ma temo che voi due da sole non sarete in grado di liberare il principe.",
-				"Custode: Tornate quando sarete un po' di più"
+				"Custode: Tornate quando sarete un po' di più."
 		], () => {
 			moveWithMapObjs.forEach(mov => {
 				gsap.to(mov.position, {
@@ -444,7 +444,7 @@ const troll = new Character({
 				"Troll: ...",
 				"Troll: Non mi piacciono i saputelli! >:["
 		], () => {
-			initBattle({random: false, chosenEnemies: [enemiesBestiary.Sgherro]});
+			initBattle({random: false, chosenEnemies: [enemiesBestiary.Sgherro], initCallback: function(){troll.hideSelf();}});
 		})
 	}
 });
@@ -519,7 +519,7 @@ const cura2 = new Character({
 				"Paesana: Ciao piccolini, cosa ci fate qua in giro? è un luogo pericoloso, sapete?",
 				"Paesana: Come come? Ti sembra di aver già sentito questa frase?",
 				"Paesana: Magari avete parlato con mia sorella!",
-				"Paesana: Spero davvero stia bene, quella fifona. Magari domani andrò a vedere come sta.",
+				"Paesana: Spero davvero stia bene, quella fifona. Quasi quasi domani andrò a vedere come sta.",
 				"Paesana: Come? Avete intenzione di affrontare il drago? Mmmh... temo che in due non ce la fareste.",
 				"Paesana: Per vostra fortuna, ho sentito che c'è una gattina da queste parti che sta proteggendo l'ultimo grande albero rimasto.",
 				"Paesana: Forse potrebbe darvi una mano. Nel fattempo ci penso io.",

@@ -55,6 +55,10 @@ function animateBattle(){
 
 /* Battle exit */
 function exitBattle(){
+	//Clean up
+	cancelAnimationFrame(battleAnimationId);
+	enemies.pop();
+	
 	//TODO: improve check for whether we won or the opponent did, to play victory or defeat audio
 	if(pgBattler.currHp > 0){
 		if(battleDragon){
@@ -62,9 +66,9 @@ function exitBattle(){
 			gsap.to('.battle-overlap',{
 				opacity: 1,
 				onComplete: () => {
-					enemies.length = 0;
+
 					
-					cancelAnimationFrame(battleAnimationId);
+					
 					animateMain();
 					
 					document.querySelector('#battleGUI').style.display = 'none';
@@ -169,7 +173,7 @@ function initBattle({ random = true, chosenEnemies = [], initCallback} = {}){
 	//make battle bars visible
 	gsap.to('.battle-overlap', {
 		opacity: 1, 
-		duration: 0.2,
+		duration: 0.5,
 		onComplete(){
 			gsap.to('.battle-overlap', {
 				opacity: 0, 

@@ -69,8 +69,7 @@ drawObjs.push(mapBackground, ...characters, playerSprite, mapForeground);
 function animateMain(){
 	mapAnimationId = window.requestAnimationFrame(animateMain); //Recursive calling, to keep moving
 	
-	//Draw everything
-	
+	//Draw everything	
 	drawObjs.forEach((drawObj) => {
 		drawObj.draw(context);
 	});
@@ -228,7 +227,7 @@ function goodEndingScene(){
 		const cuoreOverlap = document.querySelector('#cuore-overlap');
 		const overlap = document.querySelector('.battle-overlap');
 		const cuore = document.querySelector('#cuore');
-		overlap.innerHTML = '<h1>Buon primo anniversario,<br>Amore</h1>';
+		overlap.innerHTML = '<h1>Buon primo anniversario,</h1><h1>Amore</h1>';
 		
 		audio.mapBGM.stop();
 		
