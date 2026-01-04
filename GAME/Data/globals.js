@@ -5,7 +5,9 @@ const G_S = {
 	MENU: 'MENU',
 	DIALOG: 'DIALOG',
 	MAP: 'MAP',
-	BATTLE: 'BATTLE'
+	BATTLE: 'BATTLE',
+	OVER: 'GAME_OVER',
+	END: 'HAPPY_ENDING'
 };
 
 // Canvas info
@@ -38,8 +40,10 @@ const FOLLOWER_PIXEL_TOL_X = 20; //Follower size pixel tolerance on X axys
 
 //Player Battle position
 const PG_SPRITE_X = 290;
-const PG_SPRITE_Y = 320;
-/* */
+const PG_SPRITE_Y = 270;
+
+// Battle 
+const NORMAL_BATTLER_FRAME_SPEED = 20;
 
 //Dialog Typing speed
 const TYPING_SPEED = 25;
@@ -84,6 +88,7 @@ let playerDirection = 'down';
 /* Battle variables */
 let battleAnimationId;
 const enemies = [];
+let battleDragon = false; //Mark the final battle
 /* */
 
 /* Dialog */

@@ -45,7 +45,7 @@ const playerSprite = new Sprite({
 /* Collisions */
 const collisionMap = [];
 for (let i = 0; i <= (collisions.length - TILE_MAP_WIDTH); i += TILE_MAP_WIDTH){
-	//collisionMap.push(collisions.slice(i, i+TILE_MAP_WIDTH));
+	collisionMap.push(collisions.slice(i, i+TILE_MAP_WIDTH));
 }
 
 collisionMap.forEach((row, i) => {
@@ -78,8 +78,11 @@ function animateMain(){
 	let playerSpriteTolerance = {u:playerSprite.height*2/3, d:0, l:PLAYER_PIXEL_TOL_X, r:PLAYER_PIXEL_TOL_X}; //Put it here to allow computations after image load
 	
 	//Exit if here but we're in battle or dialog
-	if(gamestate == G_S.BATTLE) return;
-
+	if(gamestate == G_S.BATTLE) 
+		return;
+	
+	if(gamestate == G_S.END)
+		goodEndingScene();
 	
 	let moveEn = true; 
 	playerSprite.animate = false;
@@ -206,36 +209,37 @@ function animateMain(){
 			}
 		}
 
-		//Add check for grass battle, only if we moved
-		/*
-		if(playerSprite.animate){
-			for(let i = 0; i < grassTiles.length; i++){
-				const patch = grassTiles[i];
-				if(patch.checkCollision(playerSprite,{x: 0, y: 0}, playerSpriteTolerance) &&
-					patch.checkOverlapArea(playerSprite) > BATTLE_TRIGGER_AREA
-					&& Math.random() < 0.01) //Add randomicity to encounter
-				{
-					console.log('Battle!');
-					
-					window.cancelAnimationFrame(mapAnimationId); //Stops current loop
-					
-					audio.mapBGM.stop(); //Stop map's music
-					audio.battleIntro.play(); //start battle into
-					audio.battleBGM.play(); //battle backgroun music into
-					
-					gsap.to('.battle-overlap',{
-						opacity: 1,
-						repeat:3,
-						yoyo: true,
-						duration: 0.5,
-						onComplete() {
-								initBattle({random: true});
-							}
-						});
-					break;
-				}
-			}
-		}
-		*/
 	}
+}
+
+/* Good Ending Scene */
+function goodEndingScene(){
+	playerSprite.image = playerSprite.spriteImgs.left;
+	prince.rotateToFaceCaller('left');
+	showDialog([
+		"Mattia: Grazie bellezza, mi hai davvero salvato!",
+		"Mattia: Non pensavo che sarei mai uscito da questa situazione, ma grazie a te posso guardare al futuro con il sorriso.",
+		"Mattia: Pronta ad affrontare altre avventure, insieme?",
+		"Mattia: Hehe, ma prima...",
+		"SMOOOCH"
+	], () => {
+		window.cancelAnimationFrame(mapAnimationId);
+		
+		const cuoreOverlap = document.querySelector('#cuore-overlap');
+		const overlap = document.querySelector('.battle-overlap');
+		const cuore = document.querySelector('#cuore');
+		overlap.innerHTML = '<h1>Buon primo anniversario,<br>Amore</h1>';
+		
+		audio.mapBGM.stop();
+		
+		gsap.timeline()
+		  .to(cuore, {
+			width: 1000,
+			height: 1000,
+			duration: 2.5
+		  }).to(overlap, {
+			opacity: 1,
+			duration: 2.5,
+		  }, "<");
+	});			
 }

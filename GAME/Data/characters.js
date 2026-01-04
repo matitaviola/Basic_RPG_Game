@@ -19,8 +19,8 @@ const sallyEvent = new Character({
 		left: sallyEventImageLeft,
 		right: sallyEventImageRight
 	},
-	collisionOffset: { x: 0, y: 0},
-	interactionOffset: { x: 10, y: 10},
+	collisionOffset: { x: 0, y: 20},
+	interactionOffset: { x: 10, y: 20},
 	interactCbk: function(){
 		this.rotateToFaceCaller(playerDirection);
 		showDialog([
@@ -31,17 +31,18 @@ const sallyEvent = new Character({
 				"Sally: Meow! *...anche perchè sembra stiano per arrivare dei guai!*"
 			], 
 			() => {
-				this.hideSelf();
-				drawObjs.splice(drawObjs.length-3, 0, Sally); //From the bottom, skips foreground and playersprite
 				const tl = gsap.timeline({ onComplete: () => {
-					hunchmanSally.hideSelf();
-					initBattle({random:true});
+					initBattle({random: false, chosenEnemies: [enemiesBestiary.Sgherro], initCallback: function(){
+						sallyEvent.hideSelf();
+						hunchmanSally.hideSelf();
+						drawObjs.splice(drawObjs.length-3, 0, Sally); //From the bottom, skips foreground and playersprite
+					}});
 				} });
 				
 				//move huncheman
 				tl.to(hunchmanSally.position,{
 				x: sallyEvent.position.x,
-				y: sallyEvent.position.y,
+				y: sallyEvent.position.y + sallyEvent.height,
 				duration: 2,
 				onUpdate: () => {
 					hunchmanSally.draw(context);
@@ -67,15 +68,15 @@ const nalaEvent = new Character({
 	imageSrc: nalaEventImageDown.src,
 	frames: { max: 3, frameSpeed: 10},
 	animate: true,
-	position: {x: 15*TILE_WIDTH + STARTING_POINT_X, y:55*TILE_HEIGHT + STARTING_POINT_Y},
+	position: {x: 15.5*TILE_WIDTH + STARTING_POINT_X, y:54*TILE_HEIGHT + STARTING_POINT_Y},
 	spriteImgs: {
 		up: nalaEventImageUp,
 		down: nalaEventImageDown,
 		left: nalaEventImageLeft,
 		right: nalaEventImageRight
 	},
-	collisionOffset: { x: 0, y: 0},
-	interactionOffset: { x: 10, y: 10},
+	collisionOffset: { x: 0, y: 20},
+	interactionOffset: { x: 10, y: 20},
 	interactCbk: function(){
 		this.rotateToFaceCaller(playerDirection);
 		showDialog([
@@ -88,27 +89,26 @@ const nalaEvent = new Character({
 			() => {
 
 				const tl = gsap.timeline({ onComplete: () => {
-					hunchmanNala.hideSelf();
-					initBattle({random:true});
+					initBattle({random: false, chosenEnemies: [enemiesBestiary.Sgherro], initCallback: function(){
+						nalaEvent.hideSelf();
+						hunchmanNala.hideSelf();
+						//Rimuovi custode, ora siete abbastanza nel party
+						custode.hideSelf();
+						//Change helaer event
+						cura2.deleteSelf();
+						cura3.showSelf();
+						//add follower
+						drawObjs.splice(drawObjs.length-4, 0, Nala); //From the bottom, skips foreground and playersprite
+					}});
 				} });
 				
 				//move huncheman
 				hunchmanNala.showSelf();
-				cura2.deleteSelf();
-				cura3.showSelf();
 				tl.to(hunchmanNala.position,{
 				x: nalaEvent.position.x + TILE_WIDTH/2,
 				y: nalaEvent.position.y,
-				duration: 1.5,
-				onUpdate: () => {
-					hunchmanNala.draw(context);
-				},
-				onComplete: () => {
-					this.hideSelf();
-					//Rimuovi custode, ora siete abbastanza nel party
-					custode.hideSelf();
-					drawObjs.splice(drawObjs.length-4, 0, Nala); //From the bottom, skips foreground and playersprite
-				}});
+				duration: 1.5
+				});
 			}
 		);
 
@@ -131,7 +131,7 @@ princeImageRight.src = "./Assets/Player/princeRight.png";
 
 const prince = new Character({
 	imageSrc: princeImageUp.src,
-	frames: { max: 4, frameSpeed: 20},
+	frames: { max: 1, frameSpeed: 20},
 	animate: false,
 	position: {x: 36*TILE_WIDTH + STARTING_POINT_X, y:60*TILE_HEIGHT + STARTING_POINT_Y},
 	spriteImgs: {
@@ -140,9 +140,12 @@ const prince = new Character({
 		left:princeImageLeft,
 		right: princeImageRight
 	},
-	collisionOffset: { x: 0, y: 10},
+	collisionOffset: { x: 0, y: 20},
 	interactionOffset: { x: 10, y: 10},
 	interactCbk: function(){
+		if(battleDragon)
+			return;
+		battleDragon = true;
 		this.rotateToFaceCaller(playerDirection)
 		showDialog([
 				"Mattia: Bellezza?!",
@@ -160,18 +163,20 @@ const prince = new Character({
 						moveWithMapObjs.pop();
 						moveWithMapObjs.pop();
 						moveWithMapObjs.pop();
+						
 						gsap.to('.battle-overlap',{
 						opacity: 1,
 						repeat:3,
 						yoyo: true,
 						duration: 0.5,
-						onComplete: () => {initBattle({random: true, initCallback: function(){dragon.hideSelf();}})}
+						onComplete: () => {initBattle({random: false, chosenEnemies: [enemiesBestiary.Drago], initCallback: function(){dragon.hideSelf();}})}
 						});
 					})
 				} });
 				
 				//move DRAGON
 				dragon.showSelf();
+				audio.finalBattle.play();
 				this.rotateToFaceCaller('down');
 				moveWithMapObjs.push(Nala, Sally, playerSprite);
 				tl.to(moveWithMapObjs.map(m => m.position), {
@@ -189,6 +194,12 @@ const prince = new Character({
 					y: prince.position.y - dragon.height,
 					duration: 2,
 					onUpdate: () => { dragon.draw(context); }
+				}).to(prince.position,{
+					x: prince.position.x - TILE_WIDTH,
+					duration: 0.5,
+				}).to(playerSprite.position, {
+						y: playerSprite.position.y - TILE_HEIGHT + prince.collisionOffset.y/2,
+						duration:1
 				});	
 			}
 		)
@@ -225,7 +236,7 @@ const hunchmanNala = new Character({
 	animate: true,
 	visible: false,
 	interactable: false,
-	position: {x: 19*TILE_WIDTH + STARTING_POINT_X, y:55*TILE_HEIGHT + STARTING_POINT_Y},
+	position: {x: 24*TILE_WIDTH + STARTING_POINT_X, y:53.8*TILE_HEIGHT + STARTING_POINT_Y},
 	spriteImgs: {
 		left: hunchmanNalaImageLeft
 	},
@@ -313,6 +324,7 @@ const triste = new Character({
 				"Paesano: I nostri poveri alberi...",
 				"Paesano: ..."
 		], () => {
+			this.interactable = false;
 		})
 	}
 });
@@ -432,7 +444,7 @@ const troll = new Character({
 				"Troll: ...",
 				"Troll: Non mi piacciono i saputelli! >:["
 		], () => {
-			initBattle({random:true});
+			initBattle({random: false, chosenEnemies: [enemiesBestiary.Sgherro]});
 		})
 	}
 });

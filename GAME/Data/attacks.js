@@ -86,7 +86,7 @@ const attacks = {
 		name: 'Fireball', 
 		type: 'magic', 
 		info: 'The user trows a flaming ball to the target',
-		damage: 15,
+		damage: 150,
 		effectCbk: directDamageMove,
 		animationCbk: function({attacker, target, targetBarId, sprite, onComplete}){
 			const tl = gsap.timeline({ onComplete }); //The onComplete is executed only when the timeline is terminated

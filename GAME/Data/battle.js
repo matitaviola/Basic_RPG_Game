@@ -1,11 +1,11 @@
 /* Player's Battler */
-const emberSpriteInfo = {
-	imageSrc: "Assets/Battle/Sprites/emberSprite.png",
-	frames: {max:4, frameSpeed:PLAYER_FRAME_SPEED_IDLE},
+const pgSpriteInfo = {
+	imageSrc: "Assets/Battle/Sprites/MarikaSprite.png",
+	frames: {max:2, frameSpeed:PLAYER_FRAME_SPEED_IDLE*5},
 	position: {x: PG_SPRITE_X, y:PG_SPRITE_Y},
 	animate: true
 };
-const pgBattler = new Battler({name: 'Pg', sprite: new Sprite({...emberSpriteInfo}), maxHp: 60, attackNames: ['Tackle', 'Fireball']});
+const pgBattler = new Battler({name: 'Marika', sprite: new Sprite({...pgSpriteInfo}), maxHp: 60, attackNames: ['Fireball', 'Tackle']});
 /* */
 
 /*	Battle Background */
@@ -57,35 +57,64 @@ function animateBattle(){
 function exitBattle(){
 	//TODO: improve check for whether we won or the opponent did, to play victory or defeat audio
 	if(pgBattler.currHp > 0){
-		audio.victory.play();
-	
-		gsap.to('.battle-overlap',{
-			opacity: 1,
-			onComplete: () => {
-				enemies.length = 0;
+		if(battleDragon){
+			audio.victory.play();
+			gsap.to('.battle-overlap',{
+				opacity: 1,
+				onComplete: () => {
+					enemies.length = 0;
+					
+					cancelAnimationFrame(battleAnimationId);
+					animateMain();
+					
+					document.querySelector('#battleGUI').style.display = 'none';
+					gsap.to('.battle-overlap',{
+						opacity: 0
+					});
+					
+					audio.finalBattle.stop();
+					audio.mapBGM.play();
 				
-				cancelAnimationFrame(battleAnimationId);
-				animateMain();
+					//Set the new gamestate
+					gamestate = G_S.END;
+					
+				}
+			});
+		}
+		else{
+			audio.victory.play();
+			gsap.to('.battle-overlap',{
+				opacity: 1,
+				onComplete: () => {
+					enemies.length = 0;
+					
+					cancelAnimationFrame(battleAnimationId);
+					animateMain();
+					
+					document.querySelector('#battleGUI').style.display = 'none';
+					gsap.to('.battle-overlap',{
+						opacity: 0
+					});
+					
+					audio.battleBGM.stop();
+					audio.mapBGM.play();
 				
-				document.querySelector('#battleGUI').style.display = 'none';
-				gsap.to('.battle-overlap',{
-					opacity: 0
-				});
-				
-				audio.battleBGM.stop();
-				audio.mapBGM.play();
-			
-				//Set the new gamestate
-				gamestate = G_S.MAP;
-				
-			}
-		});
+					//Set the new gamestate
+					gamestate = G_S.MAP;
+					
+				}
+			});
+		}
 	}
 	else{
 		//GAME OVER
 		audio.battleBGM.stop();
 		
 		document.querySelector('#diagBoxBattle').innerHTML = 'GAME OVER :(';
+		document.querySelectorAll('.battle-overlap').forEach(el => {
+			el.innerHTML = '<h1>GAME OVER</h1>'
+		});
+		gamestate = G_S.OVER;
 		
 		gsap.to('.battle-overlap',{
 			opacity: 1,
@@ -114,9 +143,13 @@ function initBattle({ random = true, chosenEnemies = [], initCallback} = {}){
 	
 	//Play Music
 	audio.mapBGM.stop(); //Stop map's music
-	audio.battleIntro.play(); //start battle into
-	audio.battleBGM.play(); //battle backgroun music into
-					
+	if(battleDragon){
+		//audio.finalBattle.play();
+	}
+	else{
+		audio.battleIntro.play(); //start battle into
+		audio.battleBGM.play(); //battle backgroun music into
+	}					
 	//Find enemies
 	if(random){
 		const randomEnemy = enemiesList[Math.floor(Math.random() * enemiesList.length)];

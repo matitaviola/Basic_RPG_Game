@@ -51,13 +51,20 @@ const audio = {
 			html5: true,
 			volume: 0.5
 		})
-	}
+	},
+	finalBattle:new Howl({
+		src: './Assets/Audio/chains_of_destiny.mp3',
+		html5: true,
+		volume: 1,
+		loop: true
+	})
 }
 
 /* Audio separation for settings */
 const music = [
 	audio.mapBGM,
-	audio.battleBGM
+	audio.battleBGM,
+	audio.finalBattle
 ];
 
 const sfx = [

@@ -257,6 +257,14 @@ button:hover{
 	right:0; 
 	pointer-events: none;
 	z-index: 5;
+	
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	
+}
+.battle-overlap h1 {
+	color: white;
 }
 
 /* Battle Attacks bar */
@@ -337,4 +345,23 @@ button:hover{
 	margin-top: 10px;
 }
 
+/*--------------------------------------------------------*/
+
+/*------------------------- Good Ending ------------------*/
+#cuore-overlap {
+	background-color: transparent; 
+	opacity: 1; 
+	position: absolute; 
+	top:0; 
+	bottom:0; 
+	left:0; 
+	right:0; 
+	pointer-events: none;
+	z-index: 4;
+	
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	
+}
 /*--------------------------------------------------------*/

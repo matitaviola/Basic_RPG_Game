@@ -315,7 +315,7 @@ class Character extends Sprite {
 	}
 
 	canInteract(player, tolerance) {
-		if (!this.interactionBox) return false;
+		if (!this.interactionBox || !this.interactable) return false;
 
 		return this.interactionBox.checkCollision(
 			player,
