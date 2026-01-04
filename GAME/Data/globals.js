@@ -65,6 +65,8 @@ let lastKey;
 
 /* Audio Events */
 let clicked4AudioStart = false;
+let musicVolume = 0.7;
+let sfxVolume = 0.2;
 /* */
 
 /* Intro variables */
