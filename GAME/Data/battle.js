@@ -5,7 +5,7 @@ const pgSpriteInfo = {
 	position: {x: PG_SPRITE_X, y:PG_SPRITE_Y},
 	animate: true
 };
-const pgBattler = new Battler({name: 'Marika', sprite: new Sprite({...pgSpriteInfo}), maxHp: 60, attackNames: ['Fireball', 'Tackle']});
+const pgBattler = new Battler({name: 'Marika', sprite: new Sprite({...pgSpriteInfo}), maxHp: 60, attackNames: ['BrushStroke', 'Heal']});
 /* */
 
 /*	Battle Background */
@@ -58,17 +58,15 @@ function exitBattle(){
 	//Clean up
 	cancelAnimationFrame(battleAnimationId);
 	enemies.pop();
-	
+document.querySelectorAll('.battle-attacks-buttons button').forEach(oldButton => {oldButton.hidden = false;});
 	//TODO: improve check for whether we won or the opponent did, to play victory or defeat audio
 	if(pgBattler.currHp > 0){
 		if(battleDragon){
-			audio.victory.play();
+			audio.finalBattle.fade(musicVolume, 0, 2000);
 			gsap.to('.battle-overlap',{
 				opacity: 1,
 				onComplete: () => {
-
-					
-					
+					audio.victory.play();
 					animateMain();
 					
 					document.querySelector('#battleGUI').style.display = 'none';

@@ -102,8 +102,11 @@ const nalaEvent = new Character({
 					}});
 				} });
 				
+				//Unlock new attack
+				pgBattler.attackNames.push('Fireball');
+				
 				//move huncheman
-				hunchmanNala.showSelf();
+				hunchmanNala.showSelf();		
 				tl.to(hunchmanNala.position,{
 				x: nalaEvent.position.x + TILE_WIDTH/2,
 				y: nalaEvent.position.y,
@@ -140,8 +143,8 @@ const prince = new Character({
 		left:princeImageLeft,
 		right: princeImageRight
 	},
-	collisionOffset: { x: 0, y: 20},
-	interactionOffset: { x: 10, y: 10},
+	collisionOffset: { x: 0, y: 30},
+	interactionOffset: { x: 10, y: 20},
 	interactCbk: function(){
 		if(battleDragon)
 			return;
@@ -174,9 +177,17 @@ const prince = new Character({
 					})
 				} });
 				
+				//Unlock new attack
+				pgBattler.attackNames.push('LoveFlare');
+				
+				//Music
+				audio.battleBGM.stop();
+				audio.finalBattle.play();
+				audio.finalBattle.volume(0);
+				audio.finalBattle.fade(0, musicVolume, 2000);
+				
 				//move DRAGON
 				dragon.showSelf();
-				audio.finalBattle.play();
 				this.rotateToFaceCaller('down');
 				moveWithMapObjs.push(Nala, Sally, playerSprite);
 				tl.to(moveWithMapObjs.map(m => m.position), {
@@ -198,7 +209,7 @@ const prince = new Character({
 					x: prince.position.x - TILE_WIDTH,
 					duration: 0.5,
 				}).to(playerSprite.position, {
-						y: playerSprite.position.y - TILE_HEIGHT + prince.collisionOffset.y/2,
+						y: playerSprite.position.y - TILE_HEIGHT + prince.collisionOffset.y,
 						duration:1
 				});	
 			}
@@ -384,7 +395,7 @@ const privato = new Character({
 		], () => {
 			moveWithMapObjs.forEach(mov => {
 				gsap.to(mov.position, {
-				y: mov.position.y + MOVEMENT_PIXELS*15});
+				y: mov.position.y + MOVEMENT_PIXELS*18});
 			});
 			Sally.updateFollower('up', playerSprite);
 			Nala.updateFollower('up', Sally);

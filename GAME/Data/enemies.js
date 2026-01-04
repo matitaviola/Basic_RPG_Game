@@ -14,7 +14,7 @@ const dragoSpriteInfo = {
 	position: {x: 650, y:-10},
 	animate: true
 };
-dragoAttacks = ['Tackle', 'Fireball'];
+dragoAttacks = ['GigaFlare'];
 
 /* Enemy List */
 const enemiesBestiary = {

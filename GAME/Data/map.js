@@ -219,10 +219,12 @@ function goodEndingScene(){
 		"Mattia: Grazie bellezza, mi hai davvero salvato!",
 		"Mattia: Non pensavo che sarei mai uscito da questa situazione, ma grazie a te posso guardare al futuro con il sorriso.",
 		"Mattia: Pronta ad affrontare altre avventure, insieme?",
-		"Mattia: Hehe, ma prima...",
-		"SMOOOCH"
+		"Mattia: Hehe, ma prima..."
 	], () => {
-		window.cancelAnimationFrame(mapAnimationId);
+		
+		showDialog(["SMOOOCH"], 
+			() => {
+		});
 		
 		const cuoreOverlap = document.querySelector('#cuore-overlap');
 		const overlap = document.querySelector('.battle-overlap');
@@ -232,13 +234,18 @@ function goodEndingScene(){
 		audio.mapBGM.stop();
 		
 		gsap.timeline()
-		  .to(cuore, {
+		.to(prince.position, {
+			x: prince.position.x + MOVEMENT_PIXELS*6,
+			duration: 1,
+			onComplete: () => {window.cancelAnimationFrame(mapAnimationId);}
+		})
+		.to(cuore, {
 			width: 1000,
 			height: 1000,
 			duration: 2.5
-		  }).to(overlap, {
+		}).to(overlap, {
 			opacity: 1,
 			duration: 2.5,
-		  }, "<");
+		}, "<");
 	});			
 }
