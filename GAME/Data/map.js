@@ -229,7 +229,7 @@ function goodEndingScene(){
 		const cuoreOverlap = document.querySelector('#cuore-overlap');
 		const overlap = document.querySelector('.battle-overlap');
 		const cuore = document.querySelector('#cuore');
-		overlap.innerHTML = '<h1>Buon primo anniversario,</h1><h1>Amore</h1>';
+		overlap.innerHTML = '<h1>Buon primo anniversario,</h1><br><h1>Amore</h1>';
 		
 		audio.mapBGM.stop();
 		
