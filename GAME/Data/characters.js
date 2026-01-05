@@ -181,9 +181,10 @@ const prince = new Character({
 				pgBattler.attackNames.push('LoveFlare');
 				
 				//Music
-				audio.mapBGM.stop();
+				audio.battleBGM.stop();
 				audio.finalBattle.play();
-				audio.finalBattle.fade(0, musicVolume, 3000);
+				audio.finalBattle.volume(0);
+				audio.finalBattle.fade(0, musicVolume, 2000);
 				
 				//move DRAGON
 				dragon.showSelf();
@@ -394,7 +395,7 @@ const privato = new Character({
 		], () => {
 			moveWithMapObjs.forEach(mov => {
 				gsap.to(mov.position, {
-				y: mov.position.y + TILE_HEIGHT*2});
+				y: mov.position.y + MOVEMENT_PIXELS*18});
 			});
 			Sally.updateFollower('up', playerSprite);
 			Nala.updateFollower('up', Sally);

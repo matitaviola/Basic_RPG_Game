@@ -33,11 +33,6 @@ const audio = {
 		html5: true,
 		volume: 1
 	}),
-	love: new Howl({
-		src: './Assets/Audio/the_time_of_my_life_-_dirty_dancing.mp3',
-		html5: true,
-		volume: 1
-	}),
 	attackSound:{
 		tackleHit: new Howl({
 			src: './Assets/Audio/tackleHit.wav',
@@ -69,8 +64,7 @@ const audio = {
 const music = [
 	audio.mapBGM,
 	audio.battleBGM,
-	audio.finalBattle,
-	audio.love
+	audio.finalBattle
 ];
 
 const sfx = [

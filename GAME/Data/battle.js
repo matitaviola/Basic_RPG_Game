@@ -62,7 +62,7 @@ document.querySelectorAll('.battle-attacks-buttons button').forEach(oldButton =>
 	//TODO: improve check for whether we won or the opponent did, to play victory or defeat audio
 	if(pgBattler.currHp > 0){
 		if(battleDragon){
-
+			audio.finalBattle.fade(musicVolume, 0, 2000);
 			gsap.to('.battle-overlap',{
 				opacity: 1,
 				onComplete: () => {
@@ -75,8 +75,7 @@ document.querySelectorAll('.battle-attacks-buttons button').forEach(oldButton =>
 					});
 					
 					audio.finalBattle.stop();
-					audio.love.fade(0, musicVolume, 2000);
-					audio.love.play();
+					audio.mapBGM.play();
 				
 					//Set the new gamestate
 					gamestate = G_S.END;
