@@ -87,8 +87,14 @@ let playerDirection = 'down';
 
 /* Battle variables */
 let battleAnimationId;
-const enemies = [];
+let enemies = [];
 let battleDragon = false; //Mark the final battle
+/* */
+
+/* Attacks */
+let attacks = {};
+let actionsQueue = [];
+let atkSpritesToRender = [];
 /* */
 
 /* Dialog */

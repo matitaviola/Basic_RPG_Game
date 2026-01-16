@@ -1,44 +1,21 @@
-function loadScript(src, callback) {
-  const s = document.createElement("script");
-  s.src = src;
-  s.onload = callback;
-  document.head.appendChild(s);
-}
-
-//This function should be called once all the characters modules have been imported
+//This function should be called once all the characters 'modules' have been imported
 function charactersLoaded(){
 	characters.push(sallyEvent, nalaEvent, henchmanSally, henchmanNala, custode, prince, dragon, triste, arrabbiato, privato, ponte, troll, cura1, cura2, cura3);
-	moveWithMapObjs.push(...characters);
-	drawObjs.push(...characters);
+	moveWithMapObjs.splice(1, 0, ...characters); //Insert in pos 1 removing 0 elements, all the contents of characters
+	drawObjs.splice(1, 0,...characters);
 	console.log("All characters loaded");
 }
 
-const sources = [
+//List of the various files used for the npc scripts 
+const sourcesNPC = [
 	"./Data/NPC_Scripts/Sally.js",
 	"./Data/NPC_Scripts/Nala.js",
 	"./Data/NPC_Scripts/Prince.js",
 	"./Data/NPC_Scripts/Citizens.js",
 	"./Data/NPC_Scripts/Troll.js",
-	"./Data/NPC_Scripts/Healers.s"
+	"./Data/NPC_Scripts/Healers.js"
 ];
 
-function loadSequentially(sources, finalCallback) {
-  let i = 0;
-
-  function next() {
-    if (i >= sources.length) {
-      finalCallback();
-      return;
-    }
-
-    const s = document.createElement("script");
-    s.src = sources[i++];
-    s.onload = next;
-    document.head.appendChild(s);
-  }
-
-  next();
-}
-
-loadSequentially(sources, charactersLoaded);
+//Call to 'import' the 
+loadSequentially(sourcesNPC, charactersLoaded);
 
