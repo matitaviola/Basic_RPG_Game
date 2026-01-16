@@ -73,7 +73,7 @@ button:hover{
 
 
 /*-------------------------MENU--------------------------------*/
-/* MENU CONTAINER */
+/* Menu Container */
 .main-menu {
     position: absolute;
     top: 50%;
@@ -100,14 +100,14 @@ button:hover{
     animation: menuIn 0.4s ease forwards;
 }
 
-/* TITLE */
+/* Title */
 .main-menu h1 {
     margin: 0;
     font-size: 32px;
     letter-spacing: 1px;
 }
 
-/* DESCRIPTION */
+/* Description */
 .main-menu h2 {
     margin: 0;
     font-size: 15px;
@@ -115,7 +115,7 @@ button:hover{
     opacity: 0.85;
 }
 
-/* BUTTON GRID */
+/* Button Grid */
 .menu-buttons {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -123,7 +123,7 @@ button:hover{
     margin-top: 10px;
 }
 
-/* BUTTONS */
+/* Butttons */
 .main-menu button {
     padding: 14px;
     font-size: 16px;
@@ -162,7 +162,7 @@ button:hover{
 	padding: 8px;
 	row-gap: 17px;
 }
-/* HOVER & ACTIVE */
+/* Hover & Active */
 .main-menu button:hover,
 .main-menu button.active {
     background: linear-gradient(145deg, #777, #666);
@@ -185,6 +185,7 @@ button:hover{
         transform: translate(-50%, -50%) scale(1);
     }
 }
+
 
 /*--------------------------------------------------------*/
 
@@ -256,6 +257,14 @@ button:hover{
 	right:0; 
 	pointer-events: none;
 	z-index: 5;
+	
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	
+}
+.battle-overlap h1 {
+	color: white;
 }
 
 /* Battle Attacks bar */
@@ -336,4 +345,23 @@ button:hover{
 	margin-top: 10px;
 }
 
+/*--------------------------------------------------------*/
+
+/*------------------------- Good Ending ------------------*/
+#cuore-overlap {
+	background-color: transparent; 
+	opacity: 1; 
+	position: absolute; 
+	top:0; 
+	bottom:0; 
+	left:0; 
+	right:0; 
+	pointer-events: none;
+	z-index: 4;
+	
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	
+}
 /*--------------------------------------------------------*/

@@ -1,11 +1,11 @@
 /* Player's Battler */
-const emberSpriteInfo = {
-	imageSrc: "Assets/Battle/Sprites/emberSprite.png",
-	frames: {max:4, frameSpeed:PLAYER_FRAME_SPEED_IDLE},
+const pgSpriteInfo = {
+	imageSrc: "Assets/Battle/Sprites/MarikaSprite.png",
+	frames: {max:2, frameSpeed:PLAYER_FRAME_SPEED_IDLE*5},
 	position: {x: PG_SPRITE_X, y:PG_SPRITE_Y},
 	animate: true
 };
-const pgBattler = new Battler({name: 'Pg', sprite: new Sprite({...emberSpriteInfo}), maxHp: 60, attackNames: ['Tackle', 'Fireball']});
+const pgBattler = new Battler({name: 'Marika', sprite: new Sprite({...pgSpriteInfo}), maxHp: 60, attackNames: ['BrushStroke', 'Heal']});
 /* */
 
 /*	Battle Background */
@@ -55,39 +55,104 @@ function animateBattle(){
 
 /* Battle exit */
 function exitBattle(){
-	//TODO: add check for whether we won or the opponent did, to play victory or defeat audio
-	audio.victory.play();
-	
-	gsap.to('.battle-overlap',{
-		opacity: 1,
-		onComplete: () => {
-			enemies.length = 0;
-			
-			cancelAnimationFrame(battleAnimationId);
-			animateMain();
-			
-			document.querySelector('#battleGUI').style.display = 'none';
+	//Clean up
+	cancelAnimationFrame(battleAnimationId);
+	enemies.pop();
+document.querySelectorAll('.battle-attacks-buttons button').forEach(oldButton => {oldButton.hidden = false;});
+	//TODO: improve check for whether we won or the opponent did, to play victory or defeat audio
+	if(pgBattler.currHp > 0){
+		if(battleDragon){
+
 			gsap.to('.battle-overlap',{
-				opacity: 0
+				opacity: 1,
+				onComplete: () => {
+					audio.victory.play();
+					animateMain();
+					
+					document.querySelector('#battleGUI').style.display = 'none';
+					gsap.to('.battle-overlap',{
+						opacity: 0
+					});
+					
+					audio.finalBattle.stop();
+					audio.love.fade(0, musicVolume, 2000);
+					audio.love.play();
+				
+					//Set the new gamestate
+					gamestate = G_S.END;
+					
+				}
 			});
-			
-			audio.battleBGM.stop();
-			audio.mapBGM.play();
-		
-			//Set the new gamestate
-			gamestate = G_S.MAP;
-			
 		}
-	});
+		else{
+			audio.victory.play();
+			gsap.to('.battle-overlap',{
+				opacity: 1,
+				onComplete: () => {
+					enemies.length = 0;
+					
+					cancelAnimationFrame(battleAnimationId);
+					animateMain();
+					
+					document.querySelector('#battleGUI').style.display = 'none';
+					gsap.to('.battle-overlap',{
+						opacity: 0
+					});
+					
+					audio.battleBGM.stop();
+					audio.mapBGM.play();
+				
+					//Set the new gamestate
+					gamestate = G_S.MAP;
+					
+				}
+			});
+		}
+	}
+	else{
+		//GAME OVER
+		audio.battleBGM.stop();
+		
+		document.querySelector('#diagBoxBattle').innerHTML = 'GAME OVER :(';
+		document.querySelectorAll('.battle-overlap').forEach(el => {
+			el.innerHTML = '<h1>GAME OVER</h1>'
+		});
+		gamestate = G_S.OVER;
+		
+		gsap.to('.battle-overlap',{
+			opacity: 1,
+			repeat: 2,
+			yoyo: true,
+			duration: 2,
+			onComplete: () => {				
+				//Reload page
+				location.reload();
+				
+			}
+		});
+		
+	}
 }
 /* */
 
 /* Battle Initialization */
-function initBattle({ random = true, chosenEnemies = []} = {}){
+function initBattle({ random = true, chosenEnemies = [], initCallback} = {}){
+	window.cancelAnimationFrame(mapAnimationId);
 	
+	if(initCallback)
+		initCallback();
 	//Set the new gamestate
 	gamestate = G_S.BATTLE;
 	
+	//Play Music
+	audio.mapBGM.stop(); //Stop map's music
+	if(battleDragon){
+		//audio.finalBattle.play();
+	}
+	else{
+		audio.battleIntro.play(); //start battle into
+		audio.battleBGM.play(); //battle backgroun music into
+	}					
 	//Find enemies
 	if(random){
 		const randomEnemy = enemiesList[Math.floor(Math.random() * enemiesList.length)];
@@ -107,7 +172,7 @@ function initBattle({ random = true, chosenEnemies = []} = {}){
 	//make battle bars visible
 	gsap.to('.battle-overlap', {
 		opacity: 1, 
-		duration: 0.2,
+		duration: 0.5,
 		onComplete(){
 			gsap.to('.battle-overlap', {
 				opacity: 0, 

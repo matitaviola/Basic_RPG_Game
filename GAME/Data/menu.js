@@ -1,4 +1,21 @@
-const optionsInfo = ['These are the controls', 'These are the settings', 'These are the Game Info', 'These are the credits due']; 
+const optionsInfo = [
+	'<p><i>Movements:</i><br><br>WASD / ↑←↓→: overworld movements<br>SPACEBAR: interact with the other characters</p><p><i>Dialogs:</i><br><br>SPACEBAR: next dialog line</p><p><i>In Battle:</i><br><br>MOUSE: point and click to select the attack</p>', /*Controls*/
+	`
+	<div id="musicSetting">
+		<span>Music</span>
+			<input type="range" min="0" max="1" step="0.01" value="${musicVolume}"
+			oninput="setMusicVolume(this.value)">
+	</div>
+
+	<div id="sfxSetting">
+		<span>SFX</span>
+		<input type="range" min="0" max="1" step="0.01" value="${sfxVolume}"
+			oninput="setSFXVolume(this.value)">
+	</div>
+	`, /*Settings*/
+	'<p>Creato con amore per il primo anniversario di Marika e Mattia</p><span>♥️</span>', /*Info*/
+	'<p>Concept, Story, Mapping, Implementation: <i>Matitaviola</i></p><p>Tileset: <i>Magiscarf</i></p><p>Overworld sprite base: <i>The Pokemon Company</i></p>' /*Credits*/
+]; 
 
 function resetMenu(){
 	document.querySelectorAll('.main-menu h2').forEach(txt => txt.innerText = 'Select an option');
@@ -29,3 +46,5 @@ document.getElementById('menuExit').addEventListener('click', () => {
 document.getElementById('menuBack').addEventListener('click', () => {
 	resetMenu();
 });
+
+
