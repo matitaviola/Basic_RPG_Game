@@ -27,7 +27,12 @@
 			</div>
 
 			<!-- Bottom part with button -->
-			<button id="introButton">Start Game</button>
+			<div>
+			<button id="introButton">Start New Game</button>
+			</div>
+			<div>
+			<button id="loadSaveState">Load Save</button>
+			</div>
 		</div>
 		
 		<!-- Main menu -->
@@ -39,6 +44,7 @@
 				<button data-index="1"><span>⚙️</span>Settings</button>
 				<button data-index="2"><span>ℹ️</span>Info</button>
 				<button data-index="3"><span>🙌</span>Credits</button>
+				<button data-index="4"><span>💾</span>Save</button>
 			</div>
 			<div id='menuExit'>
 				<button><span>🚪</span>Exit</button>
@@ -135,6 +141,7 @@
 	<script src="Data/attacks.js"></script>
 	<script src="Data/enemies.js"></script>
 	<script src="Data/battle.js"></script>
+	<script src="Data/saves.js"></script>
 	<script src="Data/menu.js"></script>
 	<script src="Data/intro.js"></script>
 	<script src="index.js"></script>

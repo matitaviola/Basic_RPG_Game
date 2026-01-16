@@ -186,6 +186,16 @@ button:hover{
     }
 }
 
+/* Save/Load btn */
+#saveStateBtn {
+	background: none !important;
+	background-color: green !important;
+}
+
+#loadStateBtn {
+	background: none !important;
+    background-color: orange !important;
+}
 
 /*--------------------------------------------------------*/
 

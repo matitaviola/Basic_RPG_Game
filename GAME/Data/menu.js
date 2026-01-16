@@ -14,7 +14,16 @@ const optionsInfo = [
 	</div>
 	`, /*Settings*/
 	'<p>Creato con amore per il primo anniversario di Marika e Mattia</p><span>♥️</span>', /*Info*/
-	'<p>Concept, Story, Mapping, Implementation: <i>Matitaviola</i></p><p>Tileset: <i>Magiscarf</i></p><p>Overworld sprite base: <i>The Pokemon Company</i></p>' /*Credits*/
+	'<p>Concept, Story, Mapping, Implementation: <i>Matitaviola</i></p><p>Tileset: <i>Magiscarf</i></p><p>Overworld sprite base: <i>The Pokemon Company</i></p>', /*Credits*/
+	`
+	<div>
+		<button id="saveStateBtn">Save State</button>
+		<p>
+		</p>
+		<button id="loadStateBtn">Load State</button>
+		<input type="file" id="fileInput" accept=".json" hidden>
+	</div>
+	`/* Saves */
 ]; 
 
 function resetMenu(){
@@ -47,4 +56,37 @@ document.getElementById('menuBack').addEventListener('click', () => {
 	resetMenu();
 });
 
+document.getElementById("optionInfo").addEventListener("click", (e) => {
+  if (e.target.id === "saveStateBtn") {
+    const json = JSON.stringify(storeSaveData(), null, 2);
+    const blob = new Blob([json], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+	
+	const fileName = "MarikaSaveFile.json";
+	const today = new Date().toISOString().slice(0, 10);
+	fileName.replace(/\.json$/i, `_${today}.json`);
+	
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = fileName;
+    a.click();
 
+    URL.revokeObjectURL(url);
+  }
+});
+
+document.getElementById("optionInfo").addEventListener("click", (e) => {
+  if (e.target.id === "loadStateBtn") {
+    document.getElementById("fileInput").click();
+	document.getElementById('menuExit').click();
+  }
+});
+
+document.getElementById("optionInfo").addEventListener("change", (e) => {
+  if (e.target.id === "fileInput") {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    loadSaveFile(file);
+  }
+});
