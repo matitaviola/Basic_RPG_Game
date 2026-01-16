@@ -45,7 +45,7 @@ const playerSprite = new Sprite({
 /* Collisions */
 const collisionMap = [];
 for (let i = 0; i <= (collisions.length - TILE_MAP_WIDTH); i += TILE_MAP_WIDTH){
-	collisionMap.push(collisions.slice(i, i+TILE_MAP_WIDTH));
+	//collisionMap.push(collisions.slice(i, i+TILE_MAP_WIDTH));
 }
 
 collisionMap.forEach((row, i) => {
@@ -63,8 +63,8 @@ collisionMap.forEach((row, i) => {
 /* */
 
 /* Main Scene Animation function */
-moveWithMapObjs.push(mapBackground, mapForeground, ...collisionBlocks, ...characters );
-drawObjs.push(mapBackground, ...characters, playerSprite, mapForeground);
+moveWithMapObjs.push(mapBackground, mapForeground, ...collisionBlocks);
+drawObjs.push(mapBackground, playerSprite, mapForeground);
 
 function animateMain(){
 	mapAnimationId = window.requestAnimationFrame(animateMain); //Recursive calling, to keep moving

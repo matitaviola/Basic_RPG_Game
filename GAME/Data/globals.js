@@ -97,3 +97,7 @@ let currentText = '';
 let charIndex = 0;
 let isTyping = false;
 /* */
+
+/* Characters */
+let characters = [];
+/* */
