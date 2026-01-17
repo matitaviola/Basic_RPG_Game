@@ -45,7 +45,7 @@ const playerSprite = new Sprite({
 /* Collisions */
 const collisionMap = [];
 for (let i = 0; i <= (collisions.length - TILE_MAP_WIDTH); i += TILE_MAP_WIDTH){
-	//collisionMap.push(collisions.slice(i, i+TILE_MAP_WIDTH));
+	collisionMap.push(collisions.slice(i, i+TILE_MAP_WIDTH));
 }
 
 collisionMap.forEach((row, i) => {
@@ -62,152 +62,116 @@ collisionMap.forEach((row, i) => {
 
 /* */
 
-/* Main Scene Animation function */
-moveWithMapObjs.push(mapBackground, mapForeground, ...collisionBlocks);
-drawObjs.push(mapBackground, playerSprite, mapForeground);
-
-function animateMain(){
-	mapAnimationId = window.requestAnimationFrame(animateMain); //Recursive calling, to keep moving
-	
-	//Draw everything	
-	drawObjs.forEach((drawObj) => {
-		drawObj.draw(context);
-	});
-	
-	let playerSpriteTolerance = {u:playerSprite.height*2/3, d:0, l:PLAYER_PIXEL_TOL_X, r:PLAYER_PIXEL_TOL_X}; //Put it here to allow computations after image load
-	
-	//Exit if here but we're in battle or dialog
-	if(gamestate == G_S.BATTLE) 
-		return;
-	
-	if(gamestate == G_S.END)
-		goodEndingScene();
+/* Function Movements */
+function movePos(){
 	
 	let moveEn = true; 
-	playerSprite.animate = false;
-	Sally.animate = false;
-	Nala.animate = false;
+	let playerSpriteTolerance = {u:playerSprite.height*2/3, d:0, l:PLAYER_PIXEL_TOL_X, r:PLAYER_PIXEL_TOL_X}; //Put it here to allow computations after image load
 	
-	//Check for 'enter' for menu
-	if(gamestate == G_S.DIALOG){
-		if (keys.space.pressed) {
-			//If we're already speaking.
-			if (diagBox.classList.contains('visible')) {
-				advanceDialog();
-				//'Consume' the key, for debouncing
-				keys.space.pressed = false;
-				return;
+	//Next position
+	if(keys.w.pressed && (lastKey == 'w' || lastKey == 'ArrowUp')){
+		
+		for(let i = 0; i < collisionBlocks.length; i++){
+			const coll = collisionBlocks[i];
+			if(coll.checkCollision(playerSprite,{x: 0, y: MOVEMENT_PIXELS}, playerSpriteTolerance)){
+				moveEn = false;
+				break;
 			}
 		}
+		
+		if (moveEn) {
+			moveWithMapObjs.forEach(mov => {
+				mov.position.y += MOVEMENT_PIXELS;
+			});
+			Sally.updateFollower('up', playerSprite);
+			Nala.updateFollower('up', Sally);
+		}
+
+		//Update player sprite and direction 
+		playerSprite.animate = true;
+		playerSprite.image = playerSprite.spriteImgs.up;
+		playerDirection = 'up';
+		
+		//Update global reposition to store in memory and reload
+		mapMovedPos.y += MOVEMENT_PIXELS;
+
 	}
-	else if(gamestate == G_S.MAP){
-		//Next position
-		if(keys.w.pressed && (lastKey == 'w' || lastKey == 'ArrowUp')){
-			
-			for(let i = 0; i < collisionBlocks.length; i++){
-				const coll = collisionBlocks[i];
-				if(coll.checkCollision(playerSprite,{x: 0, y: MOVEMENT_PIXELS}, playerSpriteTolerance)){
-					moveEn = false;
-					break;
-				}
-			}
-			
-			if (moveEn) {
-				moveWithMapObjs.forEach(mov => {
-					mov.position.y += MOVEMENT_PIXELS;
-				});
-				Sally.updateFollower('up', playerSprite);
-				Nala.updateFollower('up', Sally);
-			}
-
-			//Update player sprite and direction 
-			playerSprite.animate = true;
-			playerSprite.image = playerSprite.spriteImgs.up;
-			playerDirection = 'up';
-
-		}
-		else if(keys.a.pressed && (lastKey == 'a' || lastKey == 'ArrowLeft')){
-			
-			for(let i = 0; i < collisionBlocks.length; i++){
-				const coll = collisionBlocks[i];
-				if(coll.checkCollision(playerSprite,{x: MOVEMENT_PIXELS, y: 0}, playerSpriteTolerance)){
-					moveEn = false;
-					break;
-				}
-			}
-			
-			if (moveEn) {
-				moveWithMapObjs.forEach(mov => {
-					mov.position.x += MOVEMENT_PIXELS;
-				});
-				Sally.updateFollower('left', playerSprite);
-				Nala.updateFollower('left', Sally);
-			}
-
-			playerSprite.animate = true;
-			playerSprite.image = playerSprite.spriteImgs.left;
-			playerDirection = 'left';
-
-		}
-		else if(keys.s.pressed && (lastKey == 's' || lastKey == 'ArrowDown')){
-			
-			for(let i = 0; i < collisionBlocks.length; i++){
-				const coll = collisionBlocks[i];
-				if(coll.checkCollision(playerSprite,{x: 0, y: -MOVEMENT_PIXELS}, playerSpriteTolerance)){
-					moveEn = false;
-					break;
-				}
-			}
-			
-			if (moveEn) {
-				moveWithMapObjs.forEach(mov => {
-					mov.position.y -= MOVEMENT_PIXELS;
-				});
-				Sally.updateFollower('down', playerSprite);
-				Nala.updateFollower('down', Sally);
-			}
-			  
-			playerSprite.animate = true;
-			playerSprite.image = playerSprite.spriteImgs.down;
-			playerDirection = 'down';
-
-		}
-		else if(keys.d.pressed && (lastKey == 'd' || lastKey == 'ArrowRight')){
-			
-			for(let i = 0; i < collisionBlocks.length; i++){
-				const coll = collisionBlocks[i];
-				if(coll.checkCollision(playerSprite,{x: -MOVEMENT_PIXELS, y: 0}, playerSpriteTolerance)){
-					moveEn = false;
-					break;
-				}
-			}
-			
-			if (moveEn) {
-				moveWithMapObjs.forEach(mov => {
-					mov.position.x -= MOVEMENT_PIXELS;
-				});
-				Sally.updateFollower('right', playerSprite);
-				Nala.updateFollower('right', Sally);
-			}
-			  
-			playerSprite.animate = true;
-			playerSprite.image = playerSprite.spriteImgs.right;
-			playerDirection = 'right';
-		}
-		else if (keys.space.pressed) {
-			//Interact with characters
-			for (let i = 0; i < characters.length; i++) {
-				const npc = characters[i];
-				if (npc.canInteract(playerSprite)) {
-					npc.interact();
-
-					//'Consume' the key, for debouncing
-					keys.space.pressed = false;
-					break;
-				}
+	else if(keys.a.pressed && (lastKey == 'a' || lastKey == 'ArrowLeft')){
+		
+		for(let i = 0; i < collisionBlocks.length; i++){
+			const coll = collisionBlocks[i];
+			if(coll.checkCollision(playerSprite,{x: MOVEMENT_PIXELS, y: 0}, playerSpriteTolerance)){
+				moveEn = false;
+				break;
 			}
 		}
+		
+		if (moveEn) {
+			moveWithMapObjs.forEach(mov => {
+				mov.position.x += MOVEMENT_PIXELS;
+			});
+			Sally.updateFollower('left', playerSprite);
+			Nala.updateFollower('left', Sally);
+		}
 
+		playerSprite.animate = true;
+		playerSprite.image = playerSprite.spriteImgs.left;
+		playerDirection = 'left';
+		
+		//Update global reposition to store in memory and reload
+		mapMovedPos.x += MOVEMENT_PIXELS;
+
+	}
+	else if(keys.s.pressed && (lastKey == 's' || lastKey == 'ArrowDown')){
+		
+		for(let i = 0; i < collisionBlocks.length; i++){
+			const coll = collisionBlocks[i];
+			if(coll.checkCollision(playerSprite,{x: 0, y: -MOVEMENT_PIXELS}, playerSpriteTolerance)){
+				moveEn = false;
+				break;
+			}
+		}
+		
+		if (moveEn) {
+			moveWithMapObjs.forEach(mov => {
+				mov.position.y -= MOVEMENT_PIXELS;
+			});
+			Sally.updateFollower('down', playerSprite);
+			Nala.updateFollower('down', Sally);
+		}
+		  
+		playerSprite.animate = true;
+		playerSprite.image = playerSprite.spriteImgs.down;
+		playerDirection = 'down';
+		
+		//Update global reposition to store in memory and reload
+		mapMovedPos.y -= MOVEMENT_PIXELS;
+
+	}
+	else if(keys.d.pressed && (lastKey == 'd' || lastKey == 'ArrowRight')){
+		
+		for(let i = 0; i < collisionBlocks.length; i++){
+			const coll = collisionBlocks[i];
+			if(coll.checkCollision(playerSprite,{x: -MOVEMENT_PIXELS, y: 0}, playerSpriteTolerance)){
+				moveEn = false;
+				break;
+			}
+		}
+		
+		if (moveEn) {
+			moveWithMapObjs.forEach(mov => {
+				mov.position.x -= MOVEMENT_PIXELS;
+			});
+			Sally.updateFollower('right', playerSprite);
+			Nala.updateFollower('right', Sally);
+		}
+		  
+		playerSprite.animate = true;
+		playerSprite.image = playerSprite.spriteImgs.right;
+		playerDirection = 'right';
+		
+		//Update global reposition to store in memory and reload
+		mapMovedPos.x -= MOVEMENT_PIXELS;
 	}
 }
 
@@ -248,4 +212,56 @@ function goodEndingScene(){
 			duration: 2.5,
 		}, "<");
 	});			
+}
+
+/* Main Scene Animation function */
+function animateMain(){
+	mapAnimationId = window.requestAnimationFrame(animateMain); //Recursive calling, to keep moving
+	
+	//Draw everything	
+	drawObjs.forEach((drawObj) => {
+		drawObj.draw(context);
+	});
+	
+	//Exit if here but we're in battle or dialog
+	if(gamestate == G_S.BATTLE) 
+		return;
+	
+	if(gamestate == G_S.END)
+		goodEndingScene();
+	
+	playerSprite.animate = false;
+	Sally.animate = false;
+	Nala.animate = false;
+	
+	//Check for 'enter' for menu
+	if(gamestate == G_S.DIALOG){
+		if (keys.space.pressed) {
+			//If we're already speaking.
+			if (diagBox.classList.contains('visible')) {
+				advanceDialog();
+				//'Consume' the key, for debouncing
+				keys.space.pressed = false;
+				return;
+			}
+		}
+	}
+	else if(gamestate == G_S.MAP){
+		if (keys.space.pressed) {
+			//Interact with characters
+			for (let i = 0; i < characters.length; i++) {
+				const npc = characters[i];
+				if (npc.canInteract(playerSprite)) {
+					npc.interact();
+
+					//'Consume' the key, for debouncing
+					keys.space.pressed = false;
+					break;
+				}
+			}
+		}
+		else {
+			movePos();
+		}
+	}
 }

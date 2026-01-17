@@ -83,6 +83,7 @@ let moveWithMapObjs = [];
 let collisionBlocks = [];
 let drawObjs = [];
 let playerDirection = 'down';
+let mapMovedPos = {x:0, y:0};
 /* */
 
 /* Battle variables */

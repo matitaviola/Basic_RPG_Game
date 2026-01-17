@@ -41,7 +41,22 @@ button:hover{
     flex-direction: column;
     justify-content: space-between;
 }
+#introDiv div{
+	display: flex;
+    flex-direction: column;
+	justify-content: space-between;
+}
 
+#introDiv button{
+	margin-top: 10px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 10px;
+    color: #fff;
+    font-family: 'Press Start 2P', cursive;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
 /* Text section */
 #introText {
     flex: 1;
@@ -54,19 +69,19 @@ button:hover{
 
 /* Button at bottom */
 #introButton {
-    margin-top: 10px;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 10px;
-    background-color: #ff6600;
-    color: #fff;
-    font-family: 'Press Start 2P', cursive;
-    cursor: pointer;
-    transition: background-color 0.3s;
+    background-color: #069806;
+}
+
+#loadStateBtn {
+    background-color: darkorange;
 }
 
 #introButton:hover {
-    background-color: #ff8533;
+    background-color: #0bcf0b;
+}
+
+#loadStateBtn:hover {
+    background-color: orange;
 }
 
 /*--------------------------------------------------------*/
@@ -190,11 +205,6 @@ button:hover{
 #saveStateBtn {
 	background: none !important;
 	background-color: green !important;
-}
-
-#loadStateBtn {
-	background: none !important;
-    background-color: orange !important;
 }
 
 /*--------------------------------------------------------*/

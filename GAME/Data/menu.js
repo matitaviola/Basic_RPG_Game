@@ -17,11 +17,9 @@ const optionsInfo = [
 	'<p>Concept, Story, Mapping, Implementation: <i>Matitaviola</i></p><p>Tileset: <i>Magiscarf</i></p><p>Overworld sprite base: <i>The Pokemon Company</i></p>', /*Credits*/
 	`
 	<div>
-		<button id="saveStateBtn">Save State</button>
+		Save the game data in a downloaded file!
 		<p>
-		</p>
-		<button id="loadStateBtn">Load State</button>
-		<input type="file" id="fileInput" accept=".json" hidden>
+		<button id="saveStateBtn">Save State</button>
 	</div>
 	`/* Saves */
 ]; 
@@ -56,37 +54,48 @@ document.getElementById('menuBack').addEventListener('click', () => {
 	resetMenu();
 });
 
-document.getElementById("optionInfo").addEventListener("click", (e) => {
-  if (e.target.id === "saveStateBtn") {
-    const json = JSON.stringify(storeSaveData(), null, 2);
+document.getElementById("optionInfo").addEventListener("click", async (e) => {
+  if (e.target.id !== "saveStateBtn") return;
+
+  const json = JSON.stringify(storeSaveData(), null, 2);
+  const today = new Date().toISOString().slice(0, 10);
+  const defaultName = `MarikaSaveFile_${today}.json`;
+
+ //Allow for savefile naming
+  if ("showSaveFilePicker" in window) {
+    try {
+      const handle = await window.showSaveFilePicker({
+        suggestedName: defaultName,
+        types: [
+          {
+            description: "JSON Files",
+            accept: { "application/json": [".json"] }
+          }
+        ]
+      });
+
+      const writable = await handle.createWritable();
+      await writable.write(json);
+      await writable.close();
+    } catch (err) {
+      console.log("Save canceled");
+    }
+  } 
+  else {  //Fallback for unsupported browsers (Firefox)
     const blob = new Blob([json], { type: "application/json" });
     const url = URL.createObjectURL(blob);
-	
-	const fileName = "MarikaSaveFile.json";
-	const today = new Date().toISOString().slice(0, 10);
-	fileName.replace(/\.json$/i, `_${today}.json`);
-	
+
     const a = document.createElement("a");
     a.href = url;
-    a.download = fileName;
+    a.download = defaultName;
     a.click();
 
     URL.revokeObjectURL(url);
   }
+  
+  resetMenu();
+  
 });
 
-document.getElementById("optionInfo").addEventListener("click", (e) => {
-  if (e.target.id === "loadStateBtn") {
-    document.getElementById("fileInput").click();
-	document.getElementById('menuExit').click();
-  }
-});
 
-document.getElementById("optionInfo").addEventListener("change", (e) => {
-  if (e.target.id === "fileInput") {
-    const file = e.target.files[0];
-    if (!file) return;
 
-    loadSaveFile(file);
-  }
-});

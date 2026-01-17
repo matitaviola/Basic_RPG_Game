@@ -4,7 +4,7 @@ const saveStruct = {
     gameName: "RPG4Marika",
     version: 1,
     mapId: 1,
-	position: {x:0, y:0},
+	mapMovedPos: {x:0, y:0},
 	playerHp: 60,
 	playerDirection: 'up'
 	/* resto delle variabili globali e dei flag evento */
@@ -14,6 +14,7 @@ function storeSaveData(){
 	saveStruct.mapId = 1; //Al momento abbiamo una sola mappa
 	saveStruct.playerHp = pgBattler.currHp;
 	saveStruct.playerDirection = playerDirection;
+	saveStruct.mapMovedPos = mapMovedPos;
 	
 	//Return savestate
 	return saveStruct;
@@ -64,5 +65,12 @@ function loadSaveData(saveData){
 			console.log('Impossible player position');
 		break;
 	};
+	
+	//Repositioning of the map elements
+	mapMovedPos = saveData.mapMovedPos;
+	moveWithMapObjs.forEach(mov => {
+		mov.position.x += mapMovedPos.x;
+		mov.position.y += mapMovedPos.y;
+	});
 	
 }
