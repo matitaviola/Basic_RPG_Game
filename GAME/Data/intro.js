@@ -1,13 +1,6 @@
-//TODO
 function startGame(){
-	if(!clicked4AudioStart){
-		audio.mapBGM.play();
-		clicked4AudioStart = true;
-	}
-		
-	document.getElementById('introDiv').style.display = 'none';
-	window.cancelAnimationFrame(introAnimationId); //Stops current loop
 	
+	document.getElementById('introDiv').style.display = 'none';
 	//Set the new gamestate
 	gamestate = G_S.MAP;
 
@@ -17,8 +10,10 @@ function startGame(){
 
 function initGame(){
 	document.getElementById('introButton').addEventListener('click', () => {
-		if(gamestate == G_S.INTRO)
+		if(gamestate == G_S.INTRO){
+			changeMap(0);
 			startGame();
+		}
 	});
 	
 	document.getElementById('loadStateBtn').addEventListener('click', () => {
@@ -35,11 +30,7 @@ function initGame(){
 			startGame();
 		}
 	});
-	
-	//Fill object arrays
-	moveWithMapObjs.push(mapBackground, mapForeground, ...collisionBlocks);
-	drawObjs.push(mapBackground, playerSprite, mapForeground);
-	
+
 	//Set the new gamestate
 	gamestate = G_S.INTRO;
 

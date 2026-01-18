@@ -69,14 +69,6 @@ window.addEventListener('keyup', (ev) => {
 	}
 }); //Player response upon key releasing
 
-addEventListener('click', () => {
-	if(!clicked4AudioStart){
-		audio.mapBGM.play();
-		clicked4AudioStart = true;
-	}
-});
-/* */
-
 // Starting call
 initGame();
 

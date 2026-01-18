@@ -1,66 +1,79 @@
-/* Render map */
-const mapBackground = new Sprite({
-	imageSrc: "./Assets/Maps/Map_base.png",
-	position: {x: STARTING_POINT_X, y: STARTING_POINT_Y}
-});
+/* Map Sources */
+/*
+The map files should be stored in the /Maps folder.
+The data file should be named NAME_map, where NAME is the string put as an entry of the 'maps' const of this file.
+The data file should follow this struct:
+cons NAME_map = {
+	starting_point_x,
+	starting_point_y,
+	width,
+	height,
+	base: new Sprite({
+		imageSrc: "./Assets/Maps/NAME_base.png",
+		position: {x, y}
+	}),
+	upper: new Sprite({
+		imageSrc: "./Assets/Maps/NAME_upper.png",
+		position: {x, y}
+	}),
+	bgm,
+	collisions: [...]
+} 
 
-const mapForeground = new Sprite({
-	imageSrc: "./Assets/Maps/Map_upper.png",
-	position: {x: STARTING_POINT_X, y: STARTING_POINT_Y}
-});
-/* */
+*/
+const maps = ['forest'];
 
-/* Render Player*/
-const playerImageDown = new Image();
-playerImageDown.src = "./Assets/Player/playerDown.png";
-
-const playerImageUp = new Image();
-playerImageUp.src = "./Assets/Player/playerUp.png";
-
-const playerImageLeft = new Image();
-playerImageLeft.src = "./Assets/Player/playerLeft.png";
-
-const playerImageRight = new Image();
-playerImageRight.src = "./Assets/Player/playerRight.png";
-
-const playerSprite = new Sprite({
-	imageSrc: playerImageDown.src,
-	frames: {
-		max:4, 
-		frameSpeed: PLAYER_FRAME_SPEED_IDLE
-	},
-	position: {
-		x: canvas.width/2, 
-		y:canvas.height/2
-	},
-	spriteImgs:{
-		down: playerImageDown,
-		up: playerImageUp,
-		left:playerImageLeft,
-		right: playerImageRight
-	}
-});
-/* */
-
-/* Collisions */
-const collisionMap = [];
-for (let i = 0; i <= (collisions.length - TILE_MAP_WIDTH); i += TILE_MAP_WIDTH){
-	collisionMap.push(collisions.slice(i, i+TILE_MAP_WIDTH));
+/* Change Map */
+function changeMap(mapId, mapRepositioning){
+	const scriptSrc = "./Data/Maps/" + maps[mapId] +'_map.js';
+	loadScript(scriptSrc, () => {
+		currentMap = eval(maps[mapId] + "_map");
+		createCollisions(currentMap);
+		
+		//Fill object arrays
+		moveWithMapObjs.push(currentMap.base, currentMap.upper, ...collisionBlocks);
+		drawObjs.push(currentMap.base, playerSprite, currentMap.upper);
+		
+		//If the mapRepositioning info were passed:
+		if(mapRepositioning){
+			moveWithMapObjs.forEach(mov => {
+				mov.position.x += mapMovedPos.x;
+				mov.position.y += mapMovedPos.y;
+			});
+		}
+		
+		//Update current map id:
+		currMapId = mapId;
+		
+		//Play bgm
+		const bgm = currentMap.bgm;
+		eval('audio.' + bgm + '.play();');
+	});
 }
 
-collisionMap.forEach((row, i) => {
+/* Create collision for the new map*/
+function createCollisions(map){
+	//Clean collisionBlocks
+	collisionBlocks.length = 0;
+	
+	const collisionMap = [];
+	for (let i = 0; i <= (map.collisions.length - map.width); i += map.width){
+		collisionMap.push(map.collisions.slice(i, i+map.width));
+	}
+	
+	collisionMap.forEach((row, i) => {
 	row.forEach((symbol, j) => {
 		if(symbol != 0)
 			collisionBlocks.push(
 				new Collision({
-					position:{x: j*TILE_WIDTH + STARTING_POINT_X, y:i*TILE_HEIGHT + STARTING_POINT_Y}, 
+					position:{x: j*TILE_WIDTH + map.starting_point_x, y:i*TILE_HEIGHT + map.starting_point_y}, 
 					width: TILE_WIDTH, 
 					height: TILE_HEIGHT})
 		);
 	})
+	
 });
-
-/* */
+}
 
 /* Function Movements */
 function movePos(){
