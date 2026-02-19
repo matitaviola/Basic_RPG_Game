@@ -1,6 +1,6 @@
 /* Used sprites*/
 const atkSpriteInfo_Fireball ={
-	imageSrc: "./Assets/Battle/Sprites/Attacks/fireball.png",
+	imageSrc: "./Assets/Battle/Attacks/fireball.png",
 	frames: {max:4, frameSpeed:10},
 	position: {x: 0, y:0},
 	animate: true,

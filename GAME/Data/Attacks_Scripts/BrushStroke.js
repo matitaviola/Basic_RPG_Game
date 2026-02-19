@@ -1,6 +1,6 @@
 /* Used sprites*/
 const atkSpriteInfo_Brush ={
-	imageSrc: "./Assets/Battle/Sprites/Attacks/brush.png",
+	imageSrc: "./Assets/Battle/Attacks/brush.png",
 	frames: {max:4, frameSpeed:15},
 	position: {x: 0, y:0},
 	animate: true,

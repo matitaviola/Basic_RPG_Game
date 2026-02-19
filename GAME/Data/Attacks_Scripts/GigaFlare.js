@@ -1,6 +1,6 @@
 /* Used sprites*/
 const atkSpriteInfo_GigaFlare ={
-	imageSrc: "./Assets/Battle/Sprites/Attacks/gigaflare.png",
+	imageSrc: "./Assets/Battle/Attacks/gigaflare.png",
 	frames: {max:4, frameSpeed:10},
 	position: {x: 0, y:0},
 	animate: true,

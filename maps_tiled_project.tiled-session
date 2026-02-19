@@ -1,0 +1,90 @@
+{
+    "Map/SizeTest": {
+        "height": 4300,
+        "width": 2
+    },
+    "activeFile": "multmap_test_Forest.tmx",
+    "expandedProjectPaths": [
+        "."
+    ],
+    "exportAsImage.drawTileGrid": false,
+    "exportAsImage.includeBackgroundColor": false,
+    "exportAsImage.useCurrentScale": true,
+    "exportAsImage.visibleLayersOnly": true,
+    "file.lastUsedOpenFilter": "Tiled tileset files (*.tsx *.xml)",
+    "fileStates": {
+        "Magicscarf2.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "Magiscarf.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "Magiscarf_2.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "multmap_test_Forest.tmx": {
+            "scale": 1.080625,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 319.7223828802776,
+                "y": 320.18507807981496
+            }
+        },
+        "multmap_test_coast.tmj": {
+            "scale": 1.5,
+            "selectedLayer": 6,
+            "viewCenter": {
+                "x": 226.33333333333331,
+                "y": 192.66666666666669
+            }
+        },
+        "multmap_test_coast.tmx": {
+            "scale": 1.3834374999999999,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 240.343347639485,
+                "y": 239.98192907160606
+            }
+        }
+    },
+    "frame.defaultDuration": 100,
+    "last.imagePath": "C:/Users/megam/Documents/Game_RPG_JS",
+    "map.fixedSize": true,
+    "map.height": 30,
+    "map.lastUsedFormat": "json",
+    "map.orientation": 1,
+    "map.tileHeight": 16,
+    "map.tileWidth": 16,
+    "map.width": 48,
+    "openFiles": [
+        "multmap_test_coast.tmj",
+        "Magiscarf_2.tsx",
+        "multmap_test_Forest.tmx",
+        "Magiscarf.tsx",
+        "multmap_test_coast.tmx"
+    ],
+    "project": "maps_tiled_project.tiled-project",
+    "recentFiles": [
+        "multmap_test_coast.tmj",
+        "Magiscarf_2.tsx",
+        "multmap_test_coast.tmx",
+        "Magiscarf.tsx",
+        "multmap_test_Forest.tmx",
+        "Magicscarf2.tsx"
+    ],
+    "tileset.embedInMap": false,
+    "tileset.lastUsedFilter": "Tiled tileset files (*.tsx *.xml)",
+    "tileset.lastUsedFormat": "tsx",
+    "tileset.margin": 0,
+    "tileset.spacing": 0,
+    "tileset.tileSize": {
+        "height": 8,
+        "width": 8
+    },
+    "tileset.transparentColor": "#000000",
+    "tileset.type": 0,
+    "tileset.useTransparentColor": true
+}

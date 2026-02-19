@@ -10,7 +10,7 @@ cons NAME_map = {
 	height,
 	base: new Sprite({
 		imageSrc: "./Assets/Maps/NAME_base.png",
-		position: {x, y}
+		position: {x, y} //x and y must equal the position (respectively times -1*TILE_WIDTH -1*TILE_HEIGHT) of the first tile (upper-left) that has to show up on screen, not the desired player position
 	}),
 	upper: new Sprite({
 		imageSrc: "./Assets/Maps/NAME_upper.png",
@@ -21,7 +21,7 @@ cons NAME_map = {
 } 
 
 */
-const maps = ['forest'];
+const maps = ['forest', 'coast'];
 
 /* Change Map */
 function changeMap(mapId, mapRepositioning){

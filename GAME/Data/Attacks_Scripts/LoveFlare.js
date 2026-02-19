@@ -1,13 +1,13 @@
 /* Used sprites*/
 const atkSpriteInfo_LoveFlare ={
-	imageSrc: "./Assets/Battle/Sprites/Attacks/loveflare.png",
+	imageSrc: "./Assets/Battle/Attacks/loveflare.png",
 	frames: {max:4, frameSpeed:10},
 	position: {x: 0, y:0},
 	animate: true,
 	rotation:1
 };
 const atkSpriteInfo_Ashened ={
-	imageSrc: "./Assets/Battle/Sprites/Attacks/ashened.png",
+	imageSrc: "./Assets/Battle/Attacks/ashened.png",
 	frames: {max:6, frameSpeed:10},
 	position: {x: 0, y:0},
 	animate: true,

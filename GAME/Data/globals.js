@@ -17,8 +17,6 @@ canvas.width = 1024;
 canvas.height = 576;
 
 //Map sizes
-const TILE_MAP_WIDTH = 85; //Number of tile block of the map on Tiled.
-const TILE_MAP_HEIGHT = 85;
 const TILE_WIDTH = 16*4; //Tile size pixel * zoom% -> a.k.a the map picture shuold be exported with 400% zoom
 const TILE_HEIGHT = 16*4;
 const BATTLE_TRIGGER_AREA = 100; // Size of overlapping area on grass to trigger battle [pixels^2]
