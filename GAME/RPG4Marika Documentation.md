@@ -1,7 +1,5 @@
 # RPG4Marika Documentation
 
-
-
 ---
 
 ## Project Structure
@@ -52,86 +50,70 @@ The **Player** flder contains the spritesheets for the overwolrd character, incl
 Contains the core modules of the game. Each subfolder contains the various scripts and definitions for the attack animations and effects (**Attacks_Scripts**), the map (including the map's collisions, **Maps**) and the dialogs/events triggered by the NPCs (**NPC_Scripts**).
 
 ---
-//TODO: da qui in giù è da rivedere
+
 ## Core Modules
 
 ### `globals.js`
-
-Defines constants, enums (`G_S` game states), canvas setup, and global variables.  
-Handles game state, input keys, audio volume, animation IDs, entities arrays (e.g. `characters`, `enemies`, `atkSpritesToRender`).
+Defines enums, constants, and global variables.
+- Enums: currently the only one is the 'G_S' containing the possible gamestates
+- Constants: canvas infos, map sizes/positions/movements, player and follower sprites in overworld, battle position/speed, text speed
+- Variables: gamestate, keys, audioevnt, scene animation ids, map objects and curent movement, audio, battle objects and flags, attack queue, dialog queue and flags, characters list.
+Among the variables there are those that handles the entities (e.g. `characters`, `enemies`, `atkSpritesToRender`).
 
 ### `classes.js`
-
 Implements all main classes:
-
-- [`Sprite`](Data/classes.js) – base renderable object.
-- [`Follower`](Data/classes.js) – extends `Sprite`, follows another sprite.
-- [`Collision`](Data/classes.js) – tile collision block.
-- [`Battler`](Data/classes.js) – battle participant with HP and actions.
-- [`Attack`](Data/classes.js) – defines attack metadata and callbacks.
-- [`Character`](Data/classes.js) – NPC/PC entity on the map with interaction logic.
+- [`Sprite`] base renderable object.
+- [`Follower`] extends `Sprite`, to follows another sprite.
+- [`Collision`] collidable object.
+- [`Battler`] battle participant with HP and attack list.
+- [`Attack`] defines attack metadata and callbacks (for the animation).
+- [`Character`] NPC/PC entity on the map with interaction logic.
 
 ### `audio.js`
-
-Initialises Howler audio objects for BGM, SFX, music controls (`setMusicVolume`, `setSFXVolume`), separates arrays for settings.
+Initialises Howler audio objects (defined in 'audio') for background music and sound effects. The two arrays are kept separated for settings.
 
 ### `dialog.js`
-
-Dialog system with `showDialog`, `advanceDialog`, typewriter effect and click listeners on `#diagBox`.
+Refer to [dialog.js docs](./Docs/doc_attacks.md)
 
 ### `map.js`
-
-Responsible for overworld logic:
-
-- Map definitions (`maps` constant, each imported from `Data/Maps`)
-- `changeMap` to switch zones
-- `createCollisions` to generate collisions from numeric arrays
-- Movement (`movePos`), main animation loop (`animateMain`)
-- Special scenes (`goodEndingScene`)
+Refer to [map.js docs](./Docs/doc_map.md)
 
 ### `playerSprite.js` & `followers.js`
-
 Defines `playerSprite` and two followers (`Sally` and `Nala`) with sprites, animations, and follow behaviour.
 
 ### `attacks.js`
-
-Utility functions (`directDamageMove`, `healMove`) plus dynamic loading of attack scripts and registration (`attacksLoaded`).
+Refer to [attacks.js docs](./Docs/doc_attacks.md)
 
 ### `enemies.js`
-
-Contains enemy definitions used during battles.
+Refer to [enemies.js docs](./Docs/doc_enemies.md)
 
 ### `battle.js`
-
-Complete battle system:
-
-- Player battler (`pgBattler`) and background
-- UI helpers (`disableButtons`, `enableButtons`, etc.)
-- Queue management (`queueNextAction`)
-- `initBattle`, `animateBattle`, `exitBattle` with GSAP timelines and audio control.
+Refer to [battle.js docs](./Docs/doc_battle.md)
 
 ### `characters.js`
-
-Loads NPC scripts sequentially, registers characters for the overworld, and inserts them into `drawObjs`/`moveWithMapObjs`.
+Loads overworld NPC scripts sequentially, registers characters for the overworld, and inserts them into `drawObjs`/`moveWithMapObjs`.
+Any new character's script path must be inserted in the sourcesNPC object.
+```js
+const sourcesNPC = [
+	...,
+	"./Data/NPC_Scripts/NPCName.js"
+];
+```
 
 ### `menu.js`
-
-Main menu logic, options info (controls, settings, etc.), save/load implementation using File API or fallback, `resetMenu`.
+Refer to [menu.js docs](./Docs/doc_menu.md)
 
 ### `intro.js`
-
-Intro screen, start game, load save state, set initial game state.
+Intro screen with options start game/load save state to set the initial game state.
 
 ### `saves.js`
-
-Save structure and functions to store/load JSON files, `loadSaveData` to restore state.
+Refer to [saves.js docs](./Docs/doc_saves.md)
 
 ### `scriptLoader.js`
-
-Utility to dynamically inject `<script>` tags in order; used by `attacks.js` and `characters.js`.
+Refer to [scriptLoader.js docs](./Docs/doc_scriptLoader.md).
 
 --- 
-
+//TODO: da qua in giù da rivedere
 ## Maps
 
 - **Maps** (`Data/Maps/*_map.js`): define tile collisions, background/upper layers, starting positions and BGM.

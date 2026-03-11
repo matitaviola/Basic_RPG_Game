@@ -1,4 +1,4 @@
-/* Sprites */
+dable entity/* Sprites */
 class Sprite {
 	static position;
 	
