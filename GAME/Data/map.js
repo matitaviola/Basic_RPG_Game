@@ -1,213 +1,190 @@
-/* Render map */
-const mapBackground = new Sprite({
-	imageSrc: "./Assets/Maps/Map_base.png",
-	position: {x: STARTING_POINT_X, y: STARTING_POINT_Y}
-});
+/* Map Sources */
+/*
+The map files should be stored in the /Maps folder.
+The data file should be named NAME_map, where NAME is the string put as an entry of the 'maps' const of this file.
+The data file should follow this struct:
+cons NAME_map = {
+	starting_point_x,
+	starting_point_y,
+	width,
+	height,
+	base: new Sprite({
+		imageSrc: "./Assets/Maps/NAME_base.png",
+		position: {x, y} //x and y must equal the position (respectively times -1*TILE_WIDTH -1*TILE_HEIGHT) of the first tile (upper-left) that has to show up on screen, not the desired player position
+	}),
+	upper: new Sprite({
+		imageSrc: "./Assets/Maps/NAME_upper.png",
+		position: {x, y}
+	}),
+	bgm,
+	collisions: [...]
+} 
 
-const mapForeground = new Sprite({
-	imageSrc: "./Assets/Maps/Map_upper.png",
-	position: {x: STARTING_POINT_X, y: STARTING_POINT_Y}
-});
-/* */
+*/
+const maps = ['forest', 'coast'];
 
-/* Render Player*/
-const playerImageDown = new Image();
-playerImageDown.src = "./Assets/Player/playerDown.png";
-
-const playerImageUp = new Image();
-playerImageUp.src = "./Assets/Player/playerUp.png";
-
-const playerImageLeft = new Image();
-playerImageLeft.src = "./Assets/Player/playerLeft.png";
-
-const playerImageRight = new Image();
-playerImageRight.src = "./Assets/Player/playerRight.png";
-
-const playerSprite = new Sprite({
-	imageSrc: playerImageDown.src,
-	frames: {
-		max:4, 
-		frameSpeed: PLAYER_FRAME_SPEED_IDLE
-	},
-	position: {
-		x: canvas.width/2, 
-		y:canvas.height/2
-	},
-	spriteImgs:{
-		down: playerImageDown,
-		up: playerImageUp,
-		left:playerImageLeft,
-		right: playerImageRight
-	}
-});
-/* */
-
-/* Collisions */
-const collisionMap = [];
-for (let i = 0; i <= (collisions.length - TILE_MAP_WIDTH); i += TILE_MAP_WIDTH){
-	collisionMap.push(collisions.slice(i, i+TILE_MAP_WIDTH));
+/* Change Map */
+function changeMap(mapId, mapRepositioning){
+	const scriptSrc = "./Data/Maps/" + maps[mapId] +'_map.js';
+	loadScript(scriptSrc, () => {
+		currentMap = eval(maps[mapId] + "_map");
+		createCollisions(currentMap);
+		
+		//Fill object arrays
+		moveWithMapObjs.push(currentMap.base, currentMap.upper, ...collisionBlocks);
+		drawObjs.push(currentMap.base, playerSprite, currentMap.upper);
+		
+		//If the mapRepositioning info were passed:
+		if(mapRepositioning){
+			moveWithMapObjs.forEach(mov => {
+				mov.position.x += mapMovedPos.x;
+				mov.position.y += mapMovedPos.y;
+			});
+		}
+		
+		//Update current map id:
+		currMapId = mapId;
+		
+		//Play bgm
+		const bgm = currentMap.bgm;
+		eval('audio.' + bgm + '.play();');
+	});
 }
 
-collisionMap.forEach((row, i) => {
+/* Create collision for the new map*/
+function createCollisions(map){
+	//Clean collisionBlocks
+	collisionBlocks.length = 0;
+	
+	const collisionMap = [];
+	for (let i = 0; i <= (map.collisions.length - map.width); i += map.width){
+		collisionMap.push(map.collisions.slice(i, i+map.width));
+	}
+	
+	collisionMap.forEach((row, i) => {
 	row.forEach((symbol, j) => {
 		if(symbol != 0)
 			collisionBlocks.push(
 				new Collision({
-					position:{x: j*TILE_WIDTH + STARTING_POINT_X, y:i*TILE_HEIGHT + STARTING_POINT_Y}, 
+					position:{x: j*TILE_WIDTH + map.starting_point_x, y:i*TILE_HEIGHT + map.starting_point_y}, 
 					width: TILE_WIDTH, 
 					height: TILE_HEIGHT})
 		);
 	})
+	
 });
+}
 
-/* */
-
-/* Main Scene Animation function */
-moveWithMapObjs.push(mapBackground, mapForeground, ...collisionBlocks, ...characters );
-drawObjs.push(mapBackground, ...characters, playerSprite, mapForeground);
-
-function animateMain(){
-	mapAnimationId = window.requestAnimationFrame(animateMain); //Recursive calling, to keep moving
-	
-	//Draw everything	
-	drawObjs.forEach((drawObj) => {
-		drawObj.draw(context);
-	});
-	
-	let playerSpriteTolerance = {u:playerSprite.height*2/3, d:0, l:PLAYER_PIXEL_TOL_X, r:PLAYER_PIXEL_TOL_X}; //Put it here to allow computations after image load
-	
-	//Exit if here but we're in battle or dialog
-	if(gamestate == G_S.BATTLE) 
-		return;
-	
-	if(gamestate == G_S.END)
-		goodEndingScene();
+/* Function Movements */
+function movePos(){
 	
 	let moveEn = true; 
-	playerSprite.animate = false;
-	Sally.animate = false;
-	Nala.animate = false;
+	let playerSpriteTolerance = {u:playerSprite.height*2/3, d:0, l:PLAYER_PIXEL_TOL_X, r:PLAYER_PIXEL_TOL_X}; //Put it here to allow computations after image load
 	
-	//Check for 'enter' for menu
-	if(gamestate == G_S.DIALOG){
-		if (keys.space.pressed) {
-			//If we're already speaking.
-			if (diagBox.classList.contains('visible')) {
-				advanceDialog();
-				//'Consume' the key, for debouncing
-				keys.space.pressed = false;
-				return;
+	//Next position
+	if(keys.w.pressed && (lastKey == 'w' || lastKey == 'ArrowUp')){
+		
+		for(let i = 0; i < collisionBlocks.length; i++){
+			const coll = collisionBlocks[i];
+			if(coll.checkCollision(playerSprite,{x: 0, y: MOVEMENT_PIXELS}, playerSpriteTolerance)){
+				moveEn = false;
+				break;
 			}
 		}
+		
+		if (moveEn) {
+			moveWithMapObjs.forEach(mov => {
+				mov.position.y += MOVEMENT_PIXELS;
+			});
+			Sally.updateFollower('up', playerSprite);
+			Nala.updateFollower('up', Sally);
+		}
+
+		//Update player sprite and direction 
+		playerSprite.animate = true;
+		playerSprite.image = playerSprite.spriteImgs.up;
+		playerDirection = 'up';
+		
+		//Update global reposition to store in memory and reload
+		mapMovedPos.y += MOVEMENT_PIXELS;
+
 	}
-	else if(gamestate == G_S.MAP){
-		//Next position
-		if(keys.w.pressed && (lastKey == 'w' || lastKey == 'ArrowUp')){
-			
-			for(let i = 0; i < collisionBlocks.length; i++){
-				const coll = collisionBlocks[i];
-				if(coll.checkCollision(playerSprite,{x: 0, y: MOVEMENT_PIXELS}, playerSpriteTolerance)){
-					moveEn = false;
-					break;
-				}
-			}
-			
-			if (moveEn) {
-				moveWithMapObjs.forEach(mov => {
-					mov.position.y += MOVEMENT_PIXELS;
-				});
-				Sally.updateFollower('up', playerSprite);
-				Nala.updateFollower('up', Sally);
-			}
-
-			//Update player sprite and direction 
-			playerSprite.animate = true;
-			playerSprite.image = playerSprite.spriteImgs.up;
-			playerDirection = 'up';
-
-		}
-		else if(keys.a.pressed && (lastKey == 'a' || lastKey == 'ArrowLeft')){
-			
-			for(let i = 0; i < collisionBlocks.length; i++){
-				const coll = collisionBlocks[i];
-				if(coll.checkCollision(playerSprite,{x: MOVEMENT_PIXELS, y: 0}, playerSpriteTolerance)){
-					moveEn = false;
-					break;
-				}
-			}
-			
-			if (moveEn) {
-				moveWithMapObjs.forEach(mov => {
-					mov.position.x += MOVEMENT_PIXELS;
-				});
-				Sally.updateFollower('left', playerSprite);
-				Nala.updateFollower('left', Sally);
-			}
-
-			playerSprite.animate = true;
-			playerSprite.image = playerSprite.spriteImgs.left;
-			playerDirection = 'left';
-
-		}
-		else if(keys.s.pressed && (lastKey == 's' || lastKey == 'ArrowDown')){
-			
-			for(let i = 0; i < collisionBlocks.length; i++){
-				const coll = collisionBlocks[i];
-				if(coll.checkCollision(playerSprite,{x: 0, y: -MOVEMENT_PIXELS}, playerSpriteTolerance)){
-					moveEn = false;
-					break;
-				}
-			}
-			
-			if (moveEn) {
-				moveWithMapObjs.forEach(mov => {
-					mov.position.y -= MOVEMENT_PIXELS;
-				});
-				Sally.updateFollower('down', playerSprite);
-				Nala.updateFollower('down', Sally);
-			}
-			  
-			playerSprite.animate = true;
-			playerSprite.image = playerSprite.spriteImgs.down;
-			playerDirection = 'down';
-
-		}
-		else if(keys.d.pressed && (lastKey == 'd' || lastKey == 'ArrowRight')){
-			
-			for(let i = 0; i < collisionBlocks.length; i++){
-				const coll = collisionBlocks[i];
-				if(coll.checkCollision(playerSprite,{x: -MOVEMENT_PIXELS, y: 0}, playerSpriteTolerance)){
-					moveEn = false;
-					break;
-				}
-			}
-			
-			if (moveEn) {
-				moveWithMapObjs.forEach(mov => {
-					mov.position.x -= MOVEMENT_PIXELS;
-				});
-				Sally.updateFollower('right', playerSprite);
-				Nala.updateFollower('right', Sally);
-			}
-			  
-			playerSprite.animate = true;
-			playerSprite.image = playerSprite.spriteImgs.right;
-			playerDirection = 'right';
-		}
-		else if (keys.space.pressed) {
-			//Interact with characters
-			for (let i = 0; i < characters.length; i++) {
-				const npc = characters[i];
-				if (npc.canInteract(playerSprite)) {
-					npc.interact();
-
-					//'Consume' the key, for debouncing
-					keys.space.pressed = false;
-					break;
-				}
+	else if(keys.a.pressed && (lastKey == 'a' || lastKey == 'ArrowLeft')){
+		
+		for(let i = 0; i < collisionBlocks.length; i++){
+			const coll = collisionBlocks[i];
+			if(coll.checkCollision(playerSprite,{x: MOVEMENT_PIXELS, y: 0}, playerSpriteTolerance)){
+				moveEn = false;
+				break;
 			}
 		}
+		
+		if (moveEn) {
+			moveWithMapObjs.forEach(mov => {
+				mov.position.x += MOVEMENT_PIXELS;
+			});
+			Sally.updateFollower('left', playerSprite);
+			Nala.updateFollower('left', Sally);
+		}
 
+		playerSprite.animate = true;
+		playerSprite.image = playerSprite.spriteImgs.left;
+		playerDirection = 'left';
+		
+		//Update global reposition to store in memory and reload
+		mapMovedPos.x += MOVEMENT_PIXELS;
+
+	}
+	else if(keys.s.pressed && (lastKey == 's' || lastKey == 'ArrowDown')){
+		
+		for(let i = 0; i < collisionBlocks.length; i++){
+			const coll = collisionBlocks[i];
+			if(coll.checkCollision(playerSprite,{x: 0, y: -MOVEMENT_PIXELS}, playerSpriteTolerance)){
+				moveEn = false;
+				break;
+			}
+		}
+		
+		if (moveEn) {
+			moveWithMapObjs.forEach(mov => {
+				mov.position.y -= MOVEMENT_PIXELS;
+			});
+			Sally.updateFollower('down', playerSprite);
+			Nala.updateFollower('down', Sally);
+		}
+		  
+		playerSprite.animate = true;
+		playerSprite.image = playerSprite.spriteImgs.down;
+		playerDirection = 'down';
+		
+		//Update global reposition to store in memory and reload
+		mapMovedPos.y -= MOVEMENT_PIXELS;
+
+	}
+	else if(keys.d.pressed && (lastKey == 'd' || lastKey == 'ArrowRight')){
+		
+		for(let i = 0; i < collisionBlocks.length; i++){
+			const coll = collisionBlocks[i];
+			if(coll.checkCollision(playerSprite,{x: -MOVEMENT_PIXELS, y: 0}, playerSpriteTolerance)){
+				moveEn = false;
+				break;
+			}
+		}
+		
+		if (moveEn) {
+			moveWithMapObjs.forEach(mov => {
+				mov.position.x -= MOVEMENT_PIXELS;
+			});
+			Sally.updateFollower('right', playerSprite);
+			Nala.updateFollower('right', Sally);
+		}
+		  
+		playerSprite.animate = true;
+		playerSprite.image = playerSprite.spriteImgs.right;
+		playerDirection = 'right';
+		
+		//Update global reposition to store in memory and reload
+		mapMovedPos.x -= MOVEMENT_PIXELS;
 	}
 }
 
@@ -248,4 +225,56 @@ function goodEndingScene(){
 			duration: 2.5,
 		}, "<");
 	});			
+}
+
+/* Main Scene Animation function */
+function animateMain(){
+	mapAnimationId = window.requestAnimationFrame(animateMain); //Recursive calling, to keep moving
+	
+	//Draw everything	
+	drawObjs.forEach((drawObj) => {
+		drawObj.draw(context);
+	});
+	
+	//Exit if here but we're in battle or dialog
+	if(gamestate == G_S.BATTLE) 
+		return;
+	
+	if(gamestate == G_S.END)
+		goodEndingScene();
+	
+	playerSprite.animate = false;
+	Sally.animate = false;
+	Nala.animate = false;
+	
+	//Check for 'enter' for menu
+	if(gamestate == G_S.DIALOG){
+		if (keys.space.pressed) {
+			//If we're already speaking.
+			if (diagBox.classList.contains('visible')) {
+				advanceDialog();
+				//'Consume' the key, for debouncing
+				keys.space.pressed = false;
+				return;
+			}
+		}
+	}
+	else if(gamestate == G_S.MAP){
+		if (keys.space.pressed) {
+			//Interact with characters
+			for (let i = 0; i < characters.length; i++) {
+				const npc = characters[i];
+				if (npc.canInteract(playerSprite)) {
+					npc.interact();
+
+					//'Consume' the key, for debouncing
+					keys.space.pressed = false;
+					break;
+				}
+			}
+		}
+		else {
+			movePos();
+		}
+	}
 }

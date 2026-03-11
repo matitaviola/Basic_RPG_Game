@@ -17,9 +17,7 @@ canvas.width = 1024;
 canvas.height = 576;
 
 //Map sizes
-const TILE_MAP_WIDTH = 85; //Number of tile block of the map on Tiled
-const TILE_MAP_HEIGHT = 85;
-const TILE_WIDTH = 16*4; //Tile size pixel * zoom%
+const TILE_WIDTH = 16*4; //Tile size pixel * zoom% -> a.k.a the map picture shuold be exported with 400% zoom
 const TILE_HEIGHT = 16*4;
 const BATTLE_TRIGGER_AREA = 100; // Size of overlapping area on grass to trigger battle [pixels^2]
 
@@ -78,17 +76,26 @@ let introAnimationId;
 /* */
 
 /* Map variables */
+let currentMap;
+let currMapId;
 let mapAnimationId;
 let moveWithMapObjs = [];
 let collisionBlocks = [];
 let drawObjs = [];
 let playerDirection = 'down';
+let mapMovedPos = {x:0, y:0};
 /* */
 
 /* Battle variables */
 let battleAnimationId;
-const enemies = [];
+let enemies = [];
 let battleDragon = false; //Mark the final battle
+/* */
+
+/* Attacks */
+let attacks = {};
+let actionsQueue = [];
+let atkSpritesToRender = [];
 /* */
 
 /* Dialog */
@@ -96,4 +103,8 @@ let dialogQueue = [];
 let currentText = '';
 let charIndex = 0;
 let isTyping = false;
+/* */
+
+/* Characters */
+let characters = [];
 /* */

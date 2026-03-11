@@ -14,7 +14,14 @@ const optionsInfo = [
 	</div>
 	`, /*Settings*/
 	'<p>Creato con amore per il primo anniversario di Marika e Mattia</p><span>♥️</span>', /*Info*/
-	'<p>Concept, Story, Mapping, Implementation: <i>Matitaviola</i></p><p>Tileset: <i>Magiscarf</i></p><p>Overworld sprite base: <i>The Pokemon Company</i></p>' /*Credits*/
+	'<p>Concept, Story, Mapping, Implementation: <i>Matitaviola</i></p><p>Tileset: <i>Magiscarf</i></p><p>Overworld sprite base: <i>The Pokemon Company</i></p>', /*Credits*/
+	`
+	<div>
+		Save the game data in a downloaded file!
+		<p>
+		<button id="saveStateBtn">Save State</button>
+	</div>
+	`/* Saves */
 ]; 
 
 function resetMenu(){
@@ -46,5 +53,49 @@ document.getElementById('menuExit').addEventListener('click', () => {
 document.getElementById('menuBack').addEventListener('click', () => {
 	resetMenu();
 });
+
+document.getElementById("optionInfo").addEventListener("click", async (e) => {
+  if (e.target.id !== "saveStateBtn") return;
+
+  const json = JSON.stringify(storeSaveData(), null, 2);
+  const today = new Date().toISOString().slice(0, 10);
+  const defaultName = `MarikaSaveFile_${today}.json`;
+
+ //Allow for savefile naming
+  if ("showSaveFilePicker" in window) {
+    try {
+      const handle = await window.showSaveFilePicker({
+        suggestedName: defaultName,
+        types: [
+          {
+            description: "JSON Files",
+            accept: { "application/json": [".json"] }
+          }
+        ]
+      });
+
+      const writable = await handle.createWritable();
+      await writable.write(json);
+      await writable.close();
+    } catch (err) {
+      console.log("Save canceled");
+    }
+  } 
+  else {  //Fallback for unsupported browsers (Firefox)
+    const blob = new Blob([json], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = defaultName;
+    a.click();
+
+    URL.revokeObjectURL(url);
+  }
+  
+  resetMenu();
+  
+});
+
 
 
