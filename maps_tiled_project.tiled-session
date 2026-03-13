@@ -27,9 +27,9 @@
         },
         "multmap_test_Forest.tmx": {
             "scale": 1.080625,
-            "selectedLayer": 0,
+            "selectedLayer": 10,
             "viewCenter": {
-                "x": 319.7223828802776,
+                "x": 293.81145170618856,
                 "y": 320.18507807981496
             }
         },
@@ -45,22 +45,23 @@
             "scale": 1.3834374999999999,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 240.343347639485,
+                "x": 243.23469618251636,
                 "y": 239.98192907160606
             }
         }
     },
     "frame.defaultDuration": 100,
+    "last.exportedFilePath": "C:/Users/megam/Documents/Game_RPG_JS",
     "last.imagePath": "C:/Users/megam/Documents/Game_RPG_JS",
     "map.fixedSize": true,
     "map.height": 30,
+    "map.lastUsedExportFilter": "Tutti i file (*)",
     "map.lastUsedFormat": "json",
     "map.orientation": 1,
     "map.tileHeight": 16,
     "map.tileWidth": 16,
     "map.width": 48,
     "openFiles": [
-        "multmap_test_coast.tmj",
         "Magiscarf_2.tsx",
         "multmap_test_Forest.tmx",
         "Magiscarf.tsx",
@@ -68,11 +69,11 @@
     ],
     "project": "maps_tiled_project.tiled-project",
     "recentFiles": [
-        "multmap_test_coast.tmj",
         "Magiscarf_2.tsx",
         "multmap_test_coast.tmx",
         "Magiscarf.tsx",
         "multmap_test_Forest.tmx",
+        "multmap_test_coast.tmj",
         "Magicscarf2.tsx"
     ],
     "tileset.embedInMap": false,

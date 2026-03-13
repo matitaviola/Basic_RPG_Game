@@ -63,11 +63,12 @@ Among the variables there are those that handles the entities (e.g. `characters`
 ### `classes.js`
 Implements all main classes:
 - [`Sprite`] base renderable object.
-- [`Follower`] extends `Sprite`, to follows another sprite.
 - [`Collision`] collidable object.
 - [`Battler`] battle participant with HP and attack list.
 - [`Attack`] defines attack metadata and callbacks (for the animation).
-- [`Character`] NPC/PC entity on the map with interaction logic.
+- [`Follower`] extends `Sprite`, to follows another sprite.
+- [`Character`] NPC/PC entity on the map with interaction logic, extends `Sprite`
+- [`Warp`] entity to change map on contact, extends `Collision`
 
 ### `audio.js`
 Initialises Howler audio objects (defined in 'audio') for background music and sound effects. The two arrays are kept separated for settings.

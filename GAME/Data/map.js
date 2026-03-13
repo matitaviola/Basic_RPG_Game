@@ -2,10 +2,12 @@
 /*
 The map files should be stored in the /Maps folder.
 The data file should be named NAME_map, where NAME is the string put as an entry of the 'maps' const of this file.
+The pre-warp function must return a gsap timeline.
+The warp's dest-rep are the (col, row) coordinates of TILED's "landing" tile, multiplied by -TILE_WIDTH/HEIGHT
 The data file should follow this struct:
 cons NAME_map = {
-	starting_point_x,
-	starting_point_y,
+	starting_point_x, //default starting point x
+	starting_point_y, //default starting point y
 	width,
 	height,
 	base: new Sprite({
@@ -17,38 +19,94 @@ cons NAME_map = {
 		position: {x, y}
 	}),
 	bgm,
-	collisions: [...]
+	collisions: [...],
+	warps:[
+			//{position:, width:, height:, destMapid:, destRepos:, preWarpCbk:function(){...}, postWarpCbk:function(){...}}
+			...
+		]
 } 
-
 */
-const maps = ['forest', 'coast'];
 
 /* Change Map */
-function changeMap(mapId, mapRepositioning){
-	const scriptSrc = "./Data/Maps/" + maps[mapId] +'_map.js';
+function changeMap(mapId, mapRepositioning, loadedCbk){
+	
+	let loadedMap = loadedMaps.get(mapId);
+	
+	if(loadedMap != null){
+		currentMap = loadedMap;
+		freshMap(mapId, mapRepositioning);
+		
+		if(loadedCbk != null)
+			loadedCbk();
+	}
+	else{
+		const scriptSrc = "./Data/Maps/" + mapId +'_map.js';
+		loadScript(scriptSrc, () => {
+			currentMap = eval(mapId + "_map");
+			loadedMaps.set(mapId, currentMap);
+			
+			freshMap(mapId, mapRepositioning);
+			
+			if(loadedCbk != null)
+				loadedCbk();
+		});
+	}
+}
+
+/* LoadFromSave*/
+function mapFromSave(mapId, deltaPos){
+	const scriptSrc = "./Data/Maps/" + mapId +'_map.js';
 	loadScript(scriptSrc, () => {
-		currentMap = eval(maps[mapId] + "_map");
-		createCollisions(currentMap);
+		currentMap = eval(mapId + "_map");
+		loadedMaps.set(mapId, currentMap);
 		
-		//Fill object arrays
-		moveWithMapObjs.push(currentMap.base, currentMap.upper, ...collisionBlocks);
-		drawObjs.push(currentMap.base, playerSprite, currentMap.upper);
-		
-		//If the mapRepositioning info were passed:
-		if(mapRepositioning){
-			moveWithMapObjs.forEach(mov => {
-				mov.position.x += mapMovedPos.x;
-				mov.position.y += mapMovedPos.y;
-			});
+		let recompPos = {
+			x: deltaPos.x + currentMap.starting_point_x,
+			y: deltaPos.y + currentMap.starting_point_y 
 		}
-		
-		//Update current map id:
-		currMapId = mapId;
-		
-		//Play bgm
-		const bgm = currentMap.bgm;
-		eval('audio.' + bgm + '.play();');
+		freshMap(mapId, recompPos);
 	});
+}
+
+/* New fresh map */
+function freshMap(mapId, mapRepositioning){
+
+	//Reset map to default positions
+	currentMap.base.position.x = currentMap.starting_point_x;
+	currentMap.base.position.y = currentMap.starting_point_y;
+	currentMap.upper.position.x = currentMap.starting_point_x;
+	currentMap.upper.position.y = currentMap.starting_point_y;
+	
+	//Load collisions and warps
+	createCollisions(currentMap);
+	loadWarps(currentMap);
+	
+	//Clean and refill object arrays
+	moveWithMapObjs.length = 0;
+	moveWithMapObjs.push(currentMap.base, currentMap.upper, ...collisionBlocks, ...warpsList);
+	drawObjs.length = 0;
+	drawObjs.push(currentMap.base, playerSprite, currentMap.upper);
+	
+	//If the mapRepositioning info were passed:
+	if(mapRepositioning){
+		const delta_x = mapRepositioning.x - currentMap.starting_point_x;
+		const delta_y = mapRepositioning.y - currentMap.starting_point_y;
+		moveWithMapObjs.forEach(mov => {
+			mov.position.x += delta_x;
+			mov.position.y += delta_y;
+		});
+		mapMovedPos = {x: delta_x, y:delta_y};
+	}
+	else{
+		mapMovedPos = {x:0, y:0};
+	}
+	
+	//Update current map id:
+	currMapId = mapId;
+	
+	//Play bgm
+	const bgm = currentMap.bgm;
+	eval('audio.' + bgm + '.play();');
 }
 
 /* Create collision for the new map*/
@@ -75,20 +133,54 @@ function createCollisions(map){
 });
 }
 
+/* Load warps for the new map*/
+function loadWarps(map){
+	//Clean warps
+	warpsList.length = 0;
+	if (map.warps?.length <=0)
+		return;
+	map.warps.forEach((w) => {
+			warpsList.push(
+				new Warp({
+					position:{x: w.position.x*TILE_WIDTH + map.starting_point_x, y:w.position.y*TILE_HEIGHT + map.starting_point_y}, 
+					width: w.width, 
+					height: w.height,
+					destMapId: w.destMapId,
+					destRepos: w.destRepos,
+					preWarpCbk: w.preWarpCbk,
+					postWarpCbk: w.postWarpCbk
+				})
+			)
+	});
+}
+
 /* Function Movements */
 function movePos(){
 	
 	let moveEn = true; 
+	let warped = false;
 	let playerSpriteTolerance = {u:playerSprite.height*2/3, d:0, l:PLAYER_PIXEL_TOL_X, r:PLAYER_PIXEL_TOL_X}; //Put it here to allow computations after image load
 	
 	//Next position
 	if(keys.w.pressed && (lastKey == 'w' || lastKey == 'ArrowUp')){
 		
-		for(let i = 0; i < collisionBlocks.length; i++){
-			const coll = collisionBlocks[i];
-			if(coll.checkCollision(playerSprite,{x: 0, y: MOVEMENT_PIXELS}, playerSpriteTolerance)){
-				moveEn = false;
+		//First we check if we are going to warp:
+		for(let i = 0; i < warpsList.length; i++ ){
+			const w = warpsList[i];
+			if(w.checkCollision(playerSprite, {x: 0, y: MOVEMENT_PIXELS}, playerSpriteTolerance)){
+				warped = true;
+				w.warp();
 				break;
+			}
+		}
+		
+		if(!warped){
+			for(let i = 0; i < collisionBlocks.length; i++){
+				const coll = collisionBlocks[i];
+				if(coll.checkCollision(playerSprite,{x: 0, y: MOVEMENT_PIXELS}, playerSpriteTolerance)){
+					moveEn = false;
+					break;
+				}
 			}
 		}
 		
@@ -111,11 +203,23 @@ function movePos(){
 	}
 	else if(keys.a.pressed && (lastKey == 'a' || lastKey == 'ArrowLeft')){
 		
-		for(let i = 0; i < collisionBlocks.length; i++){
-			const coll = collisionBlocks[i];
-			if(coll.checkCollision(playerSprite,{x: MOVEMENT_PIXELS, y: 0}, playerSpriteTolerance)){
-				moveEn = false;
+		//First we check if we are going to warp:
+		for(let i = 0; i < warpsList.length; i++ ){
+			const w = warpsList[i];
+			if(w.checkCollision(playerSprite, {x: MOVEMENT_PIXELS, y: 0}, playerSpriteTolerance)){
+				warped = true;
+				w.warp();
 				break;
+			}
+		}
+		
+		if(!warped){
+			for(let i = 0; i < collisionBlocks.length; i++){
+				const coll = collisionBlocks[i];
+				if(coll.checkCollision(playerSprite,{x: MOVEMENT_PIXELS, y: 0}, playerSpriteTolerance)){
+					moveEn = false;
+					break;
+				}
 			}
 		}
 		
@@ -137,11 +241,23 @@ function movePos(){
 	}
 	else if(keys.s.pressed && (lastKey == 's' || lastKey == 'ArrowDown')){
 		
-		for(let i = 0; i < collisionBlocks.length; i++){
-			const coll = collisionBlocks[i];
-			if(coll.checkCollision(playerSprite,{x: 0, y: -MOVEMENT_PIXELS}, playerSpriteTolerance)){
-				moveEn = false;
+		//First we check if we are going to warp:
+		for(let i = 0; i < warpsList.length; i++ ){
+			const w = warpsList[i];
+			if(w.checkCollision(playerSprite, {x: 0, y: -MOVEMENT_PIXELS}, playerSpriteTolerance)){
+				warped = true;
+				w.warp();
 				break;
+			}
+		}
+		
+		if(!warped){
+			for(let i = 0; i < collisionBlocks.length; i++){
+				const coll = collisionBlocks[i];
+				if(coll.checkCollision(playerSprite,{x: 0, y: -MOVEMENT_PIXELS}, playerSpriteTolerance)){
+					moveEn = false;
+					break;
+				}
 			}
 		}
 		
@@ -163,11 +279,23 @@ function movePos(){
 	}
 	else if(keys.d.pressed && (lastKey == 'd' || lastKey == 'ArrowRight')){
 		
-		for(let i = 0; i < collisionBlocks.length; i++){
-			const coll = collisionBlocks[i];
-			if(coll.checkCollision(playerSprite,{x: -MOVEMENT_PIXELS, y: 0}, playerSpriteTolerance)){
-				moveEn = false;
+		//First we check if we are going to warp:
+		for(let i = 0; i < warpsList.length; i++ ){
+			const w = warpsList[i];
+			if(w.checkCollision(playerSprite, {x: -MOVEMENT_PIXELS, y: 0}, playerSpriteTolerance)){
+				warped = true;
+				w.warp();
 				break;
+			}
+		}
+		
+		if(!warped){
+			for(let i = 0; i < collisionBlocks.length; i++){
+				const coll = collisionBlocks[i];
+				if(coll.checkCollision(playerSprite,{x: -MOVEMENT_PIXELS, y: 0}, playerSpriteTolerance)){
+					moveEn = false;
+					break;
+				}
 			}
 		}
 		
@@ -186,6 +314,8 @@ function movePos(){
 		//Update global reposition to store in memory and reload
 		mapMovedPos.x -= MOVEMENT_PIXELS;
 	}
+	
+	
 }
 
 /* Good Ending Scene */
@@ -235,6 +365,16 @@ function animateMain(){
 	drawObjs.forEach((drawObj) => {
 		drawObj.draw(context);
 	});
+	
+	/* TODO: remove, only for testing purposes
+	warpsList.forEach((w) => {
+		w.drawColor(context, 'purple');
+	});
+	*/
+	collisionBlocks.forEach((w) => {
+		w.drawColor(context, 'red');
+	});
+	
 	
 	//Exit if here but we're in battle or dialog
 	if(gamestate == G_S.BATTLE) 

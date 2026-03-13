@@ -41,5 +41,19 @@ const coast_map = {
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+		warps:[
+			//{position:, width:, height:, destMapid:, destRepos:, preWarpCbk:, postWarpCbk: }
+				{position: {x:20, y:22}, width: 2*TILE_WIDTH, height: TILE_HEIGHT,
+					destMapId:"forest", destRepos:{x: -0.5*TILE_WIDTH, y: -16*TILE_HEIGHT}, 					
+					preWarpCbk: function(){
+						return gsap.to("#warp-overlap", { opacity: 1, duration: 0.35 });
+						console.log('warping from ', currMapId);
+					}, 
+					postWarpCbk: function(){
+						gsap.to("#warp-overlap", { opacity: 0, duration: 0.35 });
+						console.log('warped  to ', currMapId);
+					}
+				}
+		]
 }

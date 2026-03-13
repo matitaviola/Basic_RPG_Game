@@ -4,7 +4,7 @@ This file handles the serialization and deserialization of game data. It defines
 
 ---
 
-## 1. Save Structure (`saveStruct`)
+## Save Structure (`saveStruct`)
 
 The `saveStruct` object defines the template for the game's save data. This ensures consistency across different versions of the game.
 
@@ -19,7 +19,7 @@ The `saveStruct` object defines the template for the game's save data. This ensu
 
 ---
 
-## 2. Saving Logic
+## Saving Logic
 
 ### `storeSaveData()`
 This function captures the live game variables and packages them into the `saveStruct`.
@@ -28,7 +28,7 @@ This function captures the live game variables and packages them into the `saveS
 
 ---
 
-## 3. Loading Logic
+## Loading Logic
 
 ### `loadSaveFile(saveFile)`
 Handles the initial reading of a physical file (usually triggered by an `<input type="file">` change event).
@@ -45,6 +45,6 @@ The "inverse" of the saving process. It applies the values from the save file ba
 
 ---
 
-## 4. Integration Details
-* **Dependency**: This file relies on the `changeMap()` function and `playerSprite` object defined in `maps.js`.
+## Integration Details
+* **Dependency**: This file relies on the `mapFromSave()` function and `playerSprite` object defined in `maps.js`.
 * **Extensibility**: To add new progress tracking (e.g., items found, bosses defeated), new flags must be added to both the `saveStruct` and the `store/load` functions.

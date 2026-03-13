@@ -67,7 +67,7 @@ function loadSaveData(saveData){
 	};
 	
 	//Repositioning of the map elements
-	changeMap(saveData.mapId, saveData.mapMovedPos);
+	mapFromSave(saveData.mapId, saveData.mapMovedPos);
 	mapMovedPos = saveData.mapMovedPos;
 	
 	

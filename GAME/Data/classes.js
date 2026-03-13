@@ -1,4 +1,6 @@
-dable entity/* Sprites */
+/* Base Classes */
+
+/* Sprites */
 class Sprite {
 	static position;
 	
@@ -54,6 +56,105 @@ class Sprite {
 	}
 }
 /* */
+
+/* Collision */
+class Collision {
+	static position;
+	static width;
+	static height;
+	
+	constructor({position, width, height}) {
+		this.position = position;
+		this.width = width;
+		this.height = height;
+	}
+	
+	draw(context) {
+		context.fillStyle = 'rgba(255, 0, 0, 0)';
+		context.fillRect(this.position.x, this.position.y, this.width, this.height); 
+	}
+	
+	drawColor(context, color) {
+		context.fillStyle = color;
+		context.fillRect(this.position.x, this.position.y, this.width, this.height); 
+	}
+	
+	drawOffset(context, offset) {
+		context.fillStyle = 'rgba(255, 0, 0, 0)';
+		context.fillRect(this.position.x + offset.x, this.position.y + offset.y, this.width, this.height); 
+	}
+	
+	checkCollision(sprite, offset = {x: 0, y: 0}, tolerance = { u:0, d:0, l:0, r:0}) {
+		
+		// Block bounds
+		const bLeft = this.position.x + offset.x;
+		const bRight = bLeft + this.width;
+		const bTop = this.position.y + offset.y;
+		const bBottom = bTop + this.height;
+
+		// Sprite bounds
+		const sLeft = sprite.position.x;
+		const sRight = sLeft + sprite.width;
+		const sTop = sprite.position.y;
+		const sBottom = sTop + sprite.height;
+
+		// Horizontal overlap considering left/right tolerance
+		const xOverlap = (sRight - tolerance.l >= bLeft) && (sLeft + tolerance.r <= bRight);
+
+		// Vertical overlap with top/bottom tolerance
+		const yOverlap = (sBottom - tolerance.d >= bTop) && (sTop + tolerance.u <= bBottom);
+
+		return xOverlap && yOverlap;
+
+	}
+	
+	checkOverlapArea(sprite){
+		const width = Math.max(this.position.x, sprite.position.x) - Math.min(this.position.x, sprite.position.x);
+		const height = Math.max(this.position.y, sprite.position.y) - Math.min(this.position.y, sprite.position.y);
+		return width*height;
+	}
+	
+}
+/* */
+
+/* Battler */
+class Battler{
+	constructor({name, sprite, maxHp = 50, attackNames}){
+		this.name = name;
+		this.currHp = maxHp;
+		this.maxHp = maxHp;
+		this.attackNames = attackNames;
+		this.sprite = sprite;
+	}
+	
+	faint() {
+		document.querySelector('#diagBoxBattle').innerHTML = this.name+' is K.O.';
+		gsap.to(this.sprite.position, {
+			y: this.sprite.position.y + 20
+		});
+		gsap.to(this.sprite, {
+			opacity: 0
+		})
+	}
+}
+/* */
+
+/* Attack */
+class Attack{
+	constructor({name, type, info, isDamage = false, damage = 0, isArea = false, animationCbk = () => {}, effectCbk = () => {} }) {
+		this.name = name;
+		this.type = type;
+		this.info = info;
+		this.isDamage = isDamage;
+		this.damage = damage;
+		this.isArea = isArea;
+		this.animationCbk = animationCbk;
+		this.effectCbk = effectCbk;
+	}
+}
+/* */
+
+/*--- Extended Classes ---*/
 
 /* Follower */
 class Follower extends Sprite {
@@ -144,102 +245,6 @@ class Follower extends Sprite {
 		this.animate = true;
 	}
 
-}
-/* */
-
-/* Collision */
-class Collision {
-	static position;
-	static width;
-	static height;
-	
-	constructor({position, width, height}) {
-		this.position = position;
-		this.width = width;
-		this.height = height;
-	}
-	
-	draw(context) {
-		context.fillStyle = 'rgba(255, 0, 0, 0)';
-		context.fillRect(this.position.x, this.position.y, this.width, this.height); 
-	}
-	
-	drawColor(context, color) {
-		context.fillStyle = color;
-		context.fillRect(this.position.x, this.position.y, this.width, this.height); 
-	}
-	
-	drawOffset(context, offset) {
-		context.fillStyle = 'rgba(255, 0, 0, 0)';
-		context.fillRect(this.position.x + offset.x, this.position.y + offset.y, this.width, this.height); 
-	}
-	
-	checkCollision(sprite, offset = {x: 0, y: 0}, tolerance = { u:0, d:0, l:0, r:0}) {
-		
-		// Block bounds
-		const bLeft = this.position.x + offset.x;
-		const bRight = bLeft + this.width;
-		const bTop = this.position.y + offset.y;
-		const bBottom = bTop + this.height;
-
-		// Sprite bounds
-		const sLeft = sprite.position.x;
-		const sRight = sLeft + sprite.width;
-		const sTop = sprite.position.y;
-		const sBottom = sTop + sprite.height;
-
-		// Horizontal overlap considering left/right tolerance
-		const xOverlap = (sRight - tolerance.l >= bLeft) && (sLeft + tolerance.r <= bRight);
-
-		// Vertical overlap with top/bottom tolerance
-		const yOverlap = (sBottom - tolerance.d >= bTop) && (sTop + tolerance.u <= bBottom);
-
-		return xOverlap && yOverlap;
-
-	}
-	
-	checkOverlapArea(sprite){
-		const width = Math.max(this.position.x, sprite.position.x) - Math.min(this.position.x, sprite.position.x);
-		const height = Math.max(this.position.y, sprite.position.y) - Math.min(this.position.y, sprite.position.y);
-		return width*height;
-	}
-	
-}
-/* */
-
-/* Battler */
-class Battler{
-	constructor({name, sprite, maxHp = 50, attackNames}){
-		this.name = name;
-		this.currHp = maxHp;
-		this.maxHp = maxHp;
-		this.attackNames = attackNames;
-		this.sprite = sprite;
-	}
-	
-	faint() {
-		document.querySelector('#diagBoxBattle').innerHTML = this.name+' is K.O.';
-		gsap.to(this.sprite.position, {
-			y: this.sprite.position.y + 20
-		});
-		gsap.to(this.sprite, {
-			opacity: 0
-		})
-	}
-}
-/* */
-/* Attack */
-class Attack{
-	constructor({name, type, info, isDamage = false, damage = 0, isArea = false, animationCbk = () => {}, effectCbk = () => {} }) {
-		this.name = name;
-		this.type = type;
-		this.info = info;
-		this.isDamage = isDamage;
-		this.damage = damage;
-		this.isArea = isArea;
-		this.animationCbk = animationCbk;
-		this.effectCbk = effectCbk;
-	}
 }
 /* */
 
@@ -441,5 +446,39 @@ class Character extends Sprite {
 		console.log('goodbye');
 	}
 }
-
 /* */
+
+/* Warp */
+class Warp extends Collision {
+	//This is basically a teletrasportation object
+	static destMapId;
+	static destRepos; //how much to move the destination map w/ regards to the map's default starting points
+	static preWarpCbk; //Pre-warping callback
+	static postWarpCbk; //Post-warping callback
+	
+	constructor({position, width, height, destMapId, destRepos, preWarpCbk, postWarpCbk}) {
+		super({position, width, height});
+		this.destMapId = destMapId;
+		this.destRepos = destRepos;
+		this.preWarpCbk = preWarpCbk;
+		this.postWarpCbk = postWarpCbk;
+	}
+	
+	warp(){
+		console.log('warping to ', this.destMapId, ' with re-position ', this.destRepos);
+		//Change game state to warping
+		gamestate = G_S.WARP;
+		
+		//Stop all audio
+		Howler.stop();
+		
+		const tl = gsap.timeline({ onComplete: () => {gamestate = G_S.MAP;}});
+		tl.add(this.preWarpCbk())
+			.call(() => {
+				context.rect(0, 0, canvas.width, canvas.height);
+				context.fillStyle = 'black';
+				context.fill();
+				changeMap(this.destMapId, this.destRepos, this.postWarpCbk)
+			});
+	}
+}
