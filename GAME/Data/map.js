@@ -23,7 +23,11 @@ cons NAME_map = {
 	warps:[
 			//{position:, width:, height:, destMapid:, destRepos:, preWarpCbk:function(){...}, postWarpCbk:function(){...}}
 			...
-		]
+		],
+	connections:[
+		{dir:'sx', map:'coast', off:2} //off:2 significa che la mappa verrà diseganta 2 tiles più in alto di quella corrente, se sx/dx, 2 più verso destra se in up/dw
+		...
+	]
 } 
 */
 
@@ -34,17 +38,45 @@ function changeMap(mapId, mapRepositioning, loadedCbk){
 	
 	if(loadedMap != null){
 		currentMap = loadedMap;
+		
+		//Load neighbouring maps, but not their objects
+		if(currentMap.connections.length > 0){
+			currentMap.connections.forEach(c => {
+				if(loadedMaps.get(c.map) == null){
+					scriptSrc = "./Data/Maps/" + c.map +'_map.js';
+					loadScript(scriptSrc, () => {
+						let mapObj = eval(c.map + "_map");
+						loadedMaps.set(c.map, mapObj);
+					});
+				}
+			});
+		}
+		
+		//fresh map objects		
 		freshMap(mapId, mapRepositioning);
 		
 		if(loadedCbk != null)
 			loadedCbk();
 	}
 	else{
-		const scriptSrc = "./Data/Maps/" + mapId +'_map.js';
+		let scriptSrc = "./Data/Maps/" + mapId +'_map.js';
 		loadScript(scriptSrc, () => {
 			currentMap = eval(mapId + "_map");
 			loadedMaps.set(mapId, currentMap);
 			
+			//Load neighbouring maps, but not their objects
+			if(currentMap.connections.length > 0){
+				currentMap.connections.forEach(c => {
+					if(loadedMaps.get(c.map) == null){
+						scriptSrc = "./Data/Maps/" + c.map +'_map.js';
+						loadScript(scriptSrc, () => {
+							let mapObj = eval(c.map + "_map");
+							loadedMaps.set(c.map, mapObj);
+						});
+					}
+				});
+			}
+			//fresh map objects
 			freshMap(mapId, mapRepositioning);
 			
 			if(loadedCbk != null)
@@ -55,11 +87,26 @@ function changeMap(mapId, mapRepositioning, loadedCbk){
 
 /* LoadFromSave*/
 function mapFromSave(mapId, deltaPos){
-	const scriptSrc = "./Data/Maps/" + mapId +'_map.js';
+	let scriptSrc = "./Data/Maps/" + mapId +'_map.js';
 	loadScript(scriptSrc, () => {
+		
 		currentMap = eval(mapId + "_map");
 		loadedMaps.set(mapId, currentMap);
 		
+		//Load neighbouring maps, but not their objects
+		if(currentMap.connections.length > 0){
+			currentMap.connections.forEach(c => {
+				if(loadedMaps.get(c.map) == null){
+					scriptSrc = "./Data/Maps/" + c.map +'_map.js';
+					loadScript(scriptSrc, () => {
+						let mapObj = eval(c.map + "_map");
+						loadedMaps.set(c.map, mapObj);
+					});
+				}
+			});
+		}
+			
+		//fresh map objects
 		let recompPos = {
 			x: currentMap.starting_point_x - deltaPos.x,
 			y: currentMap.starting_point_y - deltaPos.y
@@ -78,7 +125,7 @@ function freshMap(mapId, mapRepositioning){
 	currentMap.upper.position.y = currentMap.starting_point_y;
 	
 	//Load collisions and warps
-	createCollisions(currentMap);
+	//createCollisions(currentMap);
 	loadWarps(currentMap);
 	
 	//Clean and refill object arrays
@@ -169,23 +216,74 @@ function mapConnectionMngr(){
 	
 	//Sx
 	if(moveX > 0){
-		console.log('out sx');
-		fillBorder(0,0, moveX, canH);
+		let sx = currentMap.connections.find(o => o.dir == 'sx');
+		if(sx != null){
+			let mapSx = loadedMaps.get(sx.map);
+			context.drawImage(
+				mapSx.base.image, 
+				moveX - mapSx.base.image.width, 
+				moveY - sx.off*TILE_HEIGHT
+			);
+			context.drawImage(
+				mapSx.upper.image, 
+				moveX - mapSx.upper.image.width, 
+				moveY - sx.off*TILE_HEIGHT
+			);
+		}
 	}
 	//Dx
 	if(canW > mapW + moveX){
-		console.log('out dx')
-		fillBorder(canW - (mapW + moveX),0, mapW + moveX, canH);
+		let dx = currentMap.connections.find(o => o.dir == 'dx');
+		if(dx != null){
+			let mapDx = loadedMaps.get(dx.map);
+			context.drawImage(
+				mapDx.base.image, 
+				mapW + moveX, 
+				moveY - dx.off*TILE_HEIGHT
+			);
+			context.drawImage(
+				mapDx.upper.image, 
+				mapW + moveX, 
+				moveY - dx.off*TILE_HEIGHT
+			);
+		}
 	}
 	//Up
 	if(moveY > 0){
-		console.log('out up')
-		fillBorder(0, 0, canW, moveY);
+		console.log('out up');
+		let up = currentMap.connections.find(o => o.dir == 'up');
+		if(up != null){
+			let mapUp = loadedMaps.get(up.map);
+			context.drawImage(
+				mapUp.base.image, 
+				moveX + up.off*TILE_WIDTH, 
+				moveY - mapUp.base.image.height, 
+			);
+			context.drawImage(
+				mapUp.upper.image, 
+				moveX + up.off*TILE_WIDTH, 
+				moveY - mapUp.upper.image.height, 
+			);
+		}
 	}
 	//Dw
 	if(canH > mapH + moveY){
 		console.log('out dw')
-		fillBorder(0, canH - (mapH + moveY), canW, mapH + moveY);
+		//fillBorder(0, canH - (mapH + moveY), canW, mapH + moveY);
+		let dw = currentMap.connections.find(o => o.dir == 'dw');
+		if(dw != null){
+			let mapDw = loadedMaps.get(dw.map);
+			context.drawImage(
+				mapDw.base.image, 
+				moveX + dw.off*TILE_WIDTH, 
+				mapH + moveY
+			);
+			context.drawImage(
+				mapDw.upper.image, 
+				moveX + dw.off*TILE_WIDTH, 
+				mapH + moveY
+			);
+		}
 	}
 }
 
@@ -401,8 +499,10 @@ function goodEndingScene(){
 function animateMain(){
 	mapAnimationId = window.requestAnimationFrame(animateMain); //Recursive calling, to keep moving
 	
+	
+	//Draw everything
+	fillBorder(0,0, canvas.width, canvas.height);	//clean slate
 	mapConnectionMngr();
-	//Draw everything	
 	drawObjs.forEach((drawObj) => {
 		drawObj.draw(context);
 	});

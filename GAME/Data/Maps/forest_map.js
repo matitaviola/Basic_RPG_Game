@@ -67,6 +67,9 @@ const forest_map = {
 						console.log('warped  to ', currMapId);
 					}
 				}
+		],
+		connections:[
+			{dir:"sx", map:"coast", off:7}
 		]
 }
 			

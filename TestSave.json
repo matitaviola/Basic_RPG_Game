@@ -3,9 +3,9 @@
   "version": 1,
   "mapId": "coast",
   "mapMovedPos": {
-    "x": 114,
+    "x": 24,
     "y": -295
   },
   "playerHp": 60,
-  "playerDirection": "right"
+  "playerDirection": "left"
 }

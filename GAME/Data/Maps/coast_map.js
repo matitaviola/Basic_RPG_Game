@@ -55,5 +55,8 @@ const coast_map = {
 						console.log('warped  to ', currMapId);
 					}
 				}
+		],
+		connections:[
+			{dir:"dx", map:"forest", off:-7}
 		]
 }
