@@ -3,8 +3,8 @@
   "version": 1,
   "mapId": "forest",
   "mapMovedPos": {
-    "x": 1164,
-    "y": -1266
+    "x": -1218,
+    "y": 1140
   },
   "playerHp": 60,
   "playerDirection": "down"

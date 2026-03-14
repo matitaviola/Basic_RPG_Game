@@ -14,7 +14,8 @@ function storeSaveData(){
 	saveStruct.mapId = currMapId; //Al momento abbiamo una sola mappa
 	saveStruct.playerHp = pgBattler.currHp;
 	saveStruct.playerDirection = playerDirection;
-	saveStruct.mapMovedPos = mapMovedPos;
+	saveStruct.mapMovedPos.x = currentMap.starting_point_x - currentMap.base.position.x;
+	saveStruct.mapMovedPos.y = currentMap.starting_point_y - currentMap.base.position.y;
 	
 	//Return savestate
 	return saveStruct;

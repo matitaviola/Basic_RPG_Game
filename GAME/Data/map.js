@@ -61,8 +61,8 @@ function mapFromSave(mapId, deltaPos){
 		loadedMaps.set(mapId, currentMap);
 		
 		let recompPos = {
-			x: deltaPos.x + currentMap.starting_point_x,
-			y: deltaPos.y + currentMap.starting_point_y 
+			x: currentMap.starting_point_x - deltaPos.x,
+			y: currentMap.starting_point_y - deltaPos.y
 		}
 		freshMap(mapId, recompPos);
 	});
@@ -370,11 +370,11 @@ function animateMain(){
 	warpsList.forEach((w) => {
 		w.drawColor(context, 'purple');
 	});
-	*/
+	
 	collisionBlocks.forEach((w) => {
 		w.drawColor(context, 'red');
 	});
-	
+	*/
 	
 	//Exit if here but we're in battle or dialog
 	if(gamestate == G_S.BATTLE) 
