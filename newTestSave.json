@@ -1,0 +1,11 @@
+{
+  "gameName": "RPG4Marika",
+  "version": 1,
+  "mapId": "forest",
+  "mapMovedPos": {
+    "x": -1218,
+    "y": 1140
+  },
+  "playerHp": 60,
+  "playerDirection": "down"
+}

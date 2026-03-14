@@ -1,25 +1,29 @@
-# Documentation: maps.js Logic & Map Structure
-Responsible for overworld logic:
-- Map definitions (`maps` constant, each imported from `Data/Maps`)
-- `changeMap` to switch zones
-- `createCollisions` to generate collisions from numeric arrays
-- Movement (`movePos`), main animation loop (`animateMain`)
-- Special scenes (such as the presented `goodEndingScene`). At the moment they're kept here, but will me moved to a simple standalone script
+# Map System Documentation (`map.js`)
+
+This documentation covers the logic and structure of the map management system, which handles dynamic map loading, coordinate repositioning, collision detection, and scene transitions.
 
 ---
 
-## Map Data Configuration
-All map data must be stored in `/Data/Maps/`. Each map requires an external JavaScript file named `NAME_map.js` (where `NAME` is the identifier).
+## Core Logic: "The Moving World"
+The engine utilizes a **relative movement** system. Instead of moving the player sprite across the screen, the player remains centered while the **map and all its associated objects** move in the opposite direction of the player's input.
 
-### Map Object Structure
-A map in the Data/Maps folder must be defined as folows:
+* **`moveWithMapObjs`**: An array containing every object that must shift (Base layer, Upper layer, Collision blocks, and Warps) to maintain the illusion of movement.
+* **`drawObjs`**: An array defining the render order to handle Z-indexing (Base $\rightarrow$ Player $\rightarrow$ Upper).
+
+---
+
+## Map Data Structure
+Every map file (located in `./Data/Maps/NAME_map.js`) must define a constant named `NAME_map` with the following structure:
+
 ```js
 The map files should be stored in the /Maps folder.
 The data file should be named NAME_map, where NAME is the string put as an entry of the 'maps' const of this file.
+The pre-warp function must return a gsap timeline.
+The warp's dest-rep are the (col, row) coordinates of TILED's "landing" tile, multiplied by -TILE_WIDTH/HEIGHT
 The data file should follow this struct:
 cons NAME_map = {
-	starting_point_x,
-	starting_point_y,
+	starting_point_x, //default starting point x
+	starting_point_y, //default starting point y
 	width,
 	height,
 	base: new Sprite({
@@ -31,62 +35,54 @@ cons NAME_map = {
 		position: {x, y}
 	}),
 	bgm,
-	collisions: [...]
+	collisions: [...],
+	warps:[
+			//{position:, width:, height:, destMapid:, destRepos:, preWarpCbk:function(){...}, postWarpCbk:function(){...}}
+			...
+		]
 } 
 ```
+---
 
-> **Note on Positioning:** The `position` property in `Sprite` objects should be the negative offset of the starting tile: `(Tile Index * -1) * TILE_DIMENSION`.
+## Function Reference
+
+### Map Loading & Initialization
+* **`changeMap(mapId, mapRepositioning, loadedCbk)`**: Checks the `maps` cache for the requested ID. If missing, it dynamically loads the script via `loadScript`, evaluates the map object, and triggers `freshMap`.
+* **`freshMap(mapId, mapRepositioning)`**: Resets coordinates to `starting_point` values, clears and repopulates the object arrays (`moveWithMapObjs`, `drawObjs`), and handles the delta shift if the player is arriving from a specific warp.
+* **`mapFromSave(mapId, deltaPos)`**: Specifically for loading game states. It calculates the `recompPos` by adding the saved delta to the map's default starting points.
+
+### Physics & Geometry
+* **`createCollisions(map)`**: Parses the 1D collision array into a 2D grid based on map width and instantiates `Collision` objects at specific `(x, y)` coordinates.
+* **`loadWarps(map)`**: Iterates through the map's warp data and creates `Warp` instances, scaling tile coordinates by `TILE_WIDTH` and `TILE_HEIGHT`.
+
+### Movement & Input
+* **`movePos()`**: The primary movement logic. It performs three checks in order:
+    1.  **Warp Check**: If a warp collision is detected, movement stops and the warp function triggers.
+    2.  **Collision Check**: If a solid block is hit, `moveEn` (move enable) is set to false.
+    3.  **Transformation**: If clear, it increments/decrements the `position` of all objects in `moveWithMapObjs` by `MOVEMENT_PIXELS`.
 
 ---
 
-## Core Functions
+## The Global State (`globals.js`)
+The following variables track the live state of the map system:
 
-### `changeMap(mapId, mapRepositioning)`
-Handles switching between game zones.
-* **Loading**: Uses `loadScript` to fetch the new map data dynamically.
-* **Initialization**: Resets the `moveWithMapObjs` and `drawObjs` arrays to ensure correct rendering order.
-* **Audio**: Automatically stops current music and plays the new map's `bgm`.
-* **Persistence**: If `mapRepositioning` is true, it applies the stored `mapMovedPos` to keep the player in the same relative world space.
-
-### `createCollisions(map)`
-Generates physical boundaries from the map's numeric array.
-1. Clears existing `collisionBlocks`.
-2. Slices the 1D `collisions` array into a 2D grid based on the map's `width`.
-3. Loops through the grid and instantiates a `Collision` object for every non-zero value.
-
-### `movePos()`
-The primary movement engine.
-* **Collision Prediction**: For every directional input (WASD/Arrows), the function checks if the *next* intended position overlaps with any `collisionBlocks`.
-* **Relative Movement**: Instead of moving the player sprite, it moves all world objects (`moveWithMapObjs`) in the opposite direction, creating a camera-follow effect.
-* **Follower Logic**: Automatically triggers position updates for `Sally` and `Nala`.
+* **`currentMap`**: The currently active map object.
+* **`maps`**: A `Map()` object used to cache previously loaded map data.
+* **`mapMovedPos`**: An `{x, y}` object tracking the total distance shifted from the map's origin.
+* **`playerDirection`**: A string (`'up'`, `'down'`, etc.) used to determine sprite animations.
 
 ---
 
-## Main Animation Loop (`animateMain`)
-The `animateMain` function is called recursively via `requestAnimationFrame`.
-
-1. **Rendering**: Executes the `.draw()` method for every object in `drawObjs`.
-2. **State Management**:
-    * **BATTLE**: Logic is paused.
-    * **DIALOG**: Stops movement and listens for `Space` to advance text.
-    * **MAP**: Allows movement (`movePos`) and checks for NPC interactions.
-    * **END**: Triggers the `goodEndingScene`.
+## Game Loop Integration
+The `animateMain` function manages the state-based logic:
+* **`G_S.MAP`**: Standard gameplay; allows `movePos()` and NPC interaction.
+* **`G_S.DIALOG`**: Suspends movement; allows `advanceDialog()` via the Space key.
+* **`G_S.BATTLE`**: Suspends map logic entirely.
+* **`G_S.END`**: Triggers the `goodEndingScene` GSAP sequence.
 
 ---
 
-## Special Scenes
-### `goodEndingScene()`
-A hard-coded cinematic sequence used for the game's finale.
-* Faces the player and Prince toward each other.
-* Uses **GSAP** (GreenSock) to animate a heart graphic and the final anniversary message.
-* Disables the animation loop upon completion.
-
----
-
-## Global Dependencies
-This file assumes the following are defined in the global scope:
-* `TILE_WIDTH` / `TILE_HEIGHT`: Constants for grid size.
-* `MOVEMENT_PIXELS`: Speed of movement.
-* `G_S`: Enum for Game States (MAP, DIALOG, BATTLE, END).
-* `playerSprite`: The main player object.
-
+## Implementation Notes
+> [!IMPORTANT]
+> When defining coordinates in Tiled for the `warps` array, use the **Tile Column/Row** index. The engine automatically handles the pixel conversion:
+> `position: {x: col * TILE_WIDTH, y: row * TILE_HEIGHT}`

@@ -1,0 +1,11 @@
+{
+  "gameName": "RPG4Marika",
+  "version": 1,
+  "mapId": "coast",
+  "mapMovedPos": {
+    "x": 114,
+    "y": -295
+  },
+  "playerHp": 60,
+  "playerDirection": "right"
+}

@@ -5,6 +5,7 @@ const G_S = {
 	MENU: 'MENU',
 	DIALOG: 'DIALOG',
 	MAP: 'MAP',
+	WARP: 'WARP',
 	BATTLE: 'BATTLE',
 	OVER: 'GAME_OVER',
 	END: 'HAPPY_ENDING'
@@ -77,10 +78,12 @@ let introAnimationId;
 
 /* Map variables */
 let currentMap;
+let loadedMaps = new Map(); //src:map map
 let currMapId;
 let mapAnimationId;
 let moveWithMapObjs = [];
 let collisionBlocks = [];
+let warpsList = [];
 let drawObjs = [];
 let playerDirection = 'down';
 let mapMovedPos = {x:0, y:0};
