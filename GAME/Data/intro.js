@@ -11,7 +11,7 @@ function startGame(){
 function initGame(){
 	document.getElementById('introButton').addEventListener('click', () => {
 		if(gamestate == G_S.INTRO){
-			changeMap('forest');
+			changeMap('collA');
 			startGame();
 		}
 	});

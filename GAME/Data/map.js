@@ -125,7 +125,7 @@ function freshMap(mapId, mapRepositioning){
 	currentMap.upper.position.y = currentMap.starting_point_y;
 	
 	//Load collisions and warps
-	//createCollisions(currentMap);
+	createCollisions(currentMap);
 	loadWarps(currentMap);
 	
 	//Clean and refill object arrays
@@ -214,6 +214,25 @@ function mapConnectionMngr(){
 	let moveX = currentMap.base.position.x;
 	let moveY = currentMap.base.position.y;
 	
+	//Draw the neighbouring map
+	fillBorder(0,0, moveX, canH);
+	fillBorder(canW - (mapW + moveX),0, mapW + moveX, canH);
+	fillBorder(0, 0, canW, moveY);
+	fillBorder(0, canH - (mapH + moveY), canW, mapH + moveY);
+	/*
+	Change the above to 8 pieces like this:
+	
+	1|	2 	|3
+	----------
+	4| Map	|5
+	----------
+	6|	7	|8
+	
+	This way, we can fill only where we are sure to not have a map, using the neighbouring directions and offsets
+	
+	*/
+
+	
 	//Sx
 	if(moveX > 0){
 		let sx = currentMap.connections.find(o => o.dir == 'sx');
@@ -229,10 +248,17 @@ function mapConnectionMngr(){
 				moveX - mapSx.upper.image.width, 
 				moveY - sx.off*TILE_HEIGHT
 			);
+			//Check to change the Map
+			if(moveX > canW/2){
+				changeMap(sx.map, {x:moveX - mapSx.upper.image.width, y: moveY - sx.off*TILE_HEIGHT});
+			}
 		}
+		//else
+			//fill 4
 	}
 	//Dx
 	if(canW > mapW + moveX){
+		fillBorder(canW - (mapW + moveX),0, mapW + moveX, canH);
 		let dx = currentMap.connections.find(o => o.dir == 'dx');
 		if(dx != null){
 			let mapDx = loadedMaps.get(dx.map);
@@ -246,11 +272,16 @@ function mapConnectionMngr(){
 				mapW + moveX, 
 				moveY - dx.off*TILE_HEIGHT
 			);
+			if(canW/2 > mapW + moveX){
+				changeMap(dx.map, {x:mapW + moveX, 
+				y:moveY - dx.off*TILE_HEIGHT});
+			}
 		}
+		//else
+			//fill 5
 	}
 	//Up
 	if(moveY > 0){
-		console.log('out up');
 		let up = currentMap.connections.find(o => o.dir == 'up');
 		if(up != null){
 			let mapUp = loadedMaps.get(up.map);
@@ -264,12 +295,16 @@ function mapConnectionMngr(){
 				moveX + up.off*TILE_WIDTH, 
 				moveY - mapUp.upper.image.height, 
 			);
+			//Check to change the Map
+			if(moveY > canH/2){
+				changeMap(up.map, {x: moveX + up.off*TILE_WIDTH, y: moveY - mapUp.upper.image.height});
+			}
 		}
+		//else
+			//fill 2
 	}
 	//Dw
 	if(canH > mapH + moveY){
-		console.log('out dw')
-		//fillBorder(0, canH - (mapH + moveY), canW, mapH + moveY);
 		let dw = currentMap.connections.find(o => o.dir == 'dw');
 		if(dw != null){
 			let mapDw = loadedMaps.get(dw.map);
@@ -283,8 +318,20 @@ function mapConnectionMngr(){
 				moveX + dw.off*TILE_WIDTH, 
 				mapH + moveY
 			);
+			//Check to change the Map
+			if(canH/2 > mapH + moveY){
+				changeMap(dw.map, {x: moveX + dw.off*TILE_WIDTH, y: mapH + moveY});
+			}
 		}
+		//else
+			//fill 1
 	}
+	
+	//now check all the remaining fill Area
+	//if(sx || up) -> fill 1 tenendo conto di ambo gli offset
+	//if(dx || up) -> fill 3 tenendo conto di ambo gli offset
+	//if(sx || dw) -> fill 6 tenendo conto di ambo gli offset
+	//if(dx || dw) -> fill 8 tenendo conto di ambo gli offset
 }
 
 function fillBorder(x,y,width, height){
@@ -501,7 +548,6 @@ function animateMain(){
 	
 	
 	//Draw everything
-	fillBorder(0,0, canvas.width, canvas.height);	//clean slate
 	mapConnectionMngr();
 	drawObjs.forEach((drawObj) => {
 		drawObj.draw(context);
@@ -511,11 +557,11 @@ function animateMain(){
 	warpsList.forEach((w) => {
 		w.drawColor(context, 'purple');
 	});
-	
+	*/
 	collisionBlocks.forEach((w) => {
 		w.drawColor(context, 'red');
 	});
-	*/
+	/**/
 	
 	//Exit if here but we're in battle or dialog
 	if(gamestate == G_S.BATTLE) 
