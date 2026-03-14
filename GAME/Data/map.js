@@ -154,6 +154,46 @@ function loadWarps(map){
 	});
 }
 
+/* Manage map visual connection */
+function mapConnectionMngr(){
+	
+	if(currentMap == null)
+		return;
+	
+	let canW = canvas.width;
+	let canH = canvas.height;
+	let mapW = currentMap.width * TILE_WIDTH;
+	let mapH = currentMap.height * TILE_HEIGHT;
+	let moveX = currentMap.base.position.x;
+	let moveY = currentMap.base.position.y;
+	
+	//Sx
+	if(moveX > 0){
+		console.log('out sx');
+		fillBorder(0,0, moveX, canH);
+	}
+	//Dx
+	if(canW > mapW + moveX){
+		console.log('out dx')
+		fillBorder(canW - (mapW + moveX),0, mapW + moveX, canH);
+	}
+	//Up
+	if(moveY > 0){
+		console.log('out up')
+		fillBorder(0, 0, canW, moveY);
+	}
+	//Dw
+	if(canH > mapH + moveY){
+		console.log('out dw')
+		fillBorder(0, canH - (mapH + moveY), canW, mapH + moveY);
+	}
+}
+
+function fillBorder(x,y,width, height){
+	context.fillStyle = 'black';
+	context.fillRect(x, y, width, height);
+}	
+	
 /* Function Movements */
 function movePos(){
 	
@@ -361,6 +401,7 @@ function goodEndingScene(){
 function animateMain(){
 	mapAnimationId = window.requestAnimationFrame(animateMain); //Recursive calling, to keep moving
 	
+	mapConnectionMngr();
 	//Draw everything	
 	drawObjs.forEach((drawObj) => {
 		drawObj.draw(context);

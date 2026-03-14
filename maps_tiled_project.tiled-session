@@ -3,7 +3,7 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "multmap_test_Forest.tmx",
+    "activeFile": "multmap_test_coast.tmx",
     "expandedProjectPaths": [
         "."
     ],
@@ -29,7 +29,7 @@
             "scale": 1.080625,
             "selectedLayer": 10,
             "viewCenter": {
-                "x": 359.05147484094846,
+                "x": 320.18507807981496,
                 "y": 319.7223828802776
             }
         },
@@ -45,8 +45,8 @@
             "scale": 1.3834374999999999,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 270.34108877343573,
-                "y": 240.343347639485
+                "x": 243.23469618251636,
+                "y": 239.98192907160606
             }
         }
     },
@@ -70,9 +70,9 @@
     "project": "maps_tiled_project.tiled-project",
     "recentFiles": [
         "Magiscarf_2.tsx",
-        "multmap_test_coast.tmx",
-        "Magiscarf.tsx",
         "multmap_test_Forest.tmx",
+        "Magiscarf.tsx",
+        "multmap_test_coast.tmx",
         "multmap_test_coast.tmj",
         "Magicscarf2.tsx"
     ],
