@@ -25,7 +25,7 @@ cons NAME_map = {
 			...
 		],
 	connections:[
-		{dir:'sx', map:'coast', off:2} //off:2 significa che la mappa verrà diseganta 2 tiles più in alto di quella corrente, se sx/dx, 2 più verso destra se in up/dw
+		{dir:'sx', map:'coast', off:2} //off:2 significa che la mappa verrà diseganta 2 tiles più in alto di quella corrente se sx/dx, 2 più verso destra se in up/dw
 		...
 	]
 } 
@@ -213,132 +213,253 @@ function mapConnectionMngr(){
 	let mapH = currentMap.height * TILE_HEIGHT;
 	let moveX = currentMap.base.position.x;
 	let moveY = currentMap.base.position.y;
-	
-	//Draw the neighbouring map
-	fillBorder(0,0, moveX, canH);
-	fillBorder(canW - (mapW + moveX),0, mapW + moveX, canH);
-	fillBorder(0, 0, canW, moveY);
-	fillBorder(0, canH - (mapH + moveY), canW, mapH + moveY);
-	/*
-	Change the above to 8 pieces like this:
-	
-	1|	2 	|3
-	----------
-	4| Map	|5
-	----------
-	6|	7	|8
-	
-	This way, we can fill only where we are sure to not have a map, using the neighbouring directions and offsets
-	
-	*/
-
+	let connectedMaps = [];
 	
 	//Sx
 	if(moveX > 0){
 		let sx = currentMap.connections.find(o => o.dir == 'sx');
-		if(sx != null){
+		if(sx != null){					
+					
 			let mapSx = loadedMaps.get(sx.map);
-			context.drawImage(
-				mapSx.base.image, 
-				moveX - mapSx.base.image.width, 
-				moveY - sx.off*TILE_HEIGHT
-			);
-			context.drawImage(
-				mapSx.upper.image, 
-				moveX - mapSx.upper.image.width, 
-				moveY - sx.off*TILE_HEIGHT
-			);
-			//Check to change the Map
-			if(moveX > canW/2){
-				changeMap(sx.map, {x:moveX - mapSx.upper.image.width, y: moveY - sx.off*TILE_HEIGHT});
+			if(mapSx){
+				context.drawImage(
+					mapSx.base.image, 
+					moveX - mapSx.base.image.width, 
+					moveY - sx.off*TILE_HEIGHT
+				);
+				context.drawImage(
+					mapSx.upper.image, 
+					moveX - mapSx.upper.image.width, 
+					moveY - sx.off*TILE_HEIGHT
+				);
+				
+				//Add to list for the out-of-border fill
+				connectedMaps.push({
+					x: moveX - mapSx.base.image.width, //start x
+					y: moveY - sx.off*TILE_HEIGHT, //start y
+					w: mapSx.base.image.width,
+					h: mapSx.base.image.height
+				});
+				//Check to change the Map
+				if(moveX > canW/2){
+					changeMap(sx.map, {x:moveX - mapSx.upper.image.width, y: moveY - sx.off*TILE_HEIGHT});
+				}
 			}
 		}
-		//else
-			//fill 4
+		
 	}
 	//Dx
 	if(canW > mapW + moveX){
-		fillBorder(canW - (mapW + moveX),0, mapW + moveX, canH);
 		let dx = currentMap.connections.find(o => o.dir == 'dx');
 		if(dx != null){
+			
 			let mapDx = loadedMaps.get(dx.map);
-			context.drawImage(
-				mapDx.base.image, 
-				mapW + moveX, 
-				moveY - dx.off*TILE_HEIGHT
-			);
-			context.drawImage(
-				mapDx.upper.image, 
-				mapW + moveX, 
-				moveY - dx.off*TILE_HEIGHT
-			);
-			if(canW/2 > mapW + moveX){
-				changeMap(dx.map, {x:mapW + moveX, 
-				y:moveY - dx.off*TILE_HEIGHT});
+			if(mapDx){
+				context.drawImage(
+					mapDx.base.image, 
+					mapW + moveX, 
+					moveY - dx.off*TILE_HEIGHT
+				);
+				context.drawImage(
+					mapDx.upper.image, 
+					mapW + moveX, 
+					moveY - dx.off*TILE_HEIGHT
+				);
+				connectedMaps.push({
+					x: mapW + moveX,
+					y: moveY - dx.off * TILE_HEIGHT,
+					w: mapDx.base.image.width,
+					h: mapDx.base.image.height
+				});
+				if(canW/2 > mapW + moveX){
+					changeMap(dx.map, {x:mapW + moveX, 
+					y:moveY - dx.off*TILE_HEIGHT});
+				}
 			}
 		}
-		//else
-			//fill 5
+		
 	}
 	//Up
 	if(moveY > 0){
 		let up = currentMap.connections.find(o => o.dir == 'up');
 		if(up != null){
+			
 			let mapUp = loadedMaps.get(up.map);
-			context.drawImage(
-				mapUp.base.image, 
-				moveX + up.off*TILE_WIDTH, 
-				moveY - mapUp.base.image.height, 
-			);
-			context.drawImage(
-				mapUp.upper.image, 
-				moveX + up.off*TILE_WIDTH, 
-				moveY - mapUp.upper.image.height, 
-			);
-			//Check to change the Map
-			if(moveY > canH/2){
-				changeMap(up.map, {x: moveX + up.off*TILE_WIDTH, y: moveY - mapUp.upper.image.height});
+			if(mapUp){
+				context.drawImage(
+					mapUp.base.image, 
+					moveX + up.off*TILE_WIDTH, 
+					moveY - mapUp.base.image.height, 
+				);
+				context.drawImage(
+					mapUp.upper.image, 
+					moveX + up.off*TILE_WIDTH, 
+					moveY - mapUp.upper.image.height, 
+				);
+				connectedMaps.push({
+					x: moveX + up.off * TILE_WIDTH,
+					y: moveY - mapUp.base.image.height,
+					w: mapUp.base.image.width,
+					h: mapUp.base.image.height
+				});
+				
+				//Check to change the Map
+				if(moveY > canH/2){
+					changeMap(up.map, {x: moveX + up.off*TILE_WIDTH, y: moveY - mapUp.upper.image.height});
+				}
 			}
 		}
-		//else
-			//fill 2
+		
 	}
 	//Dw
 	if(canH > mapH + moveY){
 		let dw = currentMap.connections.find(o => o.dir == 'dw');
 		if(dw != null){
+			
 			let mapDw = loadedMaps.get(dw.map);
-			context.drawImage(
-				mapDw.base.image, 
-				moveX + dw.off*TILE_WIDTH, 
-				mapH + moveY
-			);
-			context.drawImage(
-				mapDw.upper.image, 
-				moveX + dw.off*TILE_WIDTH, 
-				mapH + moveY
-			);
-			//Check to change the Map
-			if(canH/2 > mapH + moveY){
-				changeMap(dw.map, {x: moveX + dw.off*TILE_WIDTH, y: mapH + moveY});
+			if(mapDw){
+				context.drawImage(
+					mapDw.base.image, 
+					moveX + dw.off*TILE_WIDTH, 
+					mapH + moveY
+				);
+				context.drawImage(
+					mapDw.upper.image, 
+					moveX + dw.off*TILE_WIDTH, 
+					mapH + moveY
+				);
+				connectedMaps.push({
+					x: moveX + dw.off * TILE_WIDTH,
+					y: mapH + moveY,
+					w: mapDw.base.image.width,
+					h: mapDw.base.image.height
+				});
+				
+				//Check to change the Map
+				if(canH/2 > mapH + moveY){
+					changeMap(dw.map, {x: moveX + dw.off*TILE_WIDTH, y: mapH + moveY});
+				}
 			}
 		}
-		//else
-			//fill 1
+		
 	}
 	
-	//now check all the remaining fill Area
-	//if(sx || up) -> fill 1 tenendo conto di ambo gli offset
-	//if(dx || up) -> fill 3 tenendo conto di ambo gli offset
-	//if(sx || dw) -> fill 6 tenendo conto di ambo gli offset
-	//if(dx || dw) -> fill 8 tenendo conto di ambo gli offset
+	//fill the out-of-map 
+	fillBorder(canW,canH,moveX,moveY,mapW,mapH,connectedMaps);
+		
 }
 
-function fillBorder(x,y,width, height){
-	context.fillStyle = 'black';
-	context.fillRect(x, y, width, height);
-}	
+function fillBorder(canW, canH, moveX, moveY, mapW, mapH, connectedMaps){
+	//Fill the following regions
+	/*
+	Screen:
+	1|	2 	|3
+	----------
+	4| Map	|5
+	----------
+	6|	7	|8
+	*/
+	const regions = [
+		{x:0, y:0, w:moveX, h:moveY}, //1
+		{x:moveX, y:0, w:mapW, h:moveY}, //2
+        {x:moveX+mapW, y:0, w:canW-(moveX+mapW), h:moveY},  //3
+        {x:0, y:moveY, w:moveX, h:mapH},  //4
+        {x:moveX+mapW, y:moveY, w:canW-(moveX+mapW), h:mapH},  //5
+        {x:0, y:moveY+mapH, w:moveX, h:canH-(moveY+mapH)},  //6
+        {x:moveX, y:moveY+mapH, w:mapW, h:canH-(moveY+mapH)},  //7
+        {x:moveX+mapW, y:moveY+mapH, w:canW-(moveX+mapW), h:canH-(moveY+mapH)} //8
+	]
 	
+	//For each region, divide the region into parts, depending on the maps' parts appearing in the region
+	regions.forEach(r =>{
+		
+		let parts = [r]; //Start with the whole region;
+		
+		connectedMaps.forEach(cm => {
+			let newParts = [];
+			
+			//remove from the part every bit that is occupied by a map
+			parts.forEach(p => {
+				newParts.push(...subtractRect(p, cm));
+			});
+			
+			//store the newfound parts
+			parts = newParts;
+		});
+		
+		//Fill evary found part
+		parts.forEach(p => fillWithColor("white",p.x,p.y,p.w,p.h));
+	});
+}
+
+//Returns the subrectangles of a given part minus the intersection with a Map
+function subtractRect(region, overlapper){
+	const iR = intersectRect(region, overlapper); //intersected rectangle
+	
+	if (!iR)
+		return [region]; //if no intersection has been found, the whole area will be returned and filled
+	
+	const parts = [];
+	
+	//Top 
+	if(iR.y > region.y)
+		parts.push({
+			x: region.x,
+			y: region.y,
+			w: region.w,
+			h: iR.y - region.y
+		});
+		
+	//Bottom
+	if(iR.y + iR.h < region.y + region.h)
+		parts.push({
+			x: region.x,
+			y: iR.y + iR.h,
+			w: region.w,
+			h: region.y + region.h - (iR.y+iR.h)
+		});
+		
+	//Left
+	if(iR.x > region.x)
+		parts.push({
+			x: region.x,
+			y: iR.y,
+			w: iR.x - region.x,
+			h: iR.h
+		});
+	
+	//Left
+	if(iR.x + iR.w < region.x + region.w)
+		parts.push({
+			x: iR.x + iR.w,
+			y: iR.y,
+			w: region.x + region.w - (iR.x + iR.w),
+			h: iR.h
+		});
+		
+	return parts;
+}
+
+//Returns the rectangle that is the intersection of the two passed
+function intersectRect(rect1, rect2){
+	const x = Math.max(rect1.x, rect2.x); //X più grande
+	const y = Math.max(rect1.y, rect2.y);
+	const k = Math.min(rect1.x + rect1.w, rect2.x + rect2.w); //minima X+length raggiunta
+	const j = Math.min(rect1.y + rect1.h, rect2.y + rect2.h);
+	
+	if(k <= x || j <= y) //se la minima x/y+length non arriva alla max, vuol dire che non ho intersezioni
+		return null;
+	
+	return {x: x, y: y, w: k-x, h: j-y};
+	
+}
+
+//Fill a rectangle with the given colour
+function fillWithColor(color, x,y,width, height){
+	context.fillStyle = color;
+	context.fillRect(x, y, width, height);
+}
+
 /* Function Movements */
 function movePos(){
 	

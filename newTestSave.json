@@ -1,11 +1,11 @@
 {
   "gameName": "RPG4Marika",
   "version": 1,
-  "mapId": "forest",
+  "mapId": "collA",
   "mapMovedPos": {
-    "x": -1218,
-    "y": 1140
+    "x": -813,
+    "y": -666
   },
   "playerHp": 60,
-  "playerDirection": "down"
+  "playerDirection": "up"
 }

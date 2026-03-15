@@ -57,6 +57,7 @@ const coast_map = {
 				}
 		],
 		connections:[
-			{dir:"dx", map:"forest", off:-7}
+			{dir:"dx", map:"forest", off:-7},
+			{dir:"sx", map:"collA", off:3}
 		]
 }

@@ -48,6 +48,7 @@ const collA_map = {
 	warps:[
 	],
 	connections:[
+		{dir:"dx", map:"coast", off:-3},
 		{dir:"up", map:"collB", off:0}
 	]
 }
